@@ -1,0 +1,19 @@
+{
+  "nombre": "Gonzalo",
+  "apellidos": "Díaz de Vivar",
+  "lugarResidencia": "Argentina",
+  "numeroDocumento": "45580428",
+  "fechaNacimiento": new Date(),
+  "lugarNacimiento": "Argentina",
+  "correoElectronico": "gonzalodiazdevivar@gmail.com",
+  "numeroTelefono": "+541136622676",
+  "diagnostico": {
+    "dislexia": true,
+    "discalculia": true,
+    "disortografía": false,
+    "dispraxia": false,
+    "tda-h": false
+  },
+  "linkDiagnostico": "https://google.com",
+  "linkPasaporte": "https://google.com"
+}
