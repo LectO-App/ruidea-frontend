@@ -16,12 +16,11 @@ const Hero = () => {
           </div>
           <div className="imagen"></div>
         </div>
-
-        <div className="waves">
-          <img src={wave1} alt="" />
-          <img src={wave2} alt="" />
-        </div>
       </section>
+      <div className="waves">
+        <img src={wave1} alt="" />
+        <img src={wave2} alt="" className="second-wave" />
+      </div>
     </main>
   );
 };

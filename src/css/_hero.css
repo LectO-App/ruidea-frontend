@@ -1,12 +1,21 @@
-main section {
-  display: flex;
+main {
   height: 86vh;
+  display: flex;
   flex-direction: column;
 }
 
-main section .hero {
-  padding: 0 15%;
+main section {
   flex: 1;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+main section .hero {
+  height: 100%;
+  flex: 1;
+  padding: 0 15%;
   display: flex;
   align-items: center;
 }
@@ -38,12 +47,10 @@ main section .hero .btn-inscribirme {
 }
 
 main .waves {
-  height: 16vh;
   position: relative;
+  height: auto;
 }
 
-main .waves * {
-  height: 100%;
-  position: absolute;
-  bottom: 0;
+main .waves .second-wave {
+  margin-top: -100%;
 }

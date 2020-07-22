@@ -1,0 +1,8 @@
+<svg>
+  <defs>
+    <clipPath id="wave" clipPathUnits="objectBoundingBox">
+      <path fill="#FBB217" d="M.682,.055c-.225-.001-.337-.09-.682-.04 V1 H1 V.17v-.058v0
+  V.089V.015C.905,.037,.783,.055,.682,.055z"/>    
+    </clipPath>
+  </defs>
+</svg>
