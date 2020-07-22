@@ -1,0 +1,23 @@
+nav {
+  padding: 3vh 15%;
+  height: 14vh;
+  display: flex;
+  align-items: center;
+  h2 {
+    font-size: 2.5em;
+    text-transform: uppercase;
+  }
+  .links {
+    margin-left: auto;
+    p {
+      display: inline;
+      margin: 0 1rem;
+      font-size: 1.4em;
+      cursor: pointer;
+    }
+    .btn-iniciar-sesion {
+      color: #4a71d8;
+      font-weight: 700;
+    }
+  }
+}

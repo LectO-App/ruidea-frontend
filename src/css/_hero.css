@@ -1,0 +1,49 @@
+main section {
+  display: flex;
+  height: 86vh;
+  flex-direction: column;
+}
+
+main section .hero {
+  padding: 0 15%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+main section .hero .text {
+  font-size: 1.8em;
+  flex: 0.6;
+}
+
+main section .hero .text span {
+  color: #4a71d8;
+}
+
+main section .hero .imagen {
+  flex: 0.4;
+  background: #ccc;
+  height: 60%;
+  width: 100%;
+}
+
+main section .hero .btn-inscribirme {
+  border: none;
+  color: #fff;
+  background-color: #4a71d8;
+  padding: 1em 1.8em;
+  border-radius: 4px;
+  margin-top: 2rem;
+  font-size: 0.6em;
+}
+
+main .waves {
+  height: 16vh;
+  position: relative;
+}
+
+main .waves * {
+  height: 100%;
+  position: absolute;
+  bottom: 0;
+}
