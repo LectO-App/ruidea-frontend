@@ -1,0 +1,90 @@
+.dashboard-main {
+  padding: 2rem 0;
+}
+
+.dashboard-main h2 {
+  font-size: 4em;
+  text-align: center;
+}
+
+.dashboard-main .card-estado {
+  padding: 2em 4em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: #eeeeee;
+  max-width: 800px;
+  width: fit-content;
+  min-height: 400px;
+  margin: 2rem auto;
+  border-radius: 16px;
+}
+
+.dashboard-main .card-estado h5 {
+  font-size: 3em;
+  color: #2f2e2e;
+  font-weight: normal;
+}
+
+.dashboard-main .card-estado div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.dashboard-main .card-estado .estado-solicitud {
+  height: 20px;
+  font-size: 3.4em;
+}
+
+.dashboard-main .card-estado .estado-solicitud span {
+  font-weight: bold;
+}
+
+.dashboard-main .card-estado .estado-solicitud img {
+  height: 1em;
+  margin-right: 1rem;
+  user-select: none;
+}
+
+.dashboard-main .card-estado .estado-solicitud .txt-aprobada {
+  color: #60b952;
+}
+
+.dashboard-main .card-estado button {
+  border: none;
+  background-color: #4a71d8;
+  color: #fff;
+  font-size: 14px;
+  padding: 1em 2em;
+  font-weight: bold;
+  line-height: 18px;
+  margin: 0 2em;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dashboard-main .creado-por-lecto {
+  margin: auto;
+}
+
+.dashboard-main .creado-por-lecto p {
+  font-size: 1.6em;
+  color: #2c2c2c;
+}
+
+.dashboard-main .creado-por-lecto .imagenes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dashboard-main .creado-por-lecto .imagenes img {
+  height: 120px;
+}
+
+.dashboard-main .creado-por-lecto .imagenes img:nth-child(1) {
+  margin-right: 3rem;
+}

@@ -1,27 +1,27 @@
-import React from 'react';
+import React from "react";
 
 const Info = () => {
-    return (
-        <main>
-            <div className="titulo">
-                <h1>Que es Rudea?</h1>
-                <text>Lorem ipsum dolor sit amet consectetur illum detectus.</text>
-            </div>
-            
-            <div className="items">
-                <div className="imagen"></div>
-                <div className="text">
-                    <h2>Lorem ipsum dolor sit amet consectetur illum detectus.</h2>
-                </div>    
-            </div>
-            
-            
-            
-            
+  return (
+    <section className="section-que-es-rudea">
+      <div className="titulo">
+        <h1>Que es Rudea?</h1>
+        <p>Lorem ipsum dolor sit amet consectetur illum detectus.</p>
+      </div>
 
-        
-        </main>
-    );
+      <div className="items">
+        <div className="item">
+          <div className="container-imagen">
+            <div className="imagen"></div>
+          </div>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis nulla
+            rhoncus sapien fermentum diam. Ut duis libero in aliquam lectus
+            sagittis diam sit.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default Info;

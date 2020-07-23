@@ -6,18 +6,23 @@ nav {
   h2 {
     font-size: 2.5em;
     text-transform: uppercase;
+    font-weight: 800;
   }
   .links {
     margin-left: auto;
     p {
       display: inline;
-      margin: 0 1rem;
-      font-size: 1.4em;
+      margin: 0 0 0 3rem;
+      font-size: 1.3em;
       cursor: pointer;
     }
     .btn-iniciar-sesion {
       color: #4a71d8;
       font-weight: 700;
+    }
+    .btn-cerrar-sesion {
+      font-weight: 700;
+      color: rgb(231, 41, 41);
     }
   }
 }

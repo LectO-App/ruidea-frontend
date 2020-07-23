@@ -1,28 +1,39 @@
-main{
-    .titulo{
-        padding: 0 12%;
-        margin-top: 3rem;
-        font-size: 1em;
-        text{
-            font-size: 1.5em;
-        }
+.section-que-es-rudea {
+  padding: 5vh 15%;
+  .titulo {
+    h1 {
+      font-size: 3em;
     }
-    .items{
-        flex: 1;
-        padding: 0 18%;
-        display: flex;
-        align-items: center;
-      .text{
-          font-size: 1.4em;
-          flex: 0.4;
-          padding: 0 5%;
-      }
+    p {
+      font-size: 1.5em;
+      margin: 1rem 0;
+      color: rgb(20, 20, 20);
+    }
+  }
+  .item {
+    width: 100%;
+    padding: 2em;
+    margin: 2rem 0;
+    height: 40vh;
+    display: flex;
+    align-items: center;
+    p {
+      flex: 1;
+      font-size: 1.4em;
+      max-width: 50%;
+      padding: 0 2em;
+    }
+    .container-imagen {
+      height: 100%;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       .imagen {
-          flex: 0.7;
-          background: #ccc; 
-          height: 60%;
-          width: 100%;
-        }
+        width: 70%;
+        height: 100%;
+        background: #ccc;
+      }
     }
-   
+  }
 }

@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300;0,400;0,500;0,700;1,800&display=swap");
 nav {
   padding: 3vh 15%;
   height: 14vh;
@@ -8,6 +9,7 @@ nav {
 nav h2 {
   font-size: 2.5em;
   text-transform: uppercase;
+  font-weight: 800;
 }
 
 nav .links {
@@ -16,8 +18,8 @@ nav .links {
 
 nav .links p {
   display: inline;
-  margin: 0 1rem;
-  font-size: 1.4em;
+  margin: 0 0 0 3rem;
+  font-size: 1.3em;
   cursor: pointer;
 }
 
@@ -29,14 +31,19 @@ nav .links .btn-iniciar-sesion {
 main {
   height: 86vh;
   display: flex;
+  flex-direction: column;
 }
 
 main section {
+  flex: 1;
   display: flex;
   align-items: center;
+  height: 100%;
+  width: 100%;
 }
 
 main section .hero {
+  height: 100%;
   flex: 1;
   padding: 0 15%;
   display: flex;
@@ -67,17 +74,103 @@ main section .hero .btn-inscribirme {
   border-radius: 4px;
   margin-top: 2rem;
   font-size: 0.6em;
+  cursor: pointer;
 }
 
 main .waves {
-  height: 220px;
-  /* 
-    clip-path: url(../img/waves1.svg); */
+  position: relative;
+  height: auto;
+}
+
+main .waves .second-wave {
+  margin-top: -100%;
+}
+
+.section-que-es-rudea {
+  padding: 5vh 15%;
+}
+
+.section-que-es-rudea .titulo h1 {
+  font-size: 3em;
+}
+
+.section-que-es-rudea .titulo p {
+  font-size: 1.5em;
+  margin: 1rem 0;
+  color: #141414;
+}
+
+.section-que-es-rudea .item {
+  width: 100%;
+  padding: 2em;
+  margin: 2rem 0;
+  height: 40vh;
+  display: flex;
+  align-items: center;
+}
+
+.section-que-es-rudea .item p {
+  flex: 1;
+  font-size: 1.4em;
+  max-width: 50%;
+  padding: 0 2em;
+}
+
+.section-que-es-rudea .item .container-imagen {
+  height: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.section-que-es-rudea .item .container-imagen .imagen {
+  width: 70%;
+  height: 100%;
+  background: #ccc;
+}
+
+footer {
+  background: #a4cfff;
+  padding: 1.5rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+footer .links {
+  padding: 1em;
+}
+
+footer .links * {
+  margin: 1em 0;
+  text-align: center;
+  color: #073944;
+  cursor: pointer;
+}
+
+footer .creado-por-lecto {
+  color: #0e0e0e;
+  width: 50%;
+  text-align: center;
+}
+
+footer .creado-por-lecto p {
+  font-size: 1.4em;
+}
+
+footer .creado-por-lecto .imagenes {
+  padding: 1em;
+}
+
+footer .creado-por-lecto .imagenes img {
+  height: 100px;
 }
 
 * {
   margin: 0;
   box-sizing: border-box;
   padding: 0;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Mulish", sans-serif;
 }
