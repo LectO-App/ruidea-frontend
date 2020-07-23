@@ -1,0 +1,28 @@
+main{
+    .titulo{
+        padding: 0 12%;
+        margin-top: 3rem;
+        font-size: 1em;
+        text{
+            font-size: 1.5em;
+        }
+    }
+    .items{
+        flex: 1;
+        padding: 0 18%;
+        display: flex;
+        align-items: center;
+      .text{
+          font-size: 1.4em;
+          flex: 0.4;
+          padding: 0 5%;
+      }
+      .imagen {
+          flex: 0.7;
+          background: #ccc; 
+          height: 60%;
+          width: 100%;
+        }
+    }
+   
+}
