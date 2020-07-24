@@ -18,7 +18,7 @@ main {
         font-size: 1.8em;
         flex: 0.6;
         span {
-          color: #4a71d8;
+          color: $clrMain;
         }
       }
       .imagen {
@@ -30,7 +30,7 @@ main {
       .btn-inscribirme {
         border: none;
         color: #fff;
-        background-color: #4a71d8;
+        background-color: $clrMain;
         padding: 1em 1.8em;
         border-radius: 4px;
         margin-top: 2rem;

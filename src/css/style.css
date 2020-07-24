@@ -24,8 +24,13 @@ nav .links p {
 }
 
 nav .links .btn-iniciar-sesion {
-  color: #4a71d8;
+  color: #297f89;
   font-weight: 700;
+}
+
+nav .links .btn-cerrar-sesion {
+  font-weight: 700;
+  color: #e72929;
 }
 
 main {
@@ -56,7 +61,7 @@ main section .hero .text {
 }
 
 main section .hero .text span {
-  color: #4a71d8;
+  color: #41a1ac;
 }
 
 main section .hero .imagen {
@@ -69,7 +74,7 @@ main section .hero .imagen {
 main section .hero .btn-inscribirme {
   border: none;
   color: #fff;
-  background-color: #4a71d8;
+  background-color: #41a1ac;
   padding: 1em 1.8em;
   border-radius: 4px;
   margin-top: 2rem;
@@ -131,7 +136,7 @@ main .waves .second-wave {
 }
 
 footer {
-  background: #a4cfff;
+  background: #8fd5dd;
   padding: 1.5rem 0;
   display: flex;
   justify-content: center;
@@ -168,9 +173,99 @@ footer .creado-por-lecto .imagenes img {
   height: 100px;
 }
 
+.dashboard-main h2 {
+  font-size: 3.5em;
+  text-align: center;
+  overflow-y: hidden;
+}
+
+.dashboard-main .card-estado {
+  padding: 2em 4em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: #eeeeee;
+  max-width: 800px;
+  width: fit-content;
+  min-height: 400px;
+  margin: 2rem auto;
+  border-radius: 16px;
+}
+
+.dashboard-main .card-estado h5 {
+  font-size: 3em;
+  color: #2f2e2e;
+  font-weight: normal;
+}
+
+.dashboard-main .card-estado div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.dashboard-main .card-estado .estado-solicitud {
+  height: 20px;
+  font-size: 3.4em;
+}
+
+.dashboard-main .card-estado .estado-solicitud span {
+  font-weight: bold;
+}
+
+.dashboard-main .card-estado .estado-solicitud img {
+  height: 1em;
+  margin-right: 1rem;
+  user-select: none;
+}
+
+.dashboard-main .card-estado .estado-solicitud .txt-aprobada {
+  color: #60b952;
+}
+
+.dashboard-main .card-estado button {
+  border: none;
+  background-color: #4a71d8;
+  color: #fff;
+  font-size: 14px;
+  padding: 1em 2em;
+  font-weight: bold;
+  line-height: 18px;
+  margin: 0 2em;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dashboard-main .creado-por-lecto {
+  margin: auto;
+  overflow-y: hidden;
+}
+
+.dashboard-main .creado-por-lecto p {
+  font-size: 1.6em;
+  color: #2c2c2c;
+}
+
+.dashboard-main .creado-por-lecto .imagenes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dashboard-main .creado-por-lecto .imagenes img {
+  height: 120px;
+}
+
+.dashboard-main .creado-por-lecto .imagenes img:nth-child(1) {
+  margin-right: 3rem;
+}
+
 * {
   margin: 0;
   box-sizing: border-box;
   padding: 0;
   font-family: "Mulish", sans-serif;
+  overflow-x: hidden;
 }
