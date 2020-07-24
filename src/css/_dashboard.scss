@@ -1,8 +1,8 @@
 .dashboard-main {
-  padding: 2rem 0;
   h2 {
-    font-size: 4em;
+    font-size: 3.5em;
     text-align: center;
+    overflow-y: hidden;
   }
   .card-estado {
     padding: 2em 4em;
@@ -57,6 +57,7 @@
   }
   .creado-por-lecto {
     margin: auto;
+    overflow-y: hidden;
     p {
       font-size: 1.6em;
       color: rgb(44, 44, 44);
