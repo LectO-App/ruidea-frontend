@@ -21,8 +21,9 @@ const Paso1 = (props) => {
   };
 
   return (
-    <form>
+    <form className="formulario">
       <label htmlFor="nombre">Nombre</label>
+      <label htmlFor="apellidos">Apellidos</label>
       <input
         type="text"
         name="nombre"
@@ -30,7 +31,6 @@ const Paso1 = (props) => {
         value={valores.nombre}
         onChange={inputChange("nombre")}
       />
-      <label htmlFor="apellidos">Apellidos</label>
       <input
         type="text"
         name="apellidos"
@@ -39,10 +39,10 @@ const Paso1 = (props) => {
         onChange={inputChange("apellidos")}
       />
       <label htmlFor="lugar-residencia">Lugar de residencia</label>
+      <label htmlFor="localidad">Localidad</label>
       <select name="lugar-residencia" id="lugar-residencia">
         <option value="Argentina">Argentina</option>
       </select>
-      <label htmlFor="localidad">Localidad</label>
       <input
         type="text"
         name="localidad"

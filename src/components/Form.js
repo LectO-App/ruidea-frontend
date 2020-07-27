@@ -64,6 +64,7 @@ const Form = () => {
 
   return (
     <div>
+      <h1 className="titulo">Inscribirse</h1>
       <div className="barra-latera"></div>
       {showCurrentStep()}
     </div>

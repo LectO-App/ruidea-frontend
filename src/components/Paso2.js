@@ -27,8 +27,9 @@ const Paso2 = (props) => {
     pasoAnterior();
   };
   return (
-    <form>
+    <form className="formulario">
       <label htmlFor="numero-documento">Numero de documento</label>
+      <label htmlFor="fecha-nacimiento">Fecha de nacimiento</label>
       <input
         type="text"
         name="numero-documento"
@@ -36,7 +37,6 @@ const Paso2 = (props) => {
         value={valores.numeroDocumento}
         onChange={inputChange("numeroDocumento")}
       />
-      <label htmlFor="fecha-nacimiento">Fecha de nacimiento</label>
       <input
         type="date"
         name="fecha-nacimiento"
@@ -45,6 +45,7 @@ const Paso2 = (props) => {
         onChange={inputChange("fechaNacimiento")}
       />
       <label htmlFor="lugar-nacimiento">Lugar de nacimiento</label>
+      <label htmlFor="correo-electronico">Correo electrónico</label>
       <input
         type="text"
         name="lugar-nacimiento"
@@ -52,7 +53,7 @@ const Paso2 = (props) => {
         value={valores.lugarNacimiento}
         onChange={inputChange("lugarNacimiento")}
       />
-      <label htmlFor="correo-electronico">Correo electrónico</label>
+      
       <input
         type="text"
         name="correo-electronico"
@@ -62,6 +63,7 @@ const Paso2 = (props) => {
       />
 
       <label htmlFor="correo-electronico">Verificar correo electrónico</label>
+      <label htmlFor="telefono">Numero de teléfono móvil</label>
       <input
         type="text"
         name="verificar-correo-electronico"
@@ -69,7 +71,6 @@ const Paso2 = (props) => {
         value={valores.verificarCorreoElectronico}
         onChange={inputChange("verificarCorreoElectronico")}
       />
-      <label htmlFor="telefono">Numero de teléfono móvil</label>
       <input
         type="text"
         name="telefono"

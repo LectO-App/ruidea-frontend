@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import upload from "../img/upload.png";
 
 const Paso4 = (props) => {
   const { siguientePaso, handleFormChange, formData, pasoAnterior } = props;
@@ -24,10 +25,11 @@ const Paso4 = (props) => {
     pasoAnterior();
   };
   return (
-    <form>
+    <form className="fileform">
       <input type="file" name="diagnostico" id="diagnostico" />
+      <label for="diagnostico">Diagnostico</label>
       <input type="file" name="dniPasaporte" id="dniPasaporte" />
-
+      <label for="dniPasaporte">DNI o Pasaporte</label>
       <input type="radio" name="acepto-recibir-info" id="acepto-recibir-info" />
       <label htmlFor="acepto-recibir-info">
         Acepto recibir información actualizada sobre dislexia y otras DEAs.
