@@ -61,22 +61,23 @@ const Paso2 = (props) => {
         value={valores.correoElectronico}
         onChange={inputChange("correoElectronico")}
       />
-
-      <label htmlFor="correo-electronico">Verificar correo electrónico</label>
       <label htmlFor="telefono">Numero de teléfono móvil</label>
-      <input
-        type="text"
-        name="verificar-correo-electronico"
-        id="verificar-correo-electronico"
-        value={valores.verificarCorreoElectronico}
-        onChange={inputChange("verificarCorreoElectronico")}
-      />
+      <label htmlFor="correo-electronico">Verificar correo electrónico</label>
+      
+      
       <input
         type="text"
         name="telefono"
         id="telefono"
         value={valores.telefono}
         onChange={inputChange("telefono")}
+      />
+      <input
+        type="text"
+        name="verificar-correo-electronico"
+        id="verificar-correo-electronico"
+        value={valores.verificarCorreoElectronico}
+        onChange={inputChange("verificarCorreoElectronico")}
       />
 
       <button onClick={irAlPasoAnterior}>Anterior</button>

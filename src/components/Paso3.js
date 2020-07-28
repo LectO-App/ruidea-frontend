@@ -25,7 +25,8 @@ const Paso3 = (props) => {
     pasoAnterior();
   };
   return (
-    <form className="radioform">
+    <form className="checkform">
+      <h1>Tipo de diagnostico</h1>
       <input
         type="checkbox"
         name="dislexia"

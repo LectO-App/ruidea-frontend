@@ -26,10 +26,20 @@ const Paso4 = (props) => {
   };
   return (
     <form className="fileform">
-      <input type="file" name="diagnostico" id="diagnostico" />
-      <label for="diagnostico">Diagnostico</label>
-      <input type="file" name="dniPasaporte" id="dniPasaporte" />
-      <label for="dniPasaporte">DNI o Pasaporte</label>
+      
+      <div className="filePicker">
+        <img src={upload} alt=""></img>
+        <input type="file" name="diagnostico" id="diagnostico"></input>
+        <label for="diagnostico"> 
+        Adjuntar diagnostico</label>
+        
+      </div>
+      <div className="filePicker">
+      <img src={upload} alt=""></img>
+        <input type="file" name="dniPasaporte" id="dniPasaporte" />
+        <label for="dniPasaporte">Adjuntar DNI o Pasaporte</label>
+      </div>
+      
       <input type="radio" name="acepto-recibir-info" id="acepto-recibir-info" />
       <label htmlFor="acepto-recibir-info">
         Acepto recibir información actualizada sobre dislexia y otras DEAs.
@@ -40,7 +50,7 @@ const Paso4 = (props) => {
         datos.
       </label>
       <button onClick={irAlPasoAnterior}>Anterior</button>
-      <button onClick={irAlSiguientePaso}>Siguiente</button>
+      <button onClick={irAlSiguientePaso}>Enviar</button>
     </form>
   );
 };
