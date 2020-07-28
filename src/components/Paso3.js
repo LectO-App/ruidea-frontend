@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 
 const Paso3 = (props) => {
   const { siguientePaso, handleFormChange, formData, pasoAnterior } = props;
-  const [valores, setValores] = useState({});
+  const { register, handleSubmit, errors } = useForm();
+
+  const [checked, setChecked] = useState(0);
 
   useEffect(() => {
-    setValores(formData);
+    if (formData.diagnosticos) {
+      let count = 0;
+      Object.entries(formData.diagnosticos).forEach((item) => {
+        item[1] && count++;
+      });
+      setChecked(count);
+    }
   }, []);
 
-  const inputChange = (input) => (e) => {
-    setValores({
-      [input]: e.target.value,
-    });
-  };
-
-  const irAlSiguientePaso = (e) => {
-    e.preventDefault();
-    handleFormChange(valores);
+  const irAlSiguientePaso = (data) => {
+    handleFormChange({ diagnosticos: data });
     siguientePaso();
   };
 
@@ -24,52 +26,94 @@ const Paso3 = (props) => {
     e.preventDefault();
     pasoAnterior();
   };
-  return (
-    <form className="checkform">
-      <h1>Tipo de diagnostico</h1>
-      <input
-        type="checkbox"
-        name="dislexia"
-        id="dislexia"
-        value={valores.dislexia}
-        onChange={inputChange("dislexia")}
-      />
-      <label htmlFor="dislexia">Dislexia</label>
-      <input
-        type="checkbox"
-        name="discalculia"
-        id="discalculia"
-        value={valores.discalculia}
-        onChange={inputChange("discalculia")}
-      />
-      <label htmlFor="discalculia">Discalculia</label>
-      <input
-        type="checkbox"
-        name="disortografia"
-        id="disortografia"
-        value={valores.disortografia}
-        onChange={inputChange("disortografia")}
-      />
-      <label htmlFor="disortografia">Disortografía</label>
-      <input
-        type="checkbox"
-        name="dispraxia"
-        id="dispraxia"
-        value={valores.dispraxia}
-        onChange={inputChange("dispraxia")}
-      />
-      <label htmlFor="dispraxia">Dispraxia</label>
-      <input
-        type="checkbox"
-        name="tda-h"
-        id="tda-h"
-        value={valores.tdaH}
-        onChange={inputChange("tdaH")}
-      />
-      <label htmlFor="tda-h">TDA-H</label>
 
-      <button onClick={irAlPasoAnterior}>Anterior</button>
-      <button onClick={irAlSiguientePaso}>Siguiente</button>
+  const handleCheck = (e) => {
+    if (e.target.checked) {
+      setChecked(checked + 1);
+    } else {
+      setChecked(checked - 1);
+    }
+  };
+
+  return (
+    <form className="checkform" onSubmit={handleSubmit(irAlSiguientePaso)}>
+      <h3>Tipo de diagnostico</h3>
+      <div className="checkbox-wrapper">
+        <input
+          type="checkbox"
+          name="dislexia"
+          id="dislexia"
+          defaultChecked={
+            formData.diagnosticos ? formData.diagnosticos.dislexia : false
+          }
+          ref={register({
+            validate: () =>
+              checked > 0 ||
+              "Por favor seleccione al menos un tipo de diagnóstico.",
+          })}
+          onChange={handleCheck}
+        />
+        <label htmlFor="dislexia">Dislexia</label>
+      </div>
+      <div className="checkbox-wrapper">
+        <input
+          type="checkbox"
+          name="discalculia"
+          id="discalculia"
+          defaultChecked={
+            formData.diagnosticos ? formData.diagnosticos.discalculia : false
+          }
+          ref={register}
+          onChange={handleCheck}
+        />
+        <label htmlFor="discalculia">Discalculia</label>
+      </div>
+      <div className="checkbox-wrapper">
+        <input
+          type="checkbox"
+          name="disortografia"
+          id="disortografia"
+          defaultChecked={
+            formData.diagnosticos ? formData.diagnosticos.disortografia : false
+          }
+          ref={register}
+          onChange={handleCheck}
+        />
+        <label htmlFor="disortografia">Disortografía</label>
+      </div>
+      <div className="checkbox-wrapper">
+        <input
+          type="checkbox"
+          name="dispraxia"
+          id="dispraxia"
+          defaultChecked={
+            formData.diagnosticos ? formData.diagnosticos.dispraxia : false
+          }
+          ref={register}
+          onChange={handleCheck}
+        />
+        <label htmlFor="dispraxia">Dispraxia</label>
+      </div>
+      <div className="checkbox-wrapper">
+        <input
+          type="checkbox"
+          name="tdah"
+          id="tdah"
+          defaultChecked={
+            formData.diagnosticos ? formData.diagnosticos.tdah : false
+          }
+          ref={register}
+          onChange={handleCheck}
+        />
+        <label htmlFor="tdah">TDA-H</label>
+      </div>
+      {errors.dislexia && (
+        <h4 className="error-message">{errors.dislexia.message}</h4>
+      )}
+      <div className="botones">
+        <button onClick={irAlPasoAnterior}>Anterior</button>
+        <button type="submit">Siguiente</button>
+      </div>
     </form>
   );
 };

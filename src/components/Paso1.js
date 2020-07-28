@@ -1,57 +1,94 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
 
 const Paso1 = (props) => {
   const { siguientePaso, handleFormChange, formData } = props;
-  const [valores, setValores] = useState({});
+  const { register, handleSubmit, errors } = useForm();
 
-  useEffect(() => {
-    setValores(formData);
-  }, []);
-
-  const inputChange = (input) => (e) => {
-    setValores({
-      [input]: e.target.value,
-    });
-  };
-
-  const irAlSiguientePaso = (e) => {
-    e.preventDefault();
-    handleFormChange(valores);
+  const irAlSiguientePaso = (data) => {
+    handleFormChange(data);
     siguientePaso();
   };
 
   return (
-    <form className="formulario">
-      <label htmlFor="nombre">Nombre</label>
-      <label htmlFor="apellidos">Apellidos</label>
-      <input
-        type="text"
-        name="nombre"
-        id="nombre"
-        value={valores.nombre}
-        onChange={inputChange("nombre")}
-      />
-      <input
-        type="text"
-        name="apellidos"
-        id="apellidos"
-        value={valores.apellidos}
-        onChange={inputChange("apellidos")}
-      />
-      <label htmlFor="lugar-residencia">Lugar de residencia</label>
-      <label htmlFor="localidad">Localidad</label>
-      <select name="lugar-residencia" id="lugar-residencia">
-        <option value="Argentina">Argentina</option>
-      </select>
-      <input
-        type="text"
-        name="localidad"
-        id="localidad"
-        value={valores.localidad}
-        onChange={inputChange("localidad")}
-      />
-
-      <button onClick={irAlSiguientePaso}>Siguiente</button>
+    <form className="formulario" onSubmit={handleSubmit(irAlSiguientePaso)}>
+      <div className="row">
+        <div className="wrapper-form">
+          <label htmlFor="nombre">Nombre</label>
+          {errors.nombre && (
+            <span className="error-message">{errors.nombre.message}</span>
+          )}
+          <input
+            type="text"
+            name="nombre"
+            id="nombre"
+            defaultValue={formData.nombre}
+            ref={register({
+              required: "Por favor, rellene este campo",
+              pattern: {
+                value: /[a-zA-Z]/,
+                message: "Sólo se admiten letras y espacios.",
+              },
+            })}
+          />
+        </div>
+        <div className="wrapper-form">
+          <label htmlFor="apellidos">Apellidos</label>
+          {errors.apellidos && (
+            <span className="error-message">{errors.apellidos.message}</span>
+          )}
+          <input
+            type="text"
+            name="apellidos"
+            id="apellidos"
+            defaultValue={formData.apellidos}
+            ref={register({
+              required: "Por favor, rellene este campo",
+              pattern: {
+                value: /[a-zA-Z]/,
+                message: "Sólo se admiten letras y espacios.",
+              },
+            })}
+          />
+        </div>
+      </div>
+      <div className="row">
+        <div className="wrapper-form">
+          <label htmlFor="paisResidencia">País de residencia</label>
+          {errors.paisResidencia && (
+            <span className="error-message">
+              {errors.paisResidencia.message}
+            </span>
+          )}
+          <select
+            name="paisResidencia"
+            id="paisResidencia"
+            ref={register({ required: "Por favor, rellene este campo" })}
+            defaultValue={formData.paisResidencia}
+          >
+            <option value="" disabled>
+              Seleccione un país
+            </option>
+            <option value="Argentina">Argentina</option>
+          </select>
+        </div>
+        <div className="wrapper-form">
+          <label htmlFor="localidad">Localidad</label>
+          {errors.localidad && (
+            <span className="error-message">{errors.localidad.message}</span>
+          )}
+          <input
+            type="text"
+            name="localidad"
+            id="localidad"
+            defaultValue={formData.localidad}
+            ref={register({ required: "Por favor, rellene este campo" })}
+          />
+        </div>
+      </div>
+      <div className="botones">
+        <button type="submit">Siguiente</button>
+      </div>
     </form>
   );
 };

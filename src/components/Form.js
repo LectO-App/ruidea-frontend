@@ -5,6 +5,7 @@ import Paso1 from "./Paso1";
 import Paso2 from "./Paso2";
 import Paso3 from "./Paso3";
 import Paso4 from "./Paso4";
+import Paso5 from "./Paso5";
 
 const Form = () => {
   const [paso, setPaso] = useState(1);
@@ -19,7 +20,10 @@ const Form = () => {
   };
 
   const handleFormChange = (newFormData) => {
-    setFormData(newFormData);
+    setFormData({
+      ...formData,
+      ...newFormData,
+    });
   };
 
   const showCurrentStep = () => {
@@ -59,14 +63,30 @@ const Form = () => {
             formData={formData}
           />
         );
+      case 5:
+        return <Paso5 pasoAnterior={pasoAnterior} formData={formData} />;
     }
   };
 
   return (
-    <div>
-      <h1 className="titulo">Inscribirse</h1>
-      <div className="barra-latera"></div>
-      {showCurrentStep()}
+    <div className="container-form">
+      <div className="container-barra">
+        <div className="barra-lateral">
+          <div className={`barra-verde barra-verde-${paso}`}></div>
+          <div className="puntos">
+            <div className="punto" data-selected={paso >= 1 && "true"}></div>
+            <div className="punto" data-selected={paso >= 2 && "true"}></div>
+            <div className="punto" data-selected={paso >= 3 && "true"}></div>
+            <div className="punto" data-selected={paso >= 4 && "true"}></div>
+            <div className="punto" data-selected={paso >= 5 && "true"}></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="container-inscripcion">
+        <h1 className="titulo">Inscribirse</h1>
+        {showCurrentStep()}
+      </div>
     </div>
   );
 };

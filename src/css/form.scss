@@ -1,167 +1,248 @@
-    .titulo {
-        padding-left: 18vw;
-        padding-top: 5vh;
-        font-size: 4em;
+.container-form {
+  display: flex;
+  justify-content: center;
+  .container-inscripcion {
+    flex: 1;
+    padding: 5vw 0;
+  }
+}
+.container-barra {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20vw;
+  height: 100vh;
+}
+.titulo {
+  font-size: 4em;
+}
+
+.formulario {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  padding: 4vh 10vw 0 0;
+  .row {
+    display: flex;
+    align-items: center;
+  }
+  .wrapper-form {
+    display: flex;
+    flex-direction: column;
+    margin-right: 5vw;
+    input[type="text"],
+    input[type="date"],
+    select {
+      font-size: 1.6em;
+      background: #f0f0f0;
+      border: none;
+      padding: 0.5em;
+      width: 25vw;
+      color: #202020;
+      margin: 0 0 3rem 0;
+      &:focus {
+        outline: 3px solid $clrMain;
+        outline-offset: -4px;
+      }
+    }
+    label {
+      color: #1f1f1f;
+      font-size: 1.5em;
+      margin: 0 0 0.5rem 0;
+    }
+  }
+}
+
+.checkform {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  padding: 4vh 10vw 0 0;
+
+  h3 {
+    font-size: 1.75em;
+    width: 100%;
+    margin-bottom: 2vh;
+    color: #4f4f4f;
+  }
+
+  .checkbox-wrapper {
+    height: 6vh;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    font-size: 1.5rem;
+    label {
+      padding-left: 0.8rem;
+      color: #3f3f3f;
+    }
+    input[type="checkbox"] {
+      width: 1.5em;
+      height: 1.5em;
+    }
+  }
+}
+
+.fileform {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  padding: 4vh 10vw 0 0;
+
+  .filePicker {
+    input[type="file"] {
+      width: 0.1px;
+      height: 0.1px;
+      opacity: 0;
+      overflow: hidden;
+      position: absolute;
+      z-index: -1;
     }
 
-    .formulario {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        width: 100%;
-        padding-left: 18vw;
-        padding-top: 4vh;
-
-        label {
-            font-size: 1.5em;
-            width: 40%;
-            margin-right: 10%;
-            padding-bottom: 4vh;
-            padding-top: 4vh;
-        }
-
-        input[type=text],
-        input[type=date],
-        select {
-            font-size: 1.3em;
-            background: #F0F0F0;
-            width: 40%;
-            height: 3vw;
-            margin-right: 10%;
-            box-sizing: border-box;
-            border-width: 0px;
-            padding: 0.5em;
-            -webkit-box-sizing: border-box;
-            /* Safari/Chrome, other WebKit */
-            -moz-box-sizing: border-box;
-            /* Firefox, other Gecko */
-
-        }
-
-        button {
-            background: #41A1AC;
-            width: 15%;
-            height: 5vh;
-            margin-top: 6vh;
-            margin-right: 2vw;
-            color: white;
-            border-radius: 5px;
-            border-width: 0px;
-            font-size: 1.2em;
-        }
+    input[type="file"] + label {
+      background-color: $clrMainAccent;
+      padding: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 30%;
+      cursor: pointer;
+      margin: 1rem 0;
+      font-size: 1.3rem;
+      color: #1f1f1f;
+      font-weight: 500;
+      img {
+        height: 1.4rem;
+        margin: 0 1.5rem 0 0;
+        justify-content: flex-start;
+      }
+      span {
+        text-align: center;
+        flex: 1;
+      }
     }
+  }
 
-    .checkform {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        width: 100%;
-        padding-left: $progressBarSpace;
-        padding-top: 4vh;
-
-        h1 {
-            font-size: 1.5em;
-            width: 100%;
-            margin-bottom: 2vh;
-        }
-
-        input[type=checkbox] {
-            width: 2%;
-            height: 4vh;
-            margin-bottom: 2vh;
-            margin-top: 2vh;
-            margin-right: 1.5vw;
-        }
-
-        label {
-            font-size: 1.5em;
-            width: 95%;
-            margin-bottom: 2vh;
-            margin-top: 2vh;
-        }
-
-        button {
-            background: #41A1AC;
-            width: 15%;
-            height: 5vh;
-            margin-top: 4vh;
-            margin-right: 2vw;
-            color: white;
-            border-radius: 5px;
-            border-width: 0px;
-            font-size: 1.2em;
-        }
+  .btn-aceptar {
+    display: flex;
+    align-items: center;
+    padding: 1rem 0 0.5rem 0;
+    input {
+      width: 1.3rem;
+      height: 1.3rem;
     }
-
-    .fileform {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        width: 50%;
-        padding-left: $progressBarSpace;
-        padding-top: 4vh;
-
-        .filePicker {
-            width: 100%;
-            background-color: $clrMainAccent;
-            flex-direction: row;
-            margin-top: 2vh;
-            margin-bottom: 3vh;
-
-            img {
-                width: 7vh;
-                padding: 0.5vw;
-                margin-left: 1vw;
-                
-            }
-
-            input[type=file] {
-                width: 0.1px;
-                height: 0.1px;
-                opacity: 0;
-                overflow: hidden;
-                position: absolute;
-                z-index: -1;
-            }
-
-            input[type=file]+label {
-                width: 75%;
-                font-size: 1.25em;
-                text-align: center;
-                color: black;
-                background-color: $clrMainAccent;
-                line-height: 4vh;
-                display: inline-block;
-                margin-top: 2.25vh;
-                margin-bottom: 1.75vh;
-            }
-        }
-
-        input[type=radio] {
-            width: 10%;
-            height: 4vh;
-            margin-bottom: 4vh;
-            margin-top: 4vh;
-            margin-right: 2vw;
-        }
-
-        label {
-            font-size: 1.3em;
-            width: 80%;
-            margin-bottom: 2vh;
-            margin-top: 3vh;
-        }
-
-        button {
-            background: #41A1AC;
-            width: 40%;
-            height: 5vh;
-            margin-top: 2vh;
-            margin-right: 2vw;
-            color: white;
-            border-radius: 5px;
-            border-width: 0px;
-            font-size: 1.2em;
-            cursor: pointer;
-        }
+    label {
+      font-weight: 500;
+      color: #1f1f1f;
+      font-size: 1.3rem;
+      margin: 0 0.5rem;
     }
+  }
+}
+
+.botones {
+  margin: 4rem 0;
+  button {
+    background: $clrMain;
+    width: fit-content;
+    padding: 1rem 2rem;
+    color: white;
+    border-radius: 5px;
+    border-width: 0px;
+    font-size: 1.2em;
+    margin: 0 1.5rem 0 0;
+    cursor: pointer;
+  }
+}
+
+.error-message {
+  color: #d31f1f;
+  line-height: 2;
+  display: block;
+}
+.barra-lateral {
+  width: 8px;
+  height: 70vh;
+  background-color: #ccc;
+  z-index: 1;
+  overflow: visible;
+  position: relative;
+}
+
+.barra-verde {
+  position: absolute;
+  height: 0%;
+  width: 8px;
+  background: green;
+  z-index: 1;
+  transition: 0.3s;
+}
+
+.barra-verde-2 {
+  height: 25%;
+}
+.barra-verde-3 {
+  height: 50%;
+}
+.barra-verde-4 {
+  height: 75%;
+}
+.barra-verde-5 {
+  height: 100%;
+}
+
+.puntos {
+  position: absolute;
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+  overflow: visible;
+}
+.punto {
+  z-index: 3;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  background: #ccc;
+  margin: -11px;
+}
+.punto[data-selected="true"] {
+  transition-delay: 0.25s;
+  transition-duration: 0.3s;
+  background: green;
+}
+
+.resultados {
+  padding: 2rem 0;
+  h2 {
+    margin: 0 0 2rem 0;
+  }
+  li {
+    margin: 0.5rem 0;
+    font-size: 1.2rem;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .row {
+    flex-direction: column;
+    .wrapper-form {
+      margin: 0;
+      width: 100%;
+      input,
+      label,
+      select {
+        width: 100% !important;
+      }
+    }
+  }
+  .filePicker {
+    label {
+      width: 100% !important;
+    }
+  }
+}
