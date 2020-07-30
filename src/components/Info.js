@@ -2,7 +2,7 @@ import React from "react";
 
 const Info = () => {
   return (
-    <section className="section-que-es-rudea">
+    <section className="section-que-es-rudea" id="que-es-rudea">
       <div className="titulo">
         <h1>Que es Rudea?</h1>
         <p>Lorem ipsum dolor sit amet consectetur illum detectus.</p>

@@ -10,11 +10,14 @@ nav {
   }
   .links {
     margin-left: auto;
-    p {
+    p,
+    a {
       display: inline;
       margin: 0 0 0 3rem;
       font-size: 1.3em;
       cursor: pointer;
+      color: #000;
+      text-decoration: none;
     }
     .btn-iniciar-sesion {
       color: $clrMainDark;

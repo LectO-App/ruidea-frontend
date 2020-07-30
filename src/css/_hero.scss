@@ -28,6 +28,9 @@ main {
         width: 100%;
       }
       .btn-inscribirme {
+        display: block;
+        width: fit-content;
+        text-decoration: none;
         border: none;
         color: #fff;
         background-color: $clrMain;

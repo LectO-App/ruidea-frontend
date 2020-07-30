@@ -5,7 +5,7 @@ const Navbar = () => {
     <nav>
       <h2>Rudea</h2>
       <div className="links">
-        <p>¿Qué es Rudea?</p>
+        <a href="#que-es-rudea">¿Qué es Rudea?</a>
         <p className="btn-iniciar-sesion">Iniciar sesión</p>
       </div>
     </nav>

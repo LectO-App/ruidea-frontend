@@ -1,4 +1,7 @@
 import React from "react";
+
+import { Link } from "react-router-dom";
+
 import wave1 from "../img/waves1.svg";
 import wave2 from "../img/waves2.svg";
 
@@ -12,7 +15,9 @@ const Hero = () => {
               Lorem ipsum dolor sit amet consectetur
               <span> illum delectus. </span>
             </h1>
-            <button className="btn-inscribirme">Inscribirme</button>
+            <Link to="inscribirse" className="btn-inscribirme">
+              Inscribirme
+            </Link>
           </div>
           <div className="imagen"></div>
         </div>
