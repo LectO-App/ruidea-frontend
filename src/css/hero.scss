@@ -1,0 +1,74 @@
+main {
+  min-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    .hero {
+      height: 100%;
+      flex: 1;
+      padding: 0 15%;
+      display: flex;
+      align-items: center;
+      .text {
+        flex: 0.6;
+        h1 {
+          font-size: $fsHeader;
+        }
+        span {
+          color: $clrMain;
+        }
+
+        .btn-inscribirme {
+          display: block;
+          width: fit-content;
+          text-decoration: none;
+          border: none;
+          color: #fff;
+          background-color: $clrMain;
+          padding: 1em 1.8em;
+          border-radius: 4px;
+          margin-top: 2rem;
+          font-size: $fsSmall;
+          cursor: pointer;
+        }
+      }
+      .imagen {
+        flex: 0.4;
+        background: #ccc;
+        width: 500px;
+        height: 400px;
+      }
+    }
+  }
+  .waves {
+    position: relative;
+    height: auto;
+
+    .second-wave {
+      margin-top: -100%;
+    }
+  }
+}
+
+@media screen and (max-width: 1300px) {
+}
+
+@media screen and (max-width: 1000px) {
+  .hero {
+    flex-direction: column-reverse;
+  }
+  .text,
+  .imagen {
+    padding: 2rem 0;
+    text-align: center;
+    flex: 0;
+  }
+  .btn-inscribirme {
+    margin: 0 auto;
+  }
+}

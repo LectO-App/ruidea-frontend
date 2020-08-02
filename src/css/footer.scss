@@ -8,6 +8,8 @@ footer {
   .links {
     padding: 1em;
     * {
+      display: block;
+      text-decoration: none;
       margin: 1em 0;
       text-align: center;
       color: #073944;
@@ -23,8 +25,14 @@ footer {
     }
     .imagenes {
       padding: 1em;
-      img {
-        height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .imagen-lecto {
+        height: 70px;
+      }
+      .imagen-disfam {
+        height: 120px;
       }
     }
   }

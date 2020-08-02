@@ -13,11 +13,14 @@ const Info = () => {
           <div className="container-imagen">
             <div className="imagen"></div>
           </div>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis nulla
-            rhoncus sapien fermentum diam. Ut duis libero in aliquam lectus
-            sagittis diam sit.
-          </p>
+          <div className="container-texto">
+            <h2>¿Cómo funciona?</h2>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis
+              nulla rhoncus sapien fermentum diam. Ut duis libero in aliquam
+              lectus sagittis diam sit.
+            </p>
+          </div>
         </div>
       </div>
     </section>

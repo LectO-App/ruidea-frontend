@@ -87,7 +87,9 @@ const Paso1 = (props) => {
         </div>
       </div>
       <div className="botones">
-        <button type="submit">Siguiente</button>
+        <button type="submit" className="btn-siguiente">
+          Siguiente
+        </button>
       </div>
     </form>
   );

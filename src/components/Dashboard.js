@@ -3,13 +3,24 @@ import logoLecto from "../img/logo-lecto.png";
 import logoDisfam from "../img/logo-disfam.png";
 import successIcon from "../img/success-icon.svg";
 
-const Dashboard = () => {
+import auth from "../auth";
+
+const Dashboard = (props) => {
   return (
     <>
       <nav>
         <h2>Rudea</h2>
         <div className="links">
-          <p class="btn-cerrar-sesion">Cerrar sesión</p>
+          <p
+            class="btn-cerrar-sesion"
+            onClick={() => {
+              auth.logout(() => {
+                props.history.push("/");
+              });
+            }}
+          >
+            Cerrar sesión
+          </p>
         </div>
       </nav>
       <main className="dashboard-main">

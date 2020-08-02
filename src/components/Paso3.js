@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 
 const Paso3 = (props) => {
   const { siguientePaso, handleFormChange, formData, pasoAnterior } = props;
-  const { register, handleSubmit, errors } = useForm();
+  const { register, handleSubmit, errors, getValues } = useForm();
 
   const [checked, setChecked] = useState(0);
 
@@ -24,7 +24,7 @@ const Paso3 = (props) => {
 
   const irAlPasoAnterior = (e) => {
     e.preventDefault();
-    pasoAnterior();
+    pasoAnterior(getValues());
   };
 
   const handleCheck = (e) => {
@@ -111,8 +111,12 @@ const Paso3 = (props) => {
         <h4 className="error-message">{errors.dislexia.message}</h4>
       )}
       <div className="botones">
-        <button onClick={irAlPasoAnterior}>Anterior</button>
-        <button type="submit">Siguiente</button>
+        <button type="submit" className="btn-siguiente">
+          Siguiente
+        </button>
+        <button onClick={irAlPasoAnterior} className="btn-anterior">
+          Anterior
+        </button>
       </div>
     </form>
   );

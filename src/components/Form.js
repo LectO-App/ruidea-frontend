@@ -7,6 +7,8 @@ import Paso3 from "./Paso3";
 import Paso4 from "./Paso4";
 import Paso5 from "./Paso5";
 
+import { Link } from "react-router-dom";
+
 const Form = () => {
   const [paso, setPaso] = useState(1);
   const [formData, setFormData] = useState({});
@@ -15,8 +17,14 @@ const Form = () => {
     setPaso(paso + 1);
   };
 
-  const pasoAnterior = () => {
+  const pasoAnterior = (newFormData) => {
     setPaso(paso - 1);
+    if (newFormData) {
+      setFormData({
+        ...formData,
+        ...newFormData,
+      });
+    }
   };
 
   const handleFormChange = (newFormData) => {
@@ -70,15 +78,36 @@ const Form = () => {
 
   return (
     <div className="container-form">
+      <Link className="cross" to="/"></Link>
       <div className="container-barra">
         <div className="barra-lateral">
           <div className={`barra-verde barra-verde-${paso}`}></div>
           <div className="puntos">
-            <div className="punto" data-selected={paso >= 1 && "true"}></div>
-            <div className="punto" data-selected={paso >= 2 && "true"}></div>
-            <div className="punto" data-selected={paso >= 3 && "true"}></div>
-            <div className="punto" data-selected={paso >= 4 && "true"}></div>
-            <div className="punto" data-selected={paso >= 5 && "true"}></div>
+            <div
+              className="punto"
+              onClick={() => setPaso(1)}
+              data-selected={paso >= 1 && "true"}
+            ></div>
+            <div
+              className="punto"
+              onClick={() => setPaso(2)}
+              data-selected={paso >= 2 && "true"}
+            ></div>
+            <div
+              className="punto"
+              onClick={() => setPaso(3)}
+              data-selected={paso >= 3 && "true"}
+            ></div>
+            <div
+              className="punto"
+              onClick={() => setPaso(4)}
+              data-selected={paso >= 4 && "true"}
+            ></div>
+            <div
+              className="punto"
+              onClick={() => setPaso(5)}
+              data-selected={paso >= 5 && "true"}
+            ></div>
           </div>
         </div>
       </div>

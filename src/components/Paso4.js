@@ -6,7 +6,7 @@ import upload from "../img/upload.svg";
 
 const Paso4 = (props) => {
   const { siguientePaso, handleFormChange, formData, pasoAnterior } = props;
-  const { register, handleSubmit, errors } = useForm();
+  const { register, handleSubmit, errors, getValues } = useForm();
 
   const irAlSiguientePaso = (data) => {
     handleFormChange(data);
@@ -16,6 +16,7 @@ const Paso4 = (props) => {
   const irAlPasoAnterior = (e) => {
     e.preventDefault();
     pasoAnterior();
+    pasoAnterior(getValues());
   };
 
   return (
@@ -63,10 +64,11 @@ const Paso4 = (props) => {
         <label htmlFor="aceptoRecibirInfo">
           Acepto recibir información actualizada sobre dislexia y otras DEAs.
         </label>
-        {errors.aceptoRecibirInfo && (
-          <p className="error-message">{errors.aceptoRecibirInfo.message}</p>
-        )}
       </div>
+
+      {errors.aceptoRecibirInfo && (
+        <p className="error-message">{errors.aceptoRecibirInfo.message}</p>
+      )}
 
       <div className="btn-aceptar">
         <input
@@ -80,14 +82,19 @@ const Paso4 = (props) => {
           Acepto la solicitud del pasaporte DEA y la política de protección de
           datos.
         </label>
-
-        {errors.aceptoSolicitud && (
-          <p className="error-message">{errors.aceptoSolicitud.message}</p>
-        )}
       </div>
+
+      {errors.aceptoSolicitud && (
+        <p className="error-message">{errors.aceptoSolicitud.message}</p>
+      )}
+
       <div className="botones">
-        <button onClick={irAlPasoAnterior}>Anterior</button>
-        <button type="submit">Enviar</button>
+        <button type="submit" className="btn-siguiente">
+          Enviar
+        </button>
+        <button onClick={irAlPasoAnterior} className="btn-anterior">
+          Anterior
+        </button>
       </div>
     </form>
   );

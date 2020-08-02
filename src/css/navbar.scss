@@ -9,10 +9,11 @@ nav {
     font-weight: 800;
   }
   .links {
-    margin-left: auto;
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
     p,
     a {
-      display: inline;
       margin: 0 0 0 3rem;
       font-size: 1.3em;
       cursor: pointer;
@@ -26,6 +27,22 @@ nav {
     .btn-cerrar-sesion {
       font-weight: 700;
       color: rgb(231, 41, 41);
+    }
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  nav {
+    h2 {
+      font-size: 1.5em;
+    }
+  }
+  .links {
+    p,
+    a {
+      font-size: 1.3em !important;
+      margin: 0 1em !important;
+      text-align: right;
     }
   }
 }

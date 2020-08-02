@@ -2,10 +2,11 @@
   padding: 5vh 15%;
   .titulo {
     h1 {
-      font-size: 3rem;
+      font-size: $fsHeader;
+      color: #0a0a0a;
     }
     p {
-      font-size: 1.8rem;
+      font-size: $fsMedium;
       margin: 1rem 0;
       color: rgb(20, 20, 20);
     }
@@ -14,26 +15,47 @@
     width: 100%;
     padding: 2em;
     margin: 2rem 0;
-    height: 40vh;
     display: flex;
     align-items: center;
-    p {
+    min-height: 300px;
+    .container-texto,
+    .container-imagen {
       flex: 1;
-      font-size: 1.4em;
-      max-width: 50%;
+      height: 100%;
+    }
+    .container-texto {
       padding: 0 2em;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      h2 {
+        color: rgb(29, 29, 29);
+        font-size: $fsSubHeader;
+      }
+      p {
+        color: rgb(41, 40, 40);
+        font-size: $fsSmall;
+      }
     }
     .container-imagen {
-      height: 100%;
-      flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
       .imagen {
-        width: 70%;
+        width: 300px;
         height: 100%;
         background: #ccc;
       }
+    }
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .item {
+    flex-direction: column;
+    p {
+      width: 100%;
+      padding: 0 !important;
     }
   }
 }

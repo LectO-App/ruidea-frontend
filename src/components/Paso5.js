@@ -66,7 +66,9 @@ const Paso5 = (props) => {
         </ul>
       </ul>
       <div className="botones">
-        <button onClick={irAlPasoAnterior}>Anterior</button>
+        <button onClick={irAlPasoAnterior} className="btn-anterior">
+          Anterior
+        </button>
       </div>
     </div>
   );
