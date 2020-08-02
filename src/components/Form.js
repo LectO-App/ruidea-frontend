@@ -84,30 +84,34 @@ const Form = () => {
           <div className={`barra-verde barra-verde-${paso}`}></div>
           <div className="puntos">
             <div
-              className="punto"
-              onClick={() => setPaso(1)}
+              className="punto pointer"
+              onClick={() => {
+                if (paso > 1) setPaso(1);
+              }}
               data-selected={paso >= 1 && "true"}
             ></div>
             <div
-              className="punto"
-              onClick={() => setPaso(2)}
+              className="punto pointer"
+              onClick={() => {
+                if (paso > 2) setPaso(2);
+              }}
               data-selected={paso >= 2 && "true"}
             ></div>
             <div
-              className="punto"
-              onClick={() => setPaso(3)}
+              className="punto pointer"
+              onClick={() => {
+                if (paso > 3) setPaso(3);
+              }}
               data-selected={paso >= 3 && "true"}
             ></div>
             <div
-              className="punto"
-              onClick={() => setPaso(4)}
+              className="punto pointer"
+              onClick={() => {
+                if (paso > 4) setPaso(4);
+              }}
               data-selected={paso >= 4 && "true"}
             ></div>
-            <div
-              className="punto"
-              onClick={() => setPaso(5)}
-              data-selected={paso >= 5 && "true"}
-            ></div>
+            <div className="punto" data-selected={paso >= 5 && "true"}></div>
           </div>
         </div>
       </div>

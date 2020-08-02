@@ -23,6 +23,7 @@ class Auth {
   logout(cb) {
     const cookies = new Cookies();
     cookies.remove("logged-in");
+    cookies.remove("id");
     this.authenticated = false;
     cb();
   }

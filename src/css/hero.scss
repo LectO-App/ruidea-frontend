@@ -17,6 +17,7 @@ main {
       .text {
         flex: 0.6;
         h1 {
+          padding: 0 3rem 0 0;
           font-size: $fsHeader;
         }
         span {
@@ -39,8 +40,11 @@ main {
       }
       .imagen {
         flex: 0.4;
-        background: #ccc;
-        width: 500px;
+        background: url("../img/logoHero.PNG");
+        background-size: auto 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        width: 400px;
         height: 400px;
       }
     }

@@ -86,7 +86,7 @@ const Paso2 = (props) => {
             ref={register({
               required: "Por favor, rellene este campo",
               pattern: {
-                value: /^[0-9 +]+$/gm,
+                value: /^[0-9+ ]+$/gm,
                 message: "Por favor ingrese un número de teléfono válido",
               },
             })}

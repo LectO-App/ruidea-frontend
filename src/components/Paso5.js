@@ -1,5 +1,7 @@
 import React from "react";
 
+import axios from "axios";
+
 const Paso5 = (props) => {
   const { formData, pasoAnterior } = props;
   const {
@@ -20,7 +22,13 @@ const Paso5 = (props) => {
     pasoAnterior();
   };
 
-  console.log(Object.entries(diagnosticos));
+  const postToAPI = async () => {
+    const res = await axios.post(
+      "https://ruidea.herokuapp.com/inscripcion",
+      formData
+    );
+    console.log(res);
+  };
 
   return (
     <div className="resultados">
@@ -66,6 +74,9 @@ const Paso5 = (props) => {
         </ul>
       </ul>
       <div className="botones">
+        <button onClick={postToAPI} className="btn-siguiente">
+          Finalizar
+        </button>
         <button onClick={irAlPasoAnterior} className="btn-anterior">
           Anterior
         </button>

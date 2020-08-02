@@ -12,8 +12,8 @@ const Hero = () => {
         <div className="hero">
           <div className="text">
             <h1>
-              Lorem ipsum dolor sit amet consectetur
-              <span> illum delectus. </span>
+              Registro Único Iberoamericano de personas con
+              <span> Dificultades Específicas del Aprendizaje.</span>
             </h1>
             <Link to="inscribirse" className="btn-inscribirme">
               Inscribirme

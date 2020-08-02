@@ -20,24 +20,13 @@ const Login = (props) => {
       "https://ruidea.herokuapp.com/usuario/login",
       data
     );
-    /* if (res.status === 401) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text:
-          "No se encontró ningún usuario con ese email o numero de pasaporte.",
-      });
-    } */
     if (res.status === 200) {
+      console.log(res.data);
       auth.login(() => {
-        cookies.set(
-          "logged-in",
-          { bool: true, _id: res.data._id },
-          { path: "/", expires: 0 }
-        );
+        cookies.set("logged-in", true, { path: "/", expires: 0 });
+        cookies.set("id", res.data.usuario._id, { path: "/", expires: 0 });
         props.history.push("/dashboard");
       });
-    } else {
     }
   };
 

@@ -21,7 +21,7 @@ const Footer = () => {
         <Link to="/dashboard">Ver estado de mi solicitud</Link>
       </div>
       <p className="copyright">
-        &copy; 2020 Rudea. Todos los derechos reservados
+        &copy; 2020 RUIDEA. Todos los derechos reservados
       </p>
     </footer>
   );
