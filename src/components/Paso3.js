@@ -73,15 +73,15 @@ const Paso3 = (props) => {
       <div className="checkbox-wrapper">
         <input
           type="checkbox"
-          name="disortografia"
-          id="disortografia"
+          name="disortografía"
+          id="disortografía"
           defaultChecked={
-            formData.diagnosticos ? formData.diagnosticos.disortografia : false
+            formData.diagnosticos ? formData.diagnosticos.disortografía : false
           }
           ref={register}
           onChange={handleCheck}
         />
-        <label htmlFor="disortografia">Disortografía</label>
+        <label htmlFor="disortografía">Disortografía</label>
       </div>
       <div className="checkbox-wrapper">
         <input

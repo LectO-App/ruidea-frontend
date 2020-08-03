@@ -1,5 +1,5 @@
 nav {
-  padding: 3vh 15%;
+  padding: 3vh var(--padding-sides);
   height: 14vh;
   display: flex;
   align-items: center;
@@ -25,6 +25,7 @@ nav {
       font-weight: 700;
     }
     .btn-cerrar-sesion {
+      margin: 0 !important;
       font-weight: 700;
       color: rgb(231, 41, 41);
     }

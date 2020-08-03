@@ -1,5 +1,9 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Cookies from "universal-cookie";
+import { Helmet } from "react-helmet";
+
 import logoLecto from "../img/logo-lecto.png";
 import logoDisfam from "../img/logo-disfam.png";
 
@@ -8,9 +12,6 @@ import pendingIcon from "../img/pending-icon.svg";
 import failureIcon from "../img/failure-icon.svg";
 
 import auth from "../auth";
-
-import axios from "axios";
-import Cookies from "universal-cookie";
 
 const Dashboard = (props) => {
   const cookies = new Cookies();
@@ -78,11 +79,18 @@ const Dashboard = (props) => {
 
   return (
     <>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>
+          Dashboard | RUIDEA - Registro Único Iberoamericano de Personas con
+          Dificultades Específicas del Aprendizaje
+        </title>
+      </Helmet>
       <nav>
         <h2>RUIDEA</h2>
         <div className="links">
           <p
-            class="btn-cerrar-sesion"
+            className="btn-cerrar-sesion"
             onClick={() => {
               auth.logout(() => {
                 props.history.push("/");
@@ -102,8 +110,8 @@ const Dashboard = (props) => {
         <div className="creado-por-lecto">
           <p>Sistema creado por el equipo de LectO.</p>
           <div className="imagenes">
-            <img src={logoLecto} alt="Logo LectO" />
-            <img src={logoDisfam} alt="Logo Disfam" />
+            <img src={logoLecto} alt="Logo LectO" className="imagen-lecto" />
+            <img src={logoDisfam} alt="Logo Disfam" className="imagen-disfam" />
           </div>
         </div>
       </main>

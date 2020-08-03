@@ -18,3 +18,16 @@
 html {
   scroll-behavior: smooth;
 }
+:root {
+  --padding-sides: 15%;
+}
+
+.swal2-icon {
+  overflow: hidden;
+}
+
+@media screen and (max-width: 1400px) {
+  :root {
+    --padding-sides: 8%;
+  }
+}

@@ -1,5 +1,5 @@
 .section-que-es-rudea {
-  padding: 5vh 15%;
+  padding: 5vh var(--padding-sides);
   .titulo {
     h1 {
       font-size: $fsHeader;
@@ -17,11 +17,11 @@
     margin: 2rem 0;
     display: flex;
     align-items: center;
-    min-height: 300px;
+    height: 40vh;
     .container-texto,
     .container-imagen {
-      flex: 1;
       height: 100%;
+      flex: 1;
     }
     .container-texto {
       padding: 0 2em;
@@ -41,10 +41,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      .imagen {
-        width: 300px;
+      img {
         height: 100%;
-        background: #ccc;
       }
     }
   }
@@ -52,10 +50,29 @@
 
 @media screen and (max-width: 1200px) {
   .item {
+    height: fit-content !important;
     flex-direction: column;
+    background: rgb(252, 252, 252);
+    box-shadow: 0px 2px 4px rgba($color: rgb(212, 212, 212), $alpha: 0.1);
+    border-radius: 4px;
     p {
       width: 100%;
       padding: 0 !important;
     }
+    .container-imagen {
+      img {
+        /* 
+        height: 30vh !important; */
+        width: 100%;
+        padding: 0 0 2rem 0;
+      }
+    }
+    .container-texto {
+      padding: 0 !important;
+      text-align: center;
+    }
+  }
+  .titulo {
+    text-align: center;
   }
 }

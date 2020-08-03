@@ -73,15 +73,17 @@ const Paso1 = (props) => {
           </select>
         </div>
         <div className="wrapper-form">
-          <label htmlFor="localidad">Localidad</label>
-          {errors.localidad && (
-            <span className="error-message">{errors.localidad.message}</span>
+          <label htmlFor="localidadResidencia">Localidad</label>
+          {errors.localidadResidencia && (
+            <span className="error-message">
+              {errors.localidadResidencia.message}
+            </span>
           )}
           <input
             type="text"
-            name="localidad"
-            id="localidad"
-            defaultValue={formData.localidad}
+            name="localidadResidencia"
+            id="localidadResidencia"
+            defaultValue={formData.localidadResidencia}
             ref={register({ required: "Por favor, rellene este campo" })}
           />
         </div>

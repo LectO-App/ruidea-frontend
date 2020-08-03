@@ -7,7 +7,7 @@
   }
 }
 .container-barra {
-  position: relative;
+  position: sticky;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,14 +15,14 @@
   height: 100vh;
 }
 .titulo {
-  font-size: 4em;
+  font-size: calc(40px + (60 - 40) * ((100vw - 300px) / (1600 - 300)));
 }
 
 .formulario {
   display: flex;
   width: 100%;
   flex-direction: column;
-  padding: 4vh 10vw 0 0;
+  padding: 4vh var(--padding-sides) 0 0;
   .row {
     display: flex;
     align-items: center;
@@ -152,7 +152,7 @@
   top: 32px;
   width: 32px;
   height: 32px;
-  opacity: 0.6;
+  opacity: 0.7;
   &::before,
   &::after {
     position: absolute;
@@ -267,15 +267,46 @@
 }
 
 @media screen and (max-width: 1000px) {
+  .container-inscripcion {
+    padding: 32px 0 0 0 !important;
+  }
+  .container-barra {
+    width: 16vw !important;
+
+    padding: 0 2vw;
+    .barra-lateral {
+      transform: scale(0.8);
+    }
+  }
+  .botones {
+    margin: 2vh 0 !important;
+    display: flex;
+    flex-direction: row-reverse;
+    width: 100%;
+    button {
+      margin: 0 !important;
+    }
+    .btn-anterior {
+      flex: 1;
+    }
+  }
+  .titulo {
+    text-align: start;
+    line-height: 0.8em;
+  }
   .row {
     flex-direction: column;
     .wrapper-form {
-      margin: 0;
+      margin: 0 0 4vh 0;
       width: 100%;
       input,
       label,
       select {
         width: 100% !important;
+      }
+      input,
+      select {
+        margin: 0 !important;
       }
     }
   }

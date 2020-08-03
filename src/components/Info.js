@@ -1,5 +1,7 @@
 import React from "react";
 
+import imagenHero from "../img/logoHero.PNG";
+
 const Info = () => {
   return (
     <section className="section-que-es-rudea" id="que-es-rudea">
@@ -11,7 +13,7 @@ const Info = () => {
       <div>
         <div className="item">
           <div className="container-imagen">
-            <div className="imagen"></div>
+            <img src={imagenHero} alt="" />
           </div>
           <div className="container-texto">
             <h2>¿Cómo funciona?</h2>

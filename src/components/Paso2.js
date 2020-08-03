@@ -74,15 +74,17 @@ const Paso2 = (props) => {
           />
         </div>
         <div className="wrapper-form">
-          <label htmlFor="telefono">Numero de teléfono móvil</label>
-          {errors.telefono && (
-            <span className="error-message">{errors.telefono.message}</span>
+          <label htmlFor="numeroTelefono">Numero de teléfono móvil</label>
+          {errors.numeroTelefono && (
+            <span className="error-message">
+              {errors.numeroTelefono.message}
+            </span>
           )}
           <input
             type="text"
-            name="telefono"
-            id="telefono"
-            defaultValue={formData.telefono}
+            name="numeroTelefono"
+            id="numeroTelefono"
+            defaultValue={formData.numeroTelefono}
             ref={register({
               required: "Por favor, rellene este campo",
               pattern: {

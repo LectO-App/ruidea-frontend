@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 import wave1 from "../img/waves1.svg";
 import wave2 from "../img/waves2.svg";
+import imagenHero from "../img/logoHero.PNG";
 
 const Hero = () => {
   return (
@@ -19,7 +20,9 @@ const Hero = () => {
               Inscribirme
             </Link>
           </div>
-          <div className="imagen"></div>
+          <div className="imagen">
+            <img src={imagenHero} alt="" />
+          </div>
         </div>
       </section>
       <div className="waves">

@@ -1,6 +1,6 @@
 .dashboard-main {
   h2 {
-    font-size: 3.5em;
+    font-size: calc(40px + (60 - 40) * ((100vw - 300px) / (1600 - 300)));
     text-align: center;
     overflow-y: hidden;
   }
@@ -11,14 +11,15 @@
     align-items: center;
     flex-direction: column;
     background: #eeeeee;
-    max-width: 800px;
+    max-width: 90vw;
     width: fit-content;
     min-height: 400px;
     margin: 2rem auto;
     border-radius: 16px;
     h5 {
-      font-size: 3em;
+      font-size: $fsSubHeader;
       color: #2f2e2e;
+      text-align: center;
       font-weight: normal;
     }
     div {
@@ -28,8 +29,7 @@
       flex: 1;
     }
     .estado-solicitud {
-      height: 20px;
-      font-size: 3.4em;
+      font-size: calc(40px + (60 - 40) * ((100vw - 300px) / (1600 - 300)));
       span {
         font-weight: bold;
       }
@@ -71,13 +71,13 @@
   }
   .imagenes {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    img {
-      height: 120px;
-      &:nth-child(1) {
-        margin-right: 3rem;
-      }
+    .imagen-disfam {
+      height: 10rem;
+    }
+    .imagen-lecto {
+      height: 6rem;
     }
   }
 }
@@ -89,4 +89,31 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+}
+
+@media screen and (max-width: 1000px) {
+  .card-estado {
+    h5 {
+      margin-bottom: 2vh;
+    }
+    .botones-descargar {
+      flex-direction: column;
+      padding: 2rem 0;
+      button {
+        width: 100%;
+        margin: 1vh 0;
+      }
+    }
+  }
+  .creado-por-lecto {
+    text-align: center;
+    .imagenes {
+      .imagen-disfam {
+        height: 8rem !important;
+      }
+      .imagen-lecto {
+        height: 4rem !important;
+      }
+    }
+  }
 }

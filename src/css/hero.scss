@@ -11,7 +11,7 @@ main {
     .hero {
       height: 100%;
       flex: 1;
-      padding: 0 15%;
+      padding: 0 var(--padding-sides);
       display: flex;
       align-items: center;
       .text {
@@ -40,12 +40,11 @@ main {
       }
       .imagen {
         flex: 0.4;
-        background: url("../img/logoHero.PNG");
-        background-size: auto 100%;
-        background-position: center;
-        background-repeat: no-repeat;
-        width: 400px;
-        height: 400px;
+        img {
+          padding: 0 3rem;
+          width: 100%;
+          height: auto;
+        }
       }
     }
   }
@@ -63,16 +62,35 @@ main {
 }
 
 @media screen and (max-width: 1000px) {
+  section {
+    display: block !important;
+  }
   .hero {
     flex-direction: column-reverse;
   }
   .text,
   .imagen {
-    padding: 2rem 0;
     text-align: center;
     flex: 0;
   }
+  .imagen {
+    padding: 2rem 0;
+    img {
+      height: 20vh !important;
+      width: auto !important;
+      padding: 0 !important;
+    }
+  }
+  .text {
+    padding: 0;
+    h1 {
+      padding: 0 !important;
+    }
+  }
   .btn-inscribirme {
     margin: 0 auto;
+  }
+  .waves {
+    display: none;
   }
 }

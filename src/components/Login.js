@@ -1,37 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-
 import axios from "axios";
-
 import { Link } from "react-router-dom";
+import Cookies from "universal-cookie";
+import { Helmet } from "react-helmet";
+import Swal from "sweetalert2";
 
 import auth from "../auth";
-
-import Cookies from "universal-cookie";
 
 const Login = (props) => {
   const cookies = new Cookies();
   const { register, handleSubmit, errors } = useForm();
+  const [loading, setLoading] = useState(false);
+
   // eslint-disable-next-line
   const emailRegex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
   const loginSuccess = async (data) => {
-    const res = await axios.post(
-      "https://ruidea.herokuapp.com/usuario/login",
-      data
-    );
-    if (res.status === 200) {
-      console.log(res.data);
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        "https://ruidea.herokuapp.com/usuario/login",
+        data
+      );
       auth.login(() => {
         cookies.set("logged-in", true, { path: "/", expires: 0 });
         cookies.set("id", res.data.usuario._id, { path: "/", expires: 0 });
         props.history.push("/dashboard");
       });
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Email y/o contraseña incorrecta",
+        text:
+          "Revise que haya ingresado correctamente los datos y pruebe nuevamente.",
+      });
     }
+    setLoading(false);
   };
 
   return (
     <div>
+      <Helmet>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>
+            Iniciar Sesión | RUIDEA - Registro Único Iberoamericano de Personas
+            con Dificultades Específicas del Aprendizaje
+          </title>
+          {/* <link rel="canonical" href="http://mysite.com/example" /> */}
+        </Helmet>
+      </Helmet>
       <Link className="cross" to="/"></Link>
       <form className="login-form" onSubmit={handleSubmit(loginSuccess)}>
         <h1 className="titulo-iniciar-sesion">Iniciar sesión</h1>
@@ -67,7 +86,9 @@ const Login = (props) => {
           )}
           <p className="olvide-contraseña">Olvidé mi contraseña</p>
         </div>
-        <button className="btn-iniciar-sesión">Iniciar sesión</button>
+        <button className="btn-iniciar-sesión">
+          {loading ? "Cargando..." : "Iniciar sesión"}
+        </button>
       </form>
     </div>
   );

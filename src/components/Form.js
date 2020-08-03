@@ -1,5 +1,6 @@
 /*eslint-disable*/
 import React, { useState } from "react";
+import { Helmet } from "react-helmet";
 
 import Paso1 from "./Paso1";
 import Paso2 from "./Paso2";
@@ -78,6 +79,13 @@ const Form = () => {
 
   return (
     <div className="container-form">
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>
+          Inscribirse | RUIDEA - Registro Único Iberoamericano de Personas con
+          Dificultades Específicas del Aprendizaje
+        </title>
+      </Helmet>
       <Link className="cross" to="/"></Link>
       <div className="container-barra">
         <div className="barra-lateral">

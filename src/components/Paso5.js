@@ -23,6 +23,18 @@ const Paso5 = (props) => {
   };
 
   const postToAPI = async () => {
+    formData.diagnostico = formData.diagnosticos;
+    delete formData.diagnosticos;
+    delete formData.dniPasaporte;
+    delete formData.aceptoRecibirInfo;
+    delete formData.aceptoSolicitud;
+    delete formData.verificarCorreoElectronico;
+    const tempDate = formData.fechaNacimiento;
+    formData.password = "hola";
+    formData.fechaNacimiento = new Date(tempDate);
+    formData.linkPasaporte = "https://google.com";
+    formData.linkDiagnostico = "https://google.com";
+    console.log(formData);
     const res = await axios.post(
       "https://ruidea.herokuapp.com/inscripcion",
       formData
