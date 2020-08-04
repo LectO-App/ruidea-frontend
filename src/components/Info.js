@@ -1,6 +1,6 @@
 import React from "react";
 
-import imagenHero from "../img/logoRuidea.png";
+import imagenHero from "../img/logoRuidea.webp";
 
 const Info = () => {
   return (
