@@ -25,7 +25,7 @@ class Auth {
     cookies.remove("logged-in");
     cookies.remove("id");
     this.authenticated = false;
-    cb();
+    cb && cb();
   }
   isAuthenticated() {
     const cookies = new Cookies();

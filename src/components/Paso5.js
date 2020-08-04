@@ -1,20 +1,23 @@
-import React from "react";
-
+import React, { useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
+import auth from "../auth";
+import Cookies from "universal-cookie";
 
 const Paso5 = (props) => {
-  const { formData, pasoAnterior } = props;
+  const cookies = new Cookies();
+  const { formData, pasoAnterior, historyPush } = props;
   const {
     nombre,
     apellidos,
     paisResidencia,
-    localidad,
+    localidadResidencia,
     lugarNacimiento,
     fechaNacimiento,
     numeroDocumento,
-    telefono,
+    numeroTelefono,
     correoElectronico,
-    diagnosticos,
+    diagnostico,
   } = formData;
 
   const irAlPasoAnterior = (e) => {
@@ -22,24 +25,44 @@ const Paso5 = (props) => {
     pasoAnterior();
   };
 
+  const [loading, setLoading] = useState(false);
+
   const postToAPI = async () => {
-    formData.diagnostico = formData.diagnosticos;
-    delete formData.diagnosticos;
+    setLoading(true);
+
     delete formData.dniPasaporte;
     delete formData.aceptoRecibirInfo;
     delete formData.aceptoSolicitud;
     delete formData.verificarCorreoElectronico;
-    const tempDate = formData.fechaNacimiento;
+
     formData.password = "hola";
-    formData.fechaNacimiento = new Date(tempDate);
+
     formData.linkPasaporte = "https://google.com";
     formData.linkDiagnostico = "https://google.com";
-    console.log(formData);
-    const res = await axios.post(
-      "https://ruidea.herokuapp.com/inscripcion",
-      formData
-    );
-    console.log(res);
+    try {
+      await axios.post("https://ruidea.herokuapp.com/inscripcion", formData);
+
+      Swal.fire({
+        icon: "success",
+        title: "Excelente!",
+        text:
+          "Su solicitud será analizada por especialistas dentro de los próximos días. Gracias!",
+        showConfirmButton: true,
+        confirmButtonText: "Aceptar",
+        onAfterClose: () => {
+          auth.login(() => {
+            historyPush("/login");
+          });
+        },
+      });
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Lo sentimos!",
+        text: "Hubo un error al enviar los datos de la inscripción.",
+      });
+    }
+    setLoading(false);
   };
 
   return (
@@ -59,7 +82,7 @@ const Paso5 = (props) => {
           <strong>País de residencia: </strong> {paisResidencia}
         </li>
         <li>
-          <strong>Localidad: </strong> {localidad}
+          <strong>Localidad: </strong> {localidadResidencia}
         </li>
         <li>
           <strong>Lugar de nacimiento: </strong> {lugarNacimiento}
@@ -71,7 +94,7 @@ const Paso5 = (props) => {
           <strong>Numero de documento: </strong> {numeroDocumento}
         </li>
         <li>
-          <strong>Teléfono: </strong> {telefono}
+          <strong>Teléfono: </strong> {numeroTelefono}
         </li>
         <li>
           <strong>Correo electrónico: </strong> {correoElectronico}
@@ -79,7 +102,7 @@ const Paso5 = (props) => {
         <br />
         <strong>Diagnósticos: </strong>
         <ul>
-          {Object.entries(diagnosticos).map((item) => {
+          {Object.entries(diagnostico).map((item) => {
             const string = item[0].charAt(0).toUpperCase() + item[0].slice(1);
             return item[1] && <li key={item[0]}>{string}</li>;
           })}
@@ -87,7 +110,7 @@ const Paso5 = (props) => {
       </ul>
       <div className="botones">
         <button onClick={postToAPI} className="btn-siguiente">
-          Finalizar
+          {loading ? "Enviando..." : "Enviar"}
         </button>
         <button onClick={irAlPasoAnterior} className="btn-anterior">
           Anterior

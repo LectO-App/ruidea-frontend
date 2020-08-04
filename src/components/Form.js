@@ -10,7 +10,7 @@ import Paso5 from "./Paso5";
 
 import { Link } from "react-router-dom";
 
-const Form = () => {
+const Form = (props) => {
   const [paso, setPaso] = useState(1);
   const [formData, setFormData] = useState({});
 
@@ -33,6 +33,10 @@ const Form = () => {
       ...formData,
       ...newFormData,
     });
+  };
+
+  const historyPush = (path) => {
+    props.history.push(path);
   };
 
   const showCurrentStep = () => {
@@ -73,7 +77,13 @@ const Form = () => {
           />
         );
       case 5:
-        return <Paso5 pasoAnterior={pasoAnterior} formData={formData} />;
+        return (
+          <Paso5
+            pasoAnterior={pasoAnterior}
+            formData={formData}
+            historyPush={historyPush}
+          />
+        );
     }
   };
 

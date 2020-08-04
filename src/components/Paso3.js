@@ -10,9 +10,9 @@ const Paso3 = (props) => {
   const [checked, setChecked] = useState(0);
 
   useEffect(() => {
-    if (formData.diagnosticos) {
+    if (formData.diagnostico) {
       let count = 0;
-      Object.entries(formData.diagnosticos).forEach((item) => {
+      Object.entries(formData.diagnostico).forEach((item) => {
         item[1] && count++;
       });
       setChecked(count);
@@ -20,7 +20,7 @@ const Paso3 = (props) => {
   }, []);
 
   const irAlSiguientePaso = (data) => {
-    handleFormChange({ diagnosticos: data });
+    handleFormChange({ diagnostico: data });
     siguientePaso();
   };
 
@@ -46,7 +46,7 @@ const Paso3 = (props) => {
           name="dislexia"
           id="dislexia"
           defaultChecked={
-            formData.diagnosticos ? formData.diagnosticos.dislexia : false
+            formData.diagnostico ? formData.diagnostico.dislexia : false
           }
           ref={register({
             validate: () =>
@@ -63,7 +63,7 @@ const Paso3 = (props) => {
           name="discalculia"
           id="discalculia"
           defaultChecked={
-            formData.diagnosticos ? formData.diagnosticos.discalculia : false
+            formData.diagnostico ? formData.diagnostico.discalculia : false
           }
           ref={register}
           onChange={handleCheck}
@@ -76,7 +76,7 @@ const Paso3 = (props) => {
           name="disortografía"
           id="disortografía"
           defaultChecked={
-            formData.diagnosticos ? formData.diagnosticos.disortografía : false
+            formData.diagnostico ? formData.diagnostico.disortografía : false
           }
           ref={register}
           onChange={handleCheck}
@@ -89,7 +89,7 @@ const Paso3 = (props) => {
           name="dispraxia"
           id="dispraxia"
           defaultChecked={
-            formData.diagnosticos ? formData.diagnosticos.dispraxia : false
+            formData.diagnostico ? formData.diagnostico.dispraxia : false
           }
           ref={register}
           onChange={handleCheck}
@@ -102,7 +102,7 @@ const Paso3 = (props) => {
           name="tdah"
           id="tdah"
           defaultChecked={
-            formData.diagnosticos ? formData.diagnosticos.tdah : false
+            formData.diagnostico ? formData.diagnostico.tdah : false
           }
           ref={register}
           onChange={handleCheck}

@@ -25,8 +25,16 @@ html {
 .swal2-icon {
   overflow: hidden;
 }
+hr {
+  width: calc(100vw - var(--padding-sides));
+  display: none;
+  margin: auto;
+}
 
 @media screen and (max-width: 1400px) {
+  hr {
+    display: block;
+  }
   :root {
     --padding-sides: 8%;
   }

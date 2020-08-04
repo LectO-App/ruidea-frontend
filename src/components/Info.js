@@ -1,12 +1,12 @@
 import React from "react";
 
-import imagenHero from "../img/logoHero.PNG";
+import imagenHero from "../img/logoRuidea.png";
 
 const Info = () => {
   return (
-    <section className="section-que-es-rudea" id="que-es-rudea">
-      <div className="titulo">
-        <h1>Que es Rudea?</h1>
+    <section className="section-que-es-ruidea" id="que-es-ruidea">
+      <div className="titulo-info">
+        <h1>Que es RUIDEA?</h1>
         <p>Lorem ipsum dolor sit amet consectetur illum detectus.</p>
       </div>
 

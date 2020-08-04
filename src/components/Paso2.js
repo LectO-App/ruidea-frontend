@@ -1,18 +1,35 @@
 /* eslint-disable */
-
 import React, { useState } from "react";
-
+import axios from "axios";
 import { useForm } from "react-hook-form";
+import Swal from "sweetalert2";
 
 const Paso2 = (props) => {
   const { siguientePaso, handleFormChange, formData, pasoAnterior } = props;
   const { register, handleSubmit, errors, getValues } = useForm();
 
   const [email, setEmail] = useState(formData.correoElectronico);
+  const [loading, setLoading] = useState(false);
 
-  const irAlSiguientePaso = (data) => {
-    handleFormChange(data);
-    siguientePaso();
+  const irAlSiguientePaso = async (data) => {
+    setLoading(true);
+
+    const res = await axios.post(
+      "https://ruidea.herokuapp.com/inscripcion/comprobar-mail",
+      { mail: email }
+    );
+    if (res.data.disponible) {
+      handleFormChange(data);
+      siguientePaso();
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Ya existe un usuario con ese correo electrónico.",
+      });
+    }
+
+    setLoading(false);
   };
 
   const irAlPasoAnterior = (e) => {
@@ -150,7 +167,7 @@ const Paso2 = (props) => {
       </div>
       <div className="botones">
         <button type="submit" className="btn-siguiente">
-          Siguiente
+          {loading ? "Cargando..." : "Siguiente"}
         </button>
         <button onClick={irAlPasoAnterior} className="btn-anterior">
           Anterior

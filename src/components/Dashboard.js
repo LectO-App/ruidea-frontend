@@ -12,6 +12,7 @@ import pendingIcon from "../img/pending-icon.svg";
 import failureIcon from "../img/failure-icon.svg";
 
 import auth from "../auth";
+import Navbar from "./Navbar";
 
 const Dashboard = (props) => {
   const cookies = new Cookies();
@@ -86,21 +87,7 @@ const Dashboard = (props) => {
           Dificultades Específicas del Aprendizaje
         </title>
       </Helmet>
-      <nav>
-        <h2>RUIDEA</h2>
-        <div className="links">
-          <p
-            className="btn-cerrar-sesion"
-            onClick={() => {
-              auth.logout(() => {
-                props.history.push("/");
-              });
-            }}
-          >
-            Cerrar sesión
-          </p>
-        </div>
-      </nav>
+      <Navbar />
       <main className="dashboard-main">
         <h2>Hola, {data.nombre}!</h2>
         <div className="card-estado">

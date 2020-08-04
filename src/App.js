@@ -17,6 +17,16 @@ function App() {
           RUIDEA - Registro Único Iberoamericano de Personas con Dificultades
           Específicas del Aprendizaje
         </title>
+        <meta property="og:title" content="RUIDEA" />
+        <meta
+          property="og:description"
+          content="RUIDEA es un Registro Único Iberoamericano de Personas con Dificultades
+          Específicas del Aprendizaje"
+        />
+        <meta
+          name="keywords"
+          content="RUIDEA, dislexia, pasaporte dislexia, registro dislexia, registro dificultades aprendizaje, disfam, lecto, lecto app"
+        />
       </Helmet>
       <Router>
         <Switch>

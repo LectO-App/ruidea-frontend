@@ -1,12 +1,14 @@
-import React from "react";
-
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import auth from "../auth";
 
 import wave1 from "../img/waves1.svg";
 import wave2 from "../img/waves2.svg";
-import imagenHero from "../img/logoHero.PNG";
+import imagenHero from "../img/logoRuidea.png";
 
 const Hero = () => {
+  let loggedIn = auth.isAuthenticated();
+
   return (
     <main>
       <section>
@@ -16,12 +18,15 @@ const Hero = () => {
               Registro Único Iberoamericano de personas con
               <span> Dificultades Específicas del Aprendizaje.</span>
             </h1>
-            <Link to="inscribirse" className="btn-inscribirme">
-              Inscribirme
+            <Link
+              to={loggedIn ? "/dashboard" : "/inscribirse"}
+              className="btn-inscribirme"
+            >
+              {loggedIn ? "Ver mi solicitud" : "Inscribirme"}
             </Link>
           </div>
           <div className="imagen">
-            <img src={imagenHero} alt="" />
+            <img src={imagenHero} alt="Imagen Logo RUIDEA" />
           </div>
         </div>
       </section>

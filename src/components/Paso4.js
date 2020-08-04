@@ -24,18 +24,20 @@ const Paso4 = (props) => {
       <div className="filePicker">
         <input
           type="file"
-          name="diagnostico"
-          id="diagnostico"
+          name="linkDiagnostico"
+          id="linkDiagnostico"
           ref={register({
             required: "Por favor adjunte su diagnóstico médico.",
           })}
         />
-        <label htmlFor="diagnostico">
+        <label htmlFor="linkDiagnostico">
           <img src={upload} alt="Icono Upload" />
           <span> Adjuntar diagnostico</span>
         </label>
-        {errors.diagnostico && (
-          <span className="error-message">{errors.diagnostico.message}</span>
+        {errors.linkDiagnostico && (
+          <span className="error-message">
+            {errors.linkDiagnostico.message}
+          </span>
         )}
       </div>
 
@@ -90,7 +92,7 @@ const Paso4 = (props) => {
 
       <div className="botones">
         <button type="submit" className="btn-siguiente">
-          Enviar
+          Finalizar
         </button>
         <button onClick={irAlPasoAnterior} className="btn-anterior">
           Anterior

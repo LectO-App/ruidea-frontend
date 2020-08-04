@@ -3,10 +3,12 @@ nav {
   height: 14vh;
   display: flex;
   align-items: center;
-  h2 {
+  .logo-navbar {
     font-size: 2.5em;
     text-transform: uppercase;
     font-weight: 800;
+    text-decoration: none;
+    color: #000;
   }
   .links {
     flex: 1;
@@ -14,7 +16,7 @@ nav {
     justify-content: flex-end;
     p,
     a {
-      margin: 0 0 0 3rem;
+      margin: 0 0 0 3vmin;
       font-size: 1.3em;
       cursor: pointer;
       color: #000;
@@ -25,7 +27,6 @@ nav {
       font-weight: 700;
     }
     .btn-cerrar-sesion {
-      margin: 0 !important;
       font-weight: 700;
       color: rgb(231, 41, 41);
     }
@@ -34,7 +35,7 @@ nav {
 
 @media screen and (max-width: 1000px) {
   nav {
-    h2 {
+    .logo-navbar {
       font-size: 1.5em;
     }
   }
@@ -42,7 +43,6 @@ nav {
     p,
     a {
       font-size: 1.3em !important;
-      margin: 0 1em !important;
       text-align: right;
     }
   }

@@ -90,6 +90,9 @@ main {
   .btn-inscribirme {
     margin: 0 auto;
   }
+}
+
+@media screen and (max-width: 800px) {
   .waves {
     display: none;
   }
