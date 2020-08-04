@@ -7,13 +7,14 @@
 @import "footer";
 @import "dashboard";
 @import "form";
+@import "admin";
 
 * {
   margin: 0;
   box-sizing: border-box;
   padding: 0;
   font-family: "Mulish", sans-serif;
-  overflow-x: hidden;
+  overflow-x: initial;
 }
 html {
   scroll-behavior: smooth;

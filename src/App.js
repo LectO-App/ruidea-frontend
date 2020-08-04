@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
 import { ProtectedRoute } from "./protected.route";
 import { Helmet } from "react-helmet";
 
@@ -7,6 +12,9 @@ import Dashboard from "./components/Dashboard";
 import Form from "./components/Form";
 import LandingPage from "./components/LandingPage";
 import Login from "./components/Login";
+import AdminLogin from "./components/admin/AdminLogin";
+import AdminSolicitudes from "./components/admin/AdminSolicitudes";
+import AdminSolicitud from "./components/admin/AdminSolicitud";
 
 function App() {
   return (
@@ -34,6 +42,18 @@ function App() {
           <Route path="/inscribirse" component={Form} />
           <ProtectedRoute path="/dashboard" component={Dashboard} />
           <Route path="/login" component={Login} />
+          <Route
+            exact
+            path="/admin"
+            component={() => <Redirect to="/admin/login" />}
+          />
+          <Route exact path="/admin/login" component={AdminLogin} />
+          <Route exact path="/admin/solicitudes" component={AdminSolicitudes} />
+          <Route
+            exact
+            path="/admin/solicitudes/:id"
+            component={AdminSolicitud}
+          />
         </Switch>
       </Router>
     </div>

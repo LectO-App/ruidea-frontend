@@ -1,0 +1,116 @@
+.main-admin {
+  padding: 0 var(--padding-sides);
+  h1 {
+    color: #151515;
+  }
+  .container-cards-admin {
+    .card {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #e5e5e5;
+      padding: 2rem;
+      margin: 2vmin 0;
+      font-size: $fsMedium;
+      border-radius: 8px;
+      .info-usuario {
+        flex: 1;
+        color: #393838;
+      }
+      .numero-documento {
+        margin-left: 0.4em;
+        color: #707070;
+      }
+
+      .btn-verificar-solicitud {
+        background: $clrMain;
+        color: white;
+        border-radius: 5px;
+        padding: 1rem 3rem;
+        border: none;
+        cursor: pointer;
+        font-size: $fsSmall;
+      }
+    }
+  }
+}
+
+.login-form-admin {
+  padding: 4vh var(--padding-sides);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.main-solicitud {
+  padding: 5vh var(--padding-sides);
+  .container-solicitud {
+    padding: 0 0 4vh 0;
+    h2 {
+      font-size: $fsSubHeader;
+      padding: 0 0 0.3em 0;
+    }
+    .campo-informacion {
+      padding: 0.4em 0;
+      font-size: $fsMedium;
+      color: #545454;
+      .txt-info-usuario {
+        color: #292929;
+        font-weight: bold;
+        .tipo-diagnostico {
+          text-transform: capitalize;
+        }
+        a {
+          color: $clrMainDark;
+        }
+      }
+    }
+  }
+  form {
+    .form-group-admin {
+      display: flex;
+      flex-direction: column;
+      label {
+        font-size: $fsSmall;
+        color: #181818;
+        margin: 0 0 0.4em 0;
+      }
+      textarea {
+        resize: none;
+        width: 30vmax;
+        height: 30vmin;
+        padding: 0.5em 0.3em;
+        font-size: $fsSmall;
+      }
+    }
+    .botones-solicitud {
+      display: flex;
+      align-items: center;
+      button {
+        padding: 1.3em 2em;
+        margin: 2rem 1rem 0 0;
+        border: none;
+        cursor: pointer;
+        border-radius: 6px;
+        font-weight: bold;
+      }
+      .btn-aceptar-solicitud {
+        background: #47c034;
+        color: rgb(31, 31, 31);
+      }
+      .btn-revision-solicitud {
+        background: #e4c435;
+        color: rgb(31, 31, 31);
+      }
+      .btn-rechazar-solicitud {
+        background: #c74533;
+        color: rgb(255, 244, 244);
+      }
+    }
+  }
+}
+
+.dropdown {
+  width: 30vmax;
+}
