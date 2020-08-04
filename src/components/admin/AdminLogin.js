@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 
 import AdminAuth from "./adminAuth";
-import adminAuth from "./adminAuth";
 
 const AdminLogin = (props) => {
   const { register, handleSubmit, errors } = useForm();
@@ -15,7 +14,6 @@ const AdminLogin = (props) => {
       data,
       () => {
         setLoading(true);
-
         props.history.push("/admin/solicitudes");
       },
       () => {
@@ -29,7 +27,7 @@ const AdminLogin = (props) => {
   };
 
   useEffect(() => {
-    adminAuth.isAuthenticated() && props.history.push("/admin/solicitudes");
+    AdminAuth.isAuthenticated() && props.history.push("/admin/solicitudes");
   }, []);
 
   return (

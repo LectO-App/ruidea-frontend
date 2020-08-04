@@ -111,6 +111,49 @@
   }
 }
 
+.form-group-dropdown {
+  margin: 1vmax 0 0 0;
+  padding-bottom: 0;
+}
 .dropdown {
   width: 30vmax;
+}
+
+.label-ordenar {
+  font-size: $fsSmall;
+  margin: 3vmin 0 0 0;
+}
+.opcion-ordenar {
+  font-size: $fsSmall;
+  display: inline-block;
+  margin: 0.3em 1em 0 0;
+  padding: 0.5em;
+  cursor: pointer;
+  border-radius: 8px;
+  user-select: none;
+}
+.opcion-ordenar-active {
+  background: $clrMainAccent;
+}
+
+@media screen and (max-width: 1000px) {
+  .dropdown {
+    width: 100%;
+  }
+  .opcion-ordenar {
+    display: block;
+    margin: 1.5vmin 0;
+  }
+  .container-cards-admin {
+    .card {
+      flex-direction: column;
+      .info-usuario {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 0 0 3vh 0;
+      }
+    }
+  }
 }
