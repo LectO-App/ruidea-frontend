@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import auth from "../auth";
-import Cookies from "universal-cookie";
 
 const Paso5 = (props) => {
-  const cookies = new Cookies();
   const { formData, pasoAnterior, historyPush } = props;
   const {
     nombre,
