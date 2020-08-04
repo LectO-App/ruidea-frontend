@@ -166,7 +166,7 @@ const Paso2 = (props) => {
         </div>
       </div>
       <div className="botones">
-        <button type="submit" className="btn-siguiente">
+        <button role="button" type="submit" className="btn-siguiente">
           {loading ? "Cargando..." : "Siguiente"}
         </button>
         <button onClick={irAlPasoAnterior} className="btn-anterior">

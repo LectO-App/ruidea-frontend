@@ -39,13 +39,13 @@ const Dashboard = (props) => {
         return (
           <div className="texto-aprobado">
             <div className="estado-solicitud">
-              <img src={successIcon} alt="" />
+              <img src={successIcon} alt="Ícono Aprobada" />
               <span className="txt-aprobada">Aprobada!</span>
             </div>
             <div className="botones-descargar">
-              <button>Descargar como PDF</button>
-              <button>Descargar como JPG</button>
-              <button>Obtener link de pasaporte</button>
+              <button role="button">Descargar como PDF</button>
+              <button role="button">Descargar como JPG</button>
+              <button role="button">Obtener link de pasaporte</button>
             </div>
           </div>
         );
@@ -53,7 +53,7 @@ const Dashboard = (props) => {
         return (
           <div className="texto-pendiente">
             <div className="estado-solicitud">
-              <img src={pendingIcon} alt="" />
+              <img src={pendingIcon} alt="Ícono Pendiente" />
               <span className="txt-pendiente">Pendiente...</span>
             </div>
           </div>
@@ -68,8 +68,8 @@ const Dashboard = (props) => {
         return (
           <div className="texto-rechazado">
             <div className="estado-solicitud">
-              <img src={failureIcon} alt="" />
-              <span className="txt-rechazado">Rechazado</span>
+              <img src={failureIcon} alt="Ícono Rechazada" />
+              <span className="txt-rechazado">Rechazada</span>
             </div>
             <p>Mensaje del especialista:</p>
             <p className="mensaje-especialista">{data.mensaje}</p>

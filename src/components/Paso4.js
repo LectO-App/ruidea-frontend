@@ -49,7 +49,8 @@ const Paso4 = (props) => {
           ref={register({ required: "Por favor adjunte su DNI o pasaporte." })}
         />
         <label htmlFor="dniPasaporte">
-          <img src={upload} alt=""></img> <span> Adjuntar DNI o Pasaporte</span>
+          <img src={upload} alt="Icono Subir Archivo"></img>{" "}
+          <span> Adjuntar DNI o Pasaporte</span>
         </label>
         {errors.dniPasaporte && (
           <span className="error-message">{errors.dniPasaporte.message}</span>

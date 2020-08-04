@@ -6,15 +6,18 @@ import auth from "../auth";
 const Navbar = (props) => {
   return (
     <nav>
-      <Link to="/" className="logo-navbar">
+      <Link to="/" className="logo-navbar" role="button">
         RUIDEA
       </Link>
       <div className="links">
         {window.location.pathname === "/" && (
-          <a href="#que-es-ruidea">¿Qué es RUIDEA?</a>
+          <a href="#que-es-ruidea" role="button">
+            ¿Qué es RUIDEA?
+          </a>
         )}
         {auth.isAuthenticated() ? (
           <Link
+            role="button"
             className="btn-cerrar-sesion"
             to="/"
             onClick={() => {
@@ -24,7 +27,7 @@ const Navbar = (props) => {
             Cerrar sesión
           </Link>
         ) : (
-          <Link to="/login" className="btn-iniciar-sesion">
+          <Link to="/login" className="btn-iniciar-sesion" role="button">
             Iniciar sesión
           </Link>
         )}

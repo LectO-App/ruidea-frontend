@@ -16,9 +16,13 @@ const Footer = () => {
         </div>
       </div>
       <div className="links">
-        <p>Política de protección de datos</p>
-        <Link to="/inscribirse">Inscribirme</Link>
-        <Link to="/dashboard">Ver estado de mi solicitud</Link>
+        <p role="button">Política de protección de datos</p>
+        <Link to="/inscribirse" role="button">
+          Inscribirme
+        </Link>
+        <Link to="/dashboard" role="button">
+          Ver estado de mi solicitud
+        </Link>
       </div>
       <p className="copyright">
         &copy; 2020 RUIDEA. Todos los derechos reservados

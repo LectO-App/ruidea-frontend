@@ -96,7 +96,7 @@ const Form = (props) => {
           Dificultades Específicas del Aprendizaje
         </title>
       </Helmet>
-      <Link className="cross" to="/"></Link>
+      <Link className="cross" to="/" role="button"></Link>
       <div className="container-barra">
         <div className="barra-lateral">
           <div className={`barra-verde barra-verde-${paso}`}></div>

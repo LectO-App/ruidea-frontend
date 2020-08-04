@@ -13,7 +13,7 @@ const Info = () => {
       <div>
         <div className="item">
           <div className="container-imagen">
-            <img src={imagenHero} alt="" />
+            <img src={imagenHero} alt="Logo RUIDEA" />
           </div>
           <div className="container-texto">
             <h2>¿Cómo funciona?</h2>

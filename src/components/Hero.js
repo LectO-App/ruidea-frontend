@@ -19,6 +19,7 @@ const Hero = () => {
               <span> Dificultades Específicas del Aprendizaje.</span>
             </h1>
             <Link
+              role="button"
               to={loggedIn ? "/dashboard" : "/inscribirse"}
               className="btn-inscribirme"
             >
@@ -31,8 +32,8 @@ const Hero = () => {
         </div>
       </section>
       <div className="waves">
-        <img src={wave1} alt="" />
-        <img src={wave2} alt="" className="second-wave" />
+        <img src={wave1} alt="Olas" />
+        <img src={wave2} alt="Olas" className="second-wave" />
       </div>
     </main>
   );
