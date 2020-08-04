@@ -4,8 +4,8 @@ import axios from "axios";
 import Cookies from "universal-cookie";
 import { Helmet } from "react-helmet";
 
-import logoLecto from "../img/logo-lecto.png";
-import logoDisfam from "../img/logo-disfam.png";
+import logoLecto from "../img/logo-lecto.webp";
+import logoDisfam from "../img/logo-disfam.webp";
 
 import successIcon from "../img/success-icon.svg";
 import pendingIcon from "../img/pending-icon.svg";

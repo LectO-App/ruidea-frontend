@@ -2,8 +2,8 @@ import React from "react";
 
 import { Link } from "react-router-dom";
 
-import logoLecto from "../img/logo-lecto.png";
-import logoDisfam from "../img/logo-disfam.png";
+import logoLecto from "../img/logo-lecto.webp";
+import logoDisfam from "../img/logo-disfam.webp";
 
 const Footer = () => {
   return (

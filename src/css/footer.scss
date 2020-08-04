@@ -39,7 +39,7 @@ footer {
   }
 }
 
-@media screen and (max-width: 1300px) {
+@media screen and (max-width: 800px) {
   footer {
     .creado-por-lecto {
       .imagenes {
@@ -47,8 +47,7 @@ footer {
         flex-direction: column;
         img {
           margin: 0 auto !important;
-          width: 100%;
-          height: auto !important;
+          height: 200px !important;
         }
       }
     }
