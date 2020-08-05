@@ -33,8 +33,6 @@ const Paso5 = (props) => {
     delete formData.aceptoSolicitud;
     delete formData.verificarCorreoElectronico;
 
-    formData.password = "hola";
-
     formData.linkPasaporte = "https://google.com";
     formData.linkDiagnostico = "https://google.com";
     try {

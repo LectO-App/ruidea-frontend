@@ -28,26 +28,6 @@
       align-items: center;
       flex: 1;
     }
-    .estado-solicitud {
-      font-size: calc(40px + (60 - 40) * ((100vw - 300px) / (1600 - 300)));
-      span {
-        font-weight: bold;
-      }
-      img {
-        height: 1em;
-        margin-right: 1rem;
-        user-select: none;
-      }
-      .txt-aprobada {
-        color: #60b952;
-      }
-      .txt-pendiente {
-        color: #f5b613;
-      }
-    }
-    .txt-rechazado {
-      color: #d31f1f;
-    }
   }
   button {
     border: none;
@@ -60,6 +40,29 @@
     margin: 0 2em;
     cursor: pointer;
     user-select: none;
+  }
+}
+
+.estado-solicitud {
+  font-size: calc(40px + (60 - 40) * ((100vw - 300px) / (1600 - 300)));
+  display: flex;
+  align-items: center;
+  span {
+    font-weight: bold;
+  }
+  img {
+    height: 1em;
+    margin-right: 1rem;
+    user-select: none;
+  }
+  .txt-aprobada {
+    color: #60b952;
+  }
+  .txt-pendiente {
+    color: #f5b613;
+  }
+  .txt-rechazado {
+    color: #d31f1f;
   }
 }
 .creado-por-lecto {

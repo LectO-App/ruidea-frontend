@@ -24,6 +24,18 @@ const AdminSolicitudes = (props) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [searchData, setSearchData] = useState([]);
+
+  const searchInData = (e) => {
+    if (e.target.value === "") {
+      return setSearchData([]);
+    }
+    const matches = data.filter((el) =>
+      el.nombre.toLowerCase().includes(e.target.value.toLowerCase())
+    );
+    setSearchData(matches);
+  };
+
   const fetchFromAPI = async (condicion) => {
     setLoading(true);
     const res = await axios.post(
@@ -32,7 +44,6 @@ const AdminSolicitudes = (props) => {
     );
     setData(res.data);
     setLoading(false);
-    console.log(res.data);
   };
 
   const checkLoggedIn = () => {
@@ -48,7 +59,6 @@ const AdminSolicitudes = (props) => {
     AdminAuth.logout(() => {
       props.history.push("/admin");
     });
-    console.log(AdminAuth.isAuthenticated());
   };
 
   const onDropdownChange = (e) => {
@@ -99,7 +109,14 @@ const AdminSolicitudes = (props) => {
     //eslint-disable-next-line
     switch (item.estado) {
       case "aceptado":
-        return <p className="text-info-solicitud">Solicitud aceptada</p>;
+        return (
+          <p
+            className="text-info-solicitud"
+            onClick={() => props.history.push(`/admin/solicitudes/${item._id}`)}
+          >
+            Ver solicitud aceptada
+          </p>
+        );
       case "pendiente":
         return (
           <button
@@ -112,7 +129,14 @@ const AdminSolicitudes = (props) => {
           </button>
         );
       case "rechazado":
-        return <p className="text-info-solicitud">Solicitud rechazada</p>;
+        return (
+          <p
+            className="text-info-solicitud"
+            onClick={() => props.history.push(`/admin/solicitudes/${item._id}`)}
+          >
+            Ver solicitud rechazada
+          </p>
+        );
     }
   };
 
@@ -132,6 +156,27 @@ const AdminSolicitudes = (props) => {
               placeholder="Filtrar por..."
               id="dropdown"
             />
+          </div>
+          <input
+            className="searchbar"
+            placeholder="Busca un nombre o documento"
+            type="text"
+            onChange={searchInData}
+          />
+          <div className="container-resultados-busqueda">
+            {searchData.map((item) => (
+              <div
+                className="resultado-busqueda"
+                onClick={() =>
+                  props.history.push(`/admin/solicitudes/${item._id}`)
+                }
+                key={item._id}
+              >
+                <p>
+                  {item.nombre} {item.apellidos}
+                </p>
+              </div>
+            ))}
           </div>
           <p className="label-ordenar">Ordenar por: </p>
           <span
@@ -170,7 +215,7 @@ const AdminSolicitudes = (props) => {
         </div>
         <div className="container-cards-admin">
           {loading ? (
-            <h1>Cargando...</h1>
+            <h3 className="txt-cargando">Cargando...</h3>
           ) : data.length === 0 ? (
             <h1>No se encontraron usuarios en este estado</h1>
           ) : (

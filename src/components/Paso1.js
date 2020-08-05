@@ -88,6 +88,39 @@ const Paso1 = (props) => {
           />
         </div>
       </div>
+      <div className="row">
+        <div className="wrapper-form">
+          <label htmlFor="lugarNacimiento">Lugar de nacimiento</label>
+          {errors.lugarNacimiento && (
+            <span className="error-message">
+              {errors.lugarNacimiento.message}
+            </span>
+          )}
+          <input
+            type="text"
+            name="lugarNacimiento"
+            id="lugarNacimiento"
+            defaultValue={formData.lugarNacimiento}
+            ref={register({ required: "Por favor, rellene este campo" })}
+          />
+        </div>
+
+        <div className="wrapper-form">
+          <label htmlFor="fechaNacimiento">Fecha de nacimiento</label>
+          {errors.fechaNacimiento && (
+            <span className="error-message">
+              {errors.fechaNacimiento.message}
+            </span>
+          )}
+          <input
+            type="date"
+            name="fechaNacimiento"
+            id="fechaNacimiento"
+            defaultValue={formData.fechaNacimiento}
+            ref={register({ required: "Por favor, rellene este campo" })}
+          />
+        </div>
+      </div>
       <div className="botones">
         <button type="submit" className="btn-siguiente">
           Siguiente

@@ -9,6 +9,7 @@ const Paso2 = (props) => {
   const { register, handleSubmit, errors, getValues } = useForm();
 
   const [email, setEmail] = useState(formData.correoElectronico);
+  const [contraseña, setContraseña] = useState(formData.password);
   const [loading, setLoading] = useState(false);
 
   const irAlSiguientePaso = async (data) => {
@@ -41,39 +42,6 @@ const Paso2 = (props) => {
 
   return (
     <form className="formulario" onSubmit={handleSubmit(irAlSiguientePaso)}>
-      <div className="row">
-        <div className="wrapper-form">
-          <label htmlFor="lugarNacimiento">Lugar de nacimiento</label>
-          {errors.lugarNacimiento && (
-            <span className="error-message">
-              {errors.lugarNacimiento.message}
-            </span>
-          )}
-          <input
-            type="text"
-            name="lugarNacimiento"
-            id="lugarNacimiento"
-            defaultValue={formData.lugarNacimiento}
-            ref={register({ required: "Por favor, rellene este campo" })}
-          />
-        </div>
-
-        <div className="wrapper-form">
-          <label htmlFor="fechaNacimiento">Fecha de nacimiento</label>
-          {errors.fechaNacimiento && (
-            <span className="error-message">
-              {errors.fechaNacimiento.message}
-            </span>
-          )}
-          <input
-            type="date"
-            name="fechaNacimiento"
-            id="fechaNacimiento"
-            defaultValue={formData.fechaNacimiento}
-            ref={register({ required: "Por favor, rellene este campo" })}
-          />
-        </div>
-      </div>
       <div className="row">
         <div className="wrapper-form">
           <label htmlFor="numeroDocumento">Numero de documento</label>
@@ -161,6 +129,55 @@ const Paso2 = (props) => {
               },
               validate: (value) =>
                 value === email || "Los correos ingresados no coinciden.",
+            })}
+          />
+        </div>
+      </div>
+      <div className="row">
+        <div className="wrapper-form">
+          <label htmlFor="contraseña">Contraseña</label>
+          {errors.password && (
+            <span className="error-message">{errors.password.message}</span>
+          )}
+          <input
+            type="password"
+            name="password"
+            id="password"
+            defaultValue={formData.password}
+            ref={register({
+              required: "Por favor, rellene este campo",
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*\d).{8,}$/,
+                message:
+                  "Por favor ingrese una contraseña con al menos 8 caracteres y un número",
+              },
+            })}
+            onChange={(e) => {
+              setContraseña(e.target.value);
+            }}
+          />
+        </div>
+        <div className="wrapper-form">
+          <label htmlFor="verificarPassword">Verificar contraseña</label>
+          {errors.verificarPassword && (
+            <span className="error-message">
+              {errors.verificarPassword.message}
+            </span>
+          )}
+
+          <input
+            type="password"
+            name="verificarPassword"
+            id="verificarPassword"
+            defaultValue={formData.verificarPassword}
+            ref={register({
+              required: "Por favor, rellene este campo",
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*\d).{8,}$/,
+                message: "Por favor ingrese una contraseña válida",
+              },
+              validate: (value) =>
+                value === contraseña || "Las contraseñas no coinciden.",
             })}
           />
         </div>

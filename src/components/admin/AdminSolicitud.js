@@ -3,6 +3,9 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 
+import iconSuccess from "../../img/success-icon.svg";
+import iconFail from "../../img/failure-icon.svg";
+
 const AdminSolicitud = (props) => {
   const [user, setUser] = useState({});
   const [mensajeMedico, setMensajeMedico] = useState("");
@@ -50,7 +53,11 @@ const AdminSolicitud = (props) => {
   return (
     <>
       {Object.keys(user).length === 0 ? (
-        <h1 className="texto-cargando">Cargando...</h1>
+        <div className="container-cargando">
+          <div className="ball ball1"></div>
+          <div className="ball ball2"></div>
+          <div className="ball ball3"></div>
+        </div>
       ) : (
         <main className="main-solicitud">
           <Link className="cross" to="/admin/solicitudes" role="button"></Link>
@@ -135,52 +142,67 @@ const AdminSolicitud = (props) => {
               </span>
             </p>
           </div>
-          <form>
-            <div className="form-group-admin">
-              <label htmlFor="mensajeMedico">
-                Enviar mensaje (solo se enviará si se pide revisión):
-              </label>
-              <textarea
-                name="mensajeMedico"
-                id="mensajeMedico"
-                onChange={(e) => {
-                  setMensajeMedico(e.target.value);
-                }}
-              ></textarea>
+          {user.estado === "pendiente" && (
+            <form>
+              <div className="form-group-admin">
+                <label htmlFor="mensajeMedico">
+                  Enviar mensaje (solo se enviará si se pide revisión):
+                </label>
+                <textarea
+                  name="mensajeMedico"
+                  id="mensajeMedico"
+                  onChange={(e) => {
+                    setMensajeMedico(e.target.value);
+                  }}
+                ></textarea>
+              </div>
+              <div className="botones-solicitud">
+                <button
+                  className="btn-aceptar-solicitud"
+                  name="aceptado"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    postResultToAPI("aceptado");
+                  }}
+                >
+                  Aceptar solicitud
+                </button>
+                <button
+                  className="btn-revision-solicitud"
+                  name="revision"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    postResultToAPI("revision");
+                  }}
+                >
+                  Pedir revisión de solicitud
+                </button>
+                <button
+                  className="btn-rechazar-solicitud"
+                  name="rechazado"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    postResultToAPI("rechazado");
+                  }}
+                >
+                  Rechazar solicitud
+                </button>
+              </div>
+            </form>
+          )}
+          {user.estado === "aceptado" && (
+            <div className="estado-solicitud">
+              <img src={iconSuccess} alt="Ícono Aprobada" />
+              <span className="txt-aprobada">Aprobada!</span>
             </div>
-            <div className="botones-solicitud">
-              <button
-                className="btn-aceptar-solicitud"
-                name="aceptado"
-                onClick={(e) => {
-                  e.preventDefault();
-                  postResultToAPI("aceptado");
-                }}
-              >
-                Aceptar solicitud
-              </button>
-              <button
-                className="btn-revision-solicitud"
-                name="revision"
-                onClick={(e) => {
-                  e.preventDefault();
-                  postResultToAPI("revision");
-                }}
-              >
-                Pedir revisión de solicitud
-              </button>
-              <button
-                className="btn-rechazar-solicitud"
-                name="rechazado"
-                onClick={(e) => {
-                  e.preventDefault();
-                  postResultToAPI("rechazado");
-                }}
-              >
-                Rechazar solicitud
-              </button>
+          )}
+
+          {user.estado === "rechazado" && (
+            <div className="estado-solicitud">
+              <img src={iconFail} alt="Ícono Rechazada" />
+              <span className="txt-rechazado">Rechazada</span>
             </div>
-          </form>
+          )}
         </main>
       )}
     </>
