@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import iconSuccess from "../../img/success-icon.svg";
 import iconFail from "../../img/failure-icon.svg";
 
+import LoadingScreen from "../LoadingScreen";
+
 const AdminSolicitud = (props) => {
   const [user, setUser] = useState({});
   const [mensajeMedico, setMensajeMedico] = useState("");
@@ -53,11 +55,7 @@ const AdminSolicitud = (props) => {
   return (
     <>
       {Object.keys(user).length === 0 ? (
-        <div className="container-cargando">
-          <div className="ball ball1"></div>
-          <div className="ball ball2"></div>
-          <div className="ball ball3"></div>
-        </div>
+        <LoadingScreen />
       ) : (
         <main className="main-solicitud">
           <Link className="cross" to="/admin/solicitudes" role="button"></Link>

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+
 import auth from "../auth";
+
+import Cookies from "universal-cookie";
 
 const Paso5 = (props) => {
   const { formData, pasoAnterior, historyPush } = props;
@@ -36,8 +39,11 @@ const Paso5 = (props) => {
     formData.linkPasaporte = "https://google.com";
     formData.linkDiagnostico = "https://google.com";
     try {
-      await axios.post("https://ruidea.herokuapp.com/inscripcion", formData);
-
+      const res = await axios.post(
+        "https://ruidea.herokuapp.com/inscripcion",
+        formData
+      );
+      console.log(res);
       Swal.fire({
         icon: "success",
         title: "Excelente!",
@@ -46,8 +52,11 @@ const Paso5 = (props) => {
         showConfirmButton: true,
         confirmButtonText: "Aceptar",
         onAfterClose: () => {
+          const cookies = new Cookies();
           auth.login(() => {
-            historyPush("/login");
+            cookies.set("logged-in", true, { path: "/", expires: 0 });
+            cookies.set("id", res.data._id, { path: "/", expires: 0 });
+            historyPush("/dashboard");
           });
         },
       });

@@ -11,6 +11,8 @@ import successIcon from "../img/success-icon.svg";
 import pendingIcon from "../img/pending-icon.svg";
 import failureIcon from "../img/failure-icon.svg";
 
+import LoadingScreen from "./LoadingScreen";
+
 import auth from "../auth";
 import Navbar from "./Navbar";
 
@@ -87,21 +89,35 @@ const Dashboard = (props) => {
           Dificultades Específicas del Aprendizaje
         </title>
       </Helmet>
-      <Navbar />
-      <main className="dashboard-main">
-        <h2>Hola, {data.nombre}!</h2>
-        <div className="card-estado">
-          <h5>Estado de tu solicitud</h5>
-          {loading ? <span>Cargando...</span> : switchData()}
-        </div>
-        <div className="creado-por-lecto">
-          <p>Sistema creado por el equipo de LectO.</p>
-          <div className="imagenes">
-            <img src={logoLecto} alt="Logo LectO" className="imagen-lecto" />
-            <img src={logoDisfam} alt="Logo Disfam" className="imagen-disfam" />
-          </div>
-        </div>
-      </main>
+      {loading ? (
+        <LoadingScreen />
+      ) : (
+        <>
+          <Navbar />
+          <main className="dashboard-main">
+            <h2>Hola, {data.nombre}!</h2>
+            <div className="card-estado">
+              <h5>Estado de tu solicitud</h5>
+              {switchData()}
+            </div>
+            <div className="creado-por-lecto">
+              <p>Sistema creado por el equipo de LectO.</p>
+              <div className="imagenes">
+                <img
+                  src={logoLecto}
+                  alt="Logo LectO"
+                  className="imagen-lecto"
+                />
+                <img
+                  src={logoDisfam}
+                  alt="Logo Disfam"
+                  className="imagen-disfam"
+                />
+              </div>
+            </div>
+          </main>
+        </>
+      )}
     </>
   );
 };

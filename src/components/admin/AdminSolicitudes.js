@@ -8,6 +8,8 @@ import AdminAuth from "./adminAuth";
 
 import AdminNavbar from "./AdminNavbar";
 
+import { GrSearch } from "react-icons/gr";
+
 const AdminSolicitudes = (props) => {
   const optionsDropdown = [
     { value: "pendiente", label: "Pendientes" },
@@ -159,9 +161,9 @@ const AdminSolicitudes = (props) => {
           </div>
           <input
             className="searchbar"
-            placeholder="Busca un nombre o documento"
             type="text"
             onChange={searchInData}
+            placeholder="Busca un nombre o documento"
           />
           <div className="container-resultados-busqueda">
             {searchData.map((item) => (
