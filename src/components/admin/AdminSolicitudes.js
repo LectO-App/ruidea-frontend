@@ -83,12 +83,37 @@ const AdminSolicitudes = (props) => {
         break;
       // 3 es por orden alfabético
       case 3:
-        sortedArray = [...data].sort((a, b) =>
-          b.nombre > a.nombre ? 1 : a.nombre > b.nombre ? -1 : 0
-        );
+        sortedArray = [...data].sort((a, b) => {
+          var nameA = a.nombre.toLowerCase(),
+            nameB = b.nombre.toLowerCase();
+          if (nameA < nameB) return -1;
+          if (nameA > nameB) return 1;
+          return 0;
+        });
         break;
     }
     setData(sortedArray);
+  };
+
+  const renderBtnEstado = (item) => {
+    //eslint-disable-next-line
+    switch (item.estado) {
+      case "aceptado":
+        return <p className="text-info-solicitud">Solicitud aceptada</p>;
+      case "pendiente":
+        return (
+          <button
+            className="btn-verificar-solicitud"
+            onClick={() => {
+              props.history.push(`/admin/solicitudes/${item._id}`);
+            }}
+          >
+            Verificar solicitud
+          </button>
+        );
+      case "rechazado":
+        return <p className="text-info-solicitud">Solicitud rechazada</p>;
+    }
   };
 
   return (
@@ -157,14 +182,7 @@ const AdminSolicitudes = (props) => {
                     {item.numeroDocumento}
                   </span>
                 </h4>
-                <button
-                  className="btn-verificar-solicitud"
-                  onClick={() => {
-                    props.history.push(`/admin/solicitudes/${item._id}`);
-                  }}
-                >
-                  Verificar solicitud
-                </button>
+                {renderBtnEstado(item)}
               </div>
             ))
           )}

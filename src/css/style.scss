@@ -14,7 +14,6 @@
   box-sizing: border-box;
   padding: 0;
   font-family: "Mulish", sans-serif;
-  overflow-x: initial;
 }
 html {
   scroll-behavior: smooth;
@@ -30,6 +29,9 @@ hr {
   width: calc(100vw - var(--padding-sides));
   display: none;
   margin: auto;
+}
+body {
+  overflow-x: hidden;
 }
 
 @media screen and (max-width: 1400px) {

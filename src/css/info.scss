@@ -62,7 +62,8 @@
     .container-imagen {
       img {
         height: 30vh !important;
-        padding: 0 0 2rem 0;
+        margin: 0 auto 5vh auto !important;
+        padding: 0 !important;
       }
     }
     .container-texto {
