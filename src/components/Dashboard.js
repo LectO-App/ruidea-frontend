@@ -62,8 +62,18 @@ const Dashboard = (props) => {
         );
       case "revision":
         return (
-          <div className="texto-revision">
-            <h1>revision</h1>
+          <div className="texto-pendiente">
+            <div className="estado-solicitud">
+              <img src={pendingIcon} alt="Ícono Pendiente" />
+              <span className="txt-pendiente">Revisión</span>
+            </div>
+            <p>Mensaje del especialista:</p>
+            <p className="mensaje-especialista">{data.mensaje}</p>
+            <div className="botones-descargar">
+              <Link to="/inscribirse" role="button">
+                Editar inscripcion
+              </Link>
+            </div>
           </div>
         );
       case "rechazado":

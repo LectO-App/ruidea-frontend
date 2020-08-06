@@ -35,38 +35,67 @@ const Paso5 = (props) => {
     delete formData.aceptoRecibirInfo;
     delete formData.aceptoSolicitud;
     delete formData.verificarCorreoElectronico;
+    delete formData.verificarPassword;
 
     formData.linkPasaporte = "https://google.com";
     formData.linkDiagnostico = "https://google.com";
-    try {
-      const res = await axios.post(
-        "https://ruidea.herokuapp.com/inscripcion",
-        formData
-      );
-      console.log(res);
-      Swal.fire({
-        icon: "success",
-        title: "Excelente!",
-        text:
-          "Su solicitud será analizada por especialistas dentro de los próximos días. Gracias!",
-        showConfirmButton: true,
-        confirmButtonText: "Aceptar",
-        onAfterClose: () => {
-          const cookies = new Cookies();
-          auth.login(() => {
-            cookies.set("logged-in", true, { path: "/", expires: 0 });
-            cookies.set("id", res.data._id, { path: "/", expires: 0 });
+
+    const cookies = new Cookies();
+
+    if (cookies.get("id")) {
+      try {
+        await axios.put(
+          "https://ruidea.herokuapp.com/inscripcion/actualizar",
+          formData
+        );
+        Swal.fire({
+          icon: "success",
+          title: "Perfecto!",
+          text:
+            "Sus datos han sido actualizados y serán revisados nuevamente. Gracias!",
+          onAfterClose: () => {
             historyPush("/dashboard");
-          });
-        },
-      });
-    } catch (err) {
-      Swal.fire({
-        icon: "error",
-        title: "Lo sentimos!",
-        text: "Hubo un error al enviar los datos de la inscripción.",
-      });
+          },
+        });
+      } catch (err) {
+        Swal.fire({
+          icon: "error",
+          title: "Lo sentimos",
+          text: "Hubo un error al actualizar sus datos.",
+        });
+      }
+    } else {
+      try {
+        const res = await axios.post(
+          "https://ruidea.herokuapp.com/inscripcion",
+          formData
+        );
+        console.log(res);
+        Swal.fire({
+          icon: "success",
+          title: "Excelente!",
+          text:
+            "Su solicitud será analizada por especialistas dentro de los próximos días. Gracias!",
+          showConfirmButton: true,
+          confirmButtonText: "Aceptar",
+          onAfterClose: () => {
+            auth.login(() => {
+              cookies.set("logged-in", true, { path: "/", expires: 0 });
+              cookies.set("id", res.data._id, { path: "/", expires: 0 });
+              historyPush("/dashboard");
+            });
+          },
+        });
+      } catch (err) {
+        console.log(err);
+        Swal.fire({
+          icon: "error",
+          title: "Lo sentimos",
+          text: "Hubo un error al subir sus datos.",
+        });
+      }
     }
+
     setLoading(false);
   };
 

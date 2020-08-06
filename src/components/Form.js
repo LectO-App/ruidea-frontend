@@ -1,6 +1,8 @@
 /*eslint-disable*/
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
+import Cookies from "universal-cookie";
+import axios from "axios";
 
 import Paso1 from "./Paso1";
 import Paso2 from "./Paso2";
@@ -11,8 +13,26 @@ import Paso5 from "./Paso5";
 import { Link } from "react-router-dom";
 
 const Form = (props) => {
+  const cookies = new Cookies();
   const [paso, setPaso] = useState(1);
   const [formData, setFormData] = useState({});
+
+  const id = cookies.get("id");
+
+  useEffect(() => {
+    const fetchDataFromId = async () => {
+      if (id) {
+        const res = await axios.post(
+          `https://ruidea.herokuapp.com/admin/solicitudes/${id}`
+        );
+        let tempUsuario = res.data.usuario;
+        delete tempUsuario.password;
+
+        setFormData(tempUsuario);
+      }
+    };
+    fetchDataFromId();
+  }, []);
 
   const siguientePaso = () => {
     setPaso(paso + 1);

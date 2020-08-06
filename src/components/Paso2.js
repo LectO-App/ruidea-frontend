@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
+import Cookies from "universal-cookie";
 
 const Paso2 = (props) => {
   const { siguientePaso, handleFormChange, formData, pasoAnterior } = props;
@@ -13,24 +14,30 @@ const Paso2 = (props) => {
   const [loading, setLoading] = useState(false);
 
   const irAlSiguientePaso = async (data) => {
-    setLoading(true);
+    const cookies = new Cookies();
+    if (!cookies.get("id")) {
+      setLoading(true);
 
-    const res = await axios.post(
-      "https://ruidea.herokuapp.com/inscripcion/comprobar-mail",
-      { mail: email }
-    );
-    if (res.data.disponible) {
+      const res = await axios.post(
+        "https://ruidea.herokuapp.com/inscripcion/comprobar-mail",
+        { mail: email }
+      );
+      if (res.data.disponible) {
+        handleFormChange(data);
+        siguientePaso();
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Ya existe un usuario con ese correo electrónico.",
+        });
+      }
+
+      setLoading(false);
+    } else {
       handleFormChange(data);
       siguientePaso();
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Ya existe un usuario con ese correo electrónico.",
-      });
     }
-
-    setLoading(false);
   };
 
   const irAlPasoAnterior = (e) => {
@@ -120,7 +127,7 @@ const Paso2 = (props) => {
             type="text"
             name="verificarCorreoElectronico"
             id="verificarCorreoElectronico"
-            defaultValue={formData.verificarCorreoElectronico}
+            defaultValue={formData.correoElectronico}
             ref={register({
               required: "Por favor, rellene este campo",
               pattern: {

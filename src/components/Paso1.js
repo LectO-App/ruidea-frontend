@@ -116,7 +116,11 @@ const Paso1 = (props) => {
             type="date"
             name="fechaNacimiento"
             id="fechaNacimiento"
-            defaultValue={formData.fechaNacimiento}
+            defaultValue={
+              formData.fechaNacimiento
+                ? formData.fechaNacimiento.substring(0, 10)
+                : ""
+            }
             ref={register({ required: "Por favor, rellene este campo" })}
           />
         </div>
