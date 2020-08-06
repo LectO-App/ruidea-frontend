@@ -16,6 +16,8 @@ import LoadingScreen from "./LoadingScreen";
 import auth from "../auth";
 import Navbar from "./Navbar";
 
+import { Link } from "react-router-dom";
+
 const Dashboard = (props) => {
   const cookies = new Cookies();
 
