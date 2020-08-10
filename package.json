@@ -11,6 +11,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-dropdown": "^1.7.0",
+    "react-google-picker": "^0.1.0",
     "react-helmet": "^6.1.0",
     "react-hook-form": "^6.1.2",
     "react-icons": "^3.10.0",

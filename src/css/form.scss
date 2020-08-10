@@ -13,6 +13,8 @@
   align-items: center;
   width: 20vw;
   height: 100vh;
+  left: 0;
+  top: 0;
 }
 .titulo {
   font-size: calc(40px + (60 - 40) * ((100vw - 300px) / (1600 - 300)));

@@ -19,6 +19,7 @@ const Paso1 = (props) => {
             <span className="error-message">{errors.nombre.message}</span>
           )}
           <input
+            autoFocus
             type="text"
             name="nombre"
             id="nombre"

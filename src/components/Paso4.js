@@ -1,5 +1,4 @@
 import React from "react";
-
 import { useForm } from "react-hook-form";
 
 import upload from "../img/upload.svg";
@@ -17,6 +16,13 @@ const Paso4 = (props) => {
     e.preventDefault();
     pasoAnterior();
     pasoAnterior(getValues());
+  };
+
+  const handleImageUpload = async (e) => {
+    /* const formData = new FormData();
+    formData.append("file", e.target.files[0]);
+    console.log(formData.get("file")); 
+    console.log(e.target.files[0].slice(0, 10)); */
   };
 
   return (
@@ -47,6 +53,7 @@ const Paso4 = (props) => {
           name="dniPasaporte"
           id="dniPasaporte"
           ref={register({ required: "Por favor adjunte su DNI o pasaporte." })}
+          onChange={handleImageUpload}
         />
         <label htmlFor="dniPasaporte">
           <img src={upload} alt="Icono Subir Archivo"></img>{" "}

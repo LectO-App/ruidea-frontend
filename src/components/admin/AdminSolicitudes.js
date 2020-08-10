@@ -8,8 +8,6 @@ import AdminAuth from "./adminAuth";
 
 import AdminNavbar from "./AdminNavbar";
 
-import { GrSearch } from "react-icons/gr";
-
 const AdminSolicitudes = (props) => {
   const optionsDropdown = [
     { value: "pendiente", label: "Pendientes" },

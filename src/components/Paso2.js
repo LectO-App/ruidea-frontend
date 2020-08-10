@@ -58,6 +58,7 @@ const Paso2 = (props) => {
             </span>
           )}
           <input
+            autoFocus
             type="text"
             name="numeroDocumento"
             id="numeroDocumento"
