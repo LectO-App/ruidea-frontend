@@ -1,0 +1,57 @@
+.main-verificar {
+  min-height: 88vh;
+  .logo-ruidea {
+    height: 25vh;
+    margin: 4vh auto 0 auto;
+    display: block;
+  }
+  .container-datos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 3vh 0;
+    .texto-main {
+      text-align: center;
+      padding: 1vh 0 0 0;
+      h1 {
+        font-size: $fsHeader;
+      }
+      h3 {
+        font-size: $fsMedium;
+        color: #648387;
+      }
+    }
+    h2 {
+      font-size: $fsSubHeader;
+      margin: 1vh 0 0 0;
+      color: #161616;
+      text-align: center;
+    }
+  }
+
+  .container-qr {
+    width: 200px;
+    margin: auto;
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+      padding: 1vmin;
+    }
+    p {
+      text-align: center;
+      font-size: $fsSmall;
+    }
+  }
+}
+
+.footer-verificar {
+  height: 12vh;
+  font-size: $fsMedium;
+  width: 100vw;
+  .ir-a-ruidea {
+    font-size: $fsXSmall;
+    margin: 1vh 0 0 0;
+    color: #202020;
+  }
+}

@@ -49,7 +49,12 @@ const Dashboard = (props) => {
             <div className="botones-descargar">
               <button role="button">Descargar como PDF</button>
               <button role="button">Descargar como JPG</button>
-              <button role="button">Obtener link de pasaporte</button>
+              <Link
+                to={`/verificar/${data.numeroDocumento}/${data.numeroPasaporte}`}
+                role="button"
+              >
+                Obtener link de pasaporte
+              </Link>
             </div>
           </div>
         );
@@ -114,7 +119,7 @@ const Dashboard = (props) => {
             </div>
             <div className="creado-por-lecto">
               <p>Sistema creado por el equipo de LectO.</p>
-              <div className="imagenes">
+              <div className="imagenes" id="card-estado">
                 <img
                   src={logoLecto}
                   alt="Logo LectO"

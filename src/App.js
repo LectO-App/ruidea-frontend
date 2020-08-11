@@ -12,6 +12,7 @@ import Dashboard from "./components/Dashboard";
 import Form from "./components/Form";
 import LandingPage from "./components/LandingPage";
 import Login from "./components/Login";
+import Verificar from "./components/Verificar";
 import AdminLogin from "./components/admin/AdminLogin";
 import AdminSolicitudes from "./components/admin/AdminSolicitudes";
 import AdminSolicitud from "./components/admin/AdminSolicitud";
@@ -46,6 +47,10 @@ function App() {
             exact
             path="/admin"
             component={() => <Redirect to="/admin/login" />}
+          />
+          <Route
+            path="/verificar/:nroDocumento/:nroPasaporte"
+            component={Verificar}
           />
           <Route exact path="/admin/login" component={AdminLogin} />
           <Route exact path="/admin/solicitudes" component={AdminSolicitudes} />
