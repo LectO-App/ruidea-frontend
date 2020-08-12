@@ -85,8 +85,10 @@ const Dashboard = (props) => {
               <img src={pendingIcon} alt="Ícono Pendiente" />
               <span className="txt-pendiente">Revisión</span>
             </div>
-            <p>Mensaje del especialista:</p>
-            <p className="mensaje-especialista">{data.mensaje}</p>
+            <p className="mensaje-especialista-label">
+              Mensaje del especialista:
+            </p>
+            <p className="mensaje-especialista">{data.mensajeMedico}</p>
             <div className="botones-descargar">
               <Link to="/inscribirse" role="button">
                 Editar inscripcion
@@ -101,8 +103,6 @@ const Dashboard = (props) => {
               <img src={failureIcon} alt="Ícono Rechazada" />
               <span className="txt-rechazado">Rechazada</span>
             </div>
-            <p>Mensaje del especialista:</p>
-            <p className="mensaje-especialista">{data.mensaje}</p>
           </div>
         );
     }

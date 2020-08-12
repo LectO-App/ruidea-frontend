@@ -37,6 +37,8 @@ const Paso5 = (props) => {
     delete formData.verificarCorreoElectronico;
     delete formData.verificarPassword;
 
+    formData.correoElectronico = formData.correoElectronico.toLower();
+
     formData.linkPasaporte = "https://google.com";
     formData.linkDiagnostico = "https://google.com";
 
