@@ -50,13 +50,13 @@ const Dashboard = (props) => {
             <div className="botones-descargar">
               <a
                 role="button"
-                href={`https://api.urlbox.io/v1/fFZr9pUSCl4t4J0h/pdf?url=ruidea-template.netlify.app%2F%3Fnombre%3D${data.nombre}%26apellido%3D${data.apellidos}%26numeroDocumento%3D${data.numeroDocumento}%26numeroPasaporte%3D${data.numeroPasaporte}%26pais%3D${data.paisResidencia}&download=Pasaporte%20Ruidea.pdf`}
+                href={`https://api.urlbox.io/v1/fFZr9pUSCl4t4J0h/pdf?url=ruidea-template.netlify.app%2Fpdf.html%3Fnombre%3D${data.nombre}%26apellido%3D${data.apellidos}%26numeroDocumento%3D${data.numeroDocumento}%26numeroPasaporte%3D${data.numeroPasaporte}%26pais%3D${data.paisResidencia}&download=Pasaporte%20Ruidea.pdf&width=1123&height=796&force=true`}
               >
                 Descargar como PDF
               </a>
               <a
                 role="button"
-                href={`https://api.urlbox.io/v1/fFZr9pUSCl4t4J0h/png?url=ruidea-template.netlify.app%2F%3Fnombre%3D${data.nombre}%26apellido%3D${data.apellidos}%26numeroDocumento%3D${data.numeroDocumento}%26numeroPasaporte%3D${data.numeroPasaporte}%26pais%3D${data.paisResidencia}&download=Pasaporte%20Ruidea.png&width=480&height=960`}
+                href={`https://api.urlbox.io/v1/fFZr9pUSCl4t4J0h/png?url=ruidea-template.netlify.app%2F%3Fnombre%3D${data.nombre}%26apellido%3D${data.apellidos}%26numeroDocumento%3D${data.numeroDocumento}%26numeroPasaporte%3D${data.numeroPasaporte}%26pais%3D${data.paisResidencia}&download=Pasaporte%20Ruidea.png&width=480&height=960&force=true`}
               >
                 Descargar como PNG
               </a>

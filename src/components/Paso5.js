@@ -134,7 +134,11 @@ const Paso5 = (props) => {
           <strong>Correo electrónico: </strong> {correoElectronico}
         </li>
         <br />
-        <strong>Diagnósticos: </strong>
+        <li>
+          <strong>
+            <u>Diagnósticos: </u>
+          </strong>
+        </li>
         <ul>
           {Object.entries(diagnostico).map((item) => {
             const string = item[0].charAt(0).toUpperCase() + item[0].slice(1);

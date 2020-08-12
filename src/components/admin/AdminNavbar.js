@@ -5,7 +5,7 @@ import AdminAuth from "./adminAuth";
 const AdminNavbar = (props) => {
   return (
     <nav>
-      <h2 className="logo-navbar">Rudea</h2>
+      <h2 className="logo-navbar">Ruidea</h2>
       {AdminAuth.isAuthenticated() && (
         <div className="links">
           <p

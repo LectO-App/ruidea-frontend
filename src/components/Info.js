@@ -6,7 +6,7 @@ const Info = () => {
   return (
     <section className="section-que-es-ruidea" id="que-es-ruidea">
       <div className="titulo-info">
-        <h1>Que es RUIDEA?</h1>
+        <h1>¿Qué es RUIDEA?</h1>
         <p>Lorem ipsum dolor sit amet consectetur illum detectus.</p>
       </div>
 

@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Link } from "react-router-dom";
+import auth from "../auth";
 
 import logoLecto from "../img/logo-lecto.webp";
 import logoDisfam from "../img/logo-disfam.webp";
@@ -20,9 +21,15 @@ const Footer = () => {
         <Link to="/inscribirse" role="button">
           Inscribirme
         </Link>
-        <Link to="/dashboard" role="button">
-          Ver estado de mi solicitud
-        </Link>
+        {auth.isAuthenticated() ? (
+          <Link to="/dashboard" role="button">
+            Ver estado de mi solicitud
+          </Link>
+        ) : (
+          <Link to="/login" role="button">
+            Iniciar sesión
+          </Link>
+        )}
       </div>
       <p className="copyright">
         &copy; 2020 RUIDEA. Todos los derechos reservados

@@ -71,6 +71,12 @@ const Paso1 = (props) => {
               Seleccione un país
             </option>
             <option value="Argentina">Argentina</option>
+            <option value="España">España</option>
+            <option value="Argentina">Argentina</option>
+            <option value="Argentina">Argentina</option>
+            <option value="Argentina">Argentina</option>
+            <option value="Argentina">Argentina</option>
+            <option value="Argentina">Argentina</option>
           </select>
         </div>
         <div className="wrapper-form">
@@ -101,6 +107,7 @@ const Paso1 = (props) => {
             type="text"
             name="lugarNacimiento"
             id="lugarNacimiento"
+            placeholder="Ciudad y País"
             defaultValue={formData.lugarNacimiento}
             ref={register({ required: "Por favor, rellene este campo" })}
           />
