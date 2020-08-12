@@ -23,6 +23,7 @@ const Dashboard = (props) => {
 
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
+  const [img, setImg] = useState("");
 
   const fetchFromAPI = async (id) => {
     const res = await axios.get(
@@ -47,8 +48,18 @@ const Dashboard = (props) => {
               <span className="txt-aprobada">Aprobada!</span>
             </div>
             <div className="botones-descargar">
-              <button role="button">Descargar como PDF</button>
-              <button role="button">Descargar como JPG</button>
+              <a
+                role="button"
+                href={`https://api.urlbox.io/v1/fFZr9pUSCl4t4J0h/pdf?url=ruidea-template.netlify.app%2F%3Fnombre%3D${data.nombre}%26apellido%3D${data.apellidos}%26numeroDocumento%3D${data.numeroDocumento}%26numeroPasaporte%3D${data.numeroPasaporte}%26pais%3D${data.paisResidencia}&download=Pasaporte%20Ruidea.pdf`}
+              >
+                Descargar como PDF
+              </a>
+              <a
+                role="button"
+                href={`https://api.urlbox.io/v1/fFZr9pUSCl4t4J0h/png?url=ruidea-template.netlify.app%2F%3Fnombre%3D${data.nombre}%26apellido%3D${data.apellidos}%26numeroDocumento%3D${data.numeroDocumento}%26numeroPasaporte%3D${data.numeroPasaporte}%26pais%3D${data.paisResidencia}&download=Pasaporte%20Ruidea.png&width=480&height=960`}
+              >
+                Descargar como PNG
+              </a>
               <Link
                 to={`/verificar/${data.numeroDocumento}/${data.numeroPasaporte}`}
                 role="button"
