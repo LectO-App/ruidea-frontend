@@ -1,6 +1,6 @@
 import React from "react";
 
-import imagenHero from "../img/logoRuidea.webp";
+import pasaporte from "../img/pasaporte.svg";
 
 const Info = () => {
   return (
@@ -13,7 +13,7 @@ const Info = () => {
       <div>
         <div className="item">
           <div className="container-imagen">
-            <img src={imagenHero} alt="Logo RUIDEA" />
+            <img src={pasaporte} alt="Logo RUIDEA" />
           </div>
           <div className="container-texto">
             <h2>¿Cómo funciona?</h2>

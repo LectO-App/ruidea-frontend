@@ -29,8 +29,7 @@
       flex: 1;
     }
   }
-  a,
-  button {
+  a {
     border: none;
     background-color: #4a71d8;
     color: #fff;
@@ -42,6 +41,7 @@
     cursor: pointer;
     user-select: none;
     text-decoration: none;
+    text-align: center;
   }
 }
 
@@ -104,7 +104,7 @@
     .botones-descargar {
       flex-direction: column;
       padding: 2rem 0;
-      button {
+      a {
         width: 100%;
         margin: 1vh 0;
       }
