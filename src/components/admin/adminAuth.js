@@ -1,5 +1,5 @@
 import Cookies from "universal-cookie";
-import axios from "axios";
+import { axiosInstance } from "../../axios";
 
 class AdminAuth {
   constructor() {
@@ -8,7 +8,8 @@ class AdminAuth {
   async login(data, successFunction, errorFunction) {
     try {
       const { user, password } = data;
-      await axios.post("https://ruidea.herokuapp.com/admin/login", {
+
+      await axiosInstance.post(`/admin/login`, {
         user,
         password,
       });
@@ -24,7 +25,6 @@ class AdminAuth {
   logout(cb) {
     const cookies = new Cookies();
     cookies.remove("admin");
-    console.log("removed");
     console.log(this.authenticated);
     this.authenticated = false;
     cb && cb();

@@ -1,8 +1,40 @@
 .dashboard-main {
-  h2 {
+  h1 {
     font-size: calc(40px + (60 - 40) * ((100vw - 300px) / (1600 - 300)));
     text-align: center;
     overflow-y: hidden;
+  }
+  .container-verificar-mail {
+    padding: 2em 4em;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+    background: #eeeeee;
+    max-width: 90vw;
+    width: fit-content;
+    min-height: 400px;
+    margin: 2rem auto;
+    border-radius: 16px;
+
+    .titulo-verificar-mail {
+      text-align: center;
+      font-size: $fsSubHeader;
+      color: #121212;
+    }
+    .texto-verificar-mail {
+      padding: 0 calc(var(--padding-sides));
+      text-align: center;
+      font-size: $fsMedium;
+      font-weight: 400;
+      color: #121212;
+    }
+    .btn-no-recibi-mail {
+      width: fit-content;
+      display: block;
+      margin: 0 auto;
+      font-size: $fsSmall;
+    }
   }
   .card-estado {
     padding: 2em 4em;
@@ -29,7 +61,8 @@
       flex: 1;
     }
   }
-  a {
+  a,
+  button {
     border: none;
     background-color: #4a71d8;
     color: #fff;
@@ -115,7 +148,8 @@
     .botones-descargar {
       flex-direction: column;
       padding: 2rem 0;
-      a {
+      a,
+      button {
         width: 100%;
         margin: 1vh 0;
       }

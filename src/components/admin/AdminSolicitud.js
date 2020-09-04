@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { axiosInstance } from "../../axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 
@@ -10,20 +10,15 @@ import LoadingScreen from "../LoadingScreen";
 
 const AdminSolicitud = (props) => {
   const [user, setUser] = useState({});
-  const [mensajeMedico, setMensajeMedico] = useState("");
 
-  const postResultToAPI = async (estado) => {
+  const postResultToAPI = async (estado, mensajeMedico = "") => {
     try {
-      await axios.post("https://ruidea.herokuapp.com/admin/respuesta", {
+      await axiosInstance.post(`/admin/respuesta`, {
         estado,
         mensajeMedico,
         emailUsuario: user.correoElectronico,
       });
-      console.log({
-        estado,
-        mensajeMedico,
-        emailUsuario: user.correoElectronico,
-      });
+
       Swal.fire({
         icon: "success",
         title: "Enviado!",
@@ -39,8 +34,8 @@ const AdminSolicitud = (props) => {
 
   const getUserFromAPI = async () => {
     try {
-      const res = await axios.post(
-        `https://ruidea.herokuapp.com/admin/solicitudes/${props.match.params.id}`
+      const res = await axiosInstance.post(
+        `/admin/solicitudes/${props.match.params.id}`
       );
       setUser(res.data.usuario);
     } catch (err) {
@@ -116,44 +111,31 @@ const AdminSolicitud = (props) => {
               </span>
             </p>
             <p className="campo-informacion">
-              Link Diagnóstico:{" "}
+              Link a Diagnóstico y DNI o Pasaporte:{" "}
               <span className="txt-info-usuario">
-                <a
-                  href={user.linkDiagnostico}
+                <button
+                  className="btn-descargar-archivos"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={(e) => {
+                    const fetchLink = async (btn) => {
+                      const res = await axiosInstance.get(
+                        `/inscripcion/link-archivos/${user._id}`
+                      );
+                      const link = document.createElement("a");
+                      link.href = res.data;
+                      link.click();
+                    };
+                    fetchLink(e);
+                  }}
                 >
-                  Ver
-                </a>
-              </span>
-            </p>
-            <p className="campo-informacion">
-              Link DNI o Pasaporte:{" "}
-              <span className="txt-info-usuario">
-                <a
-                  href={user.linkPasaporte}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Ver
-                </a>
+                  Descargar
+                </button>
               </span>
             </p>
           </div>
           {user.estado === "pendiente" && (
             <form>
-              <div className="form-group-admin">
-                <label htmlFor="mensajeMedico">
-                  Enviar mensaje (solo se enviará si se pide revisión):
-                </label>
-                <textarea
-                  name="mensajeMedico"
-                  id="mensajeMedico"
-                  onChange={(e) => {
-                    setMensajeMedico(e.target.value);
-                  }}
-                ></textarea>
-              </div>
               <div className="botones-solicitud">
                 <button
                   className="btn-aceptar-solicitud"
@@ -170,7 +152,22 @@ const AdminSolicitud = (props) => {
                   name="revision"
                   onClick={(e) => {
                     e.preventDefault();
-                    postResultToAPI("revision");
+                    const showDialog = async () => {
+                      const { value: text } = await Swal.fire({
+                        input: "textarea",
+                        inputPlaceholder: "Enviar un mensaje al usuario",
+                        inputAttributes: {
+                          "aria-label": "Enviar un mensaje al usuario",
+                          style: "resize:none;",
+                          onChange: "",
+                        },
+                        showCancelButton: true,
+                      });
+
+                      (text !== "" || text !== " ") &&
+                        postResultToAPI("revision", text);
+                    };
+                    showDialog();
                   }}
                 >
                   Pedir revisión de solicitud

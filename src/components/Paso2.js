@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState } from "react";
-import axios from "axios";
+import { axiosInstance } from "../axios";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import Cookies from "universal-cookie";
@@ -18,10 +18,9 @@ const Paso2 = (props) => {
     if (!cookies.get("id")) {
       setLoading(true);
 
-      const res = await axios.post(
-        "https://ruidea.herokuapp.com/inscripcion/comprobar-mail",
-        { mail: email }
-      );
+      const res = await axiosInstance.post(`/inscripcion/comprobar-mail`, {
+        mail: email,
+      });
       if (res.data.disponible) {
         handleFormChange(data);
         siguientePaso();

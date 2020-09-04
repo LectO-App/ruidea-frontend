@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-
+import { axiosInstance } from "../axios";
 import upload from "../img/upload.svg";
 
 const Paso4 = (props) => {
   const { siguientePaso, handleFormChange, formData, pasoAnterior } = props;
   const { register, handleSubmit, errors, getValues } = useForm();
 
+  const [filesChanged, setFilesChanged] = useState(false);
+
   const irAlSiguientePaso = (data) => {
+    data.filesChanged = filesChanged;
     handleFormChange(data);
     siguientePaso();
   };
@@ -16,13 +19,6 @@ const Paso4 = (props) => {
     e.preventDefault();
     pasoAnterior();
     pasoAnterior(getValues());
-  };
-
-  const handleImageUpload = async (e) => {
-    /* const formData = new FormData();
-    formData.append("file", e.target.files[0]);
-    console.log(formData.get("file")); 
-    console.log(e.target.files[0].slice(0, 10)); */
   };
 
   return (
@@ -35,6 +31,9 @@ const Paso4 = (props) => {
           ref={register({
             required: "Por favor adjunte su diagnóstico médico.",
           })}
+          onChange={() => {
+            setFilesChanged(true);
+          }}
         />
         <label htmlFor="linkDiagnostico">
           <img src={upload} alt="Icono Upload" />
@@ -53,10 +52,12 @@ const Paso4 = (props) => {
           name="dniPasaporte"
           id="dniPasaporte"
           ref={register({ required: "Por favor adjunte su DNI o pasaporte." })}
-          onChange={handleImageUpload}
+          onChange={() => {
+            setFilesChanged(true);
+          }}
         />
         <label htmlFor="dniPasaporte">
-          <img src={upload} alt="Icono Subir Archivo"></img>{" "}
+          <img src={upload} alt="Icono Subir Archivo"></img>
           <span> Adjuntar DNI o Pasaporte</span>
         </label>
         {errors.dniPasaporte && (

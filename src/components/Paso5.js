@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { axiosInstance } from "../axios";
 import Swal from "sweetalert2";
-
 import auth from "../auth";
 
 import Cookies from "universal-cookie";
@@ -31,25 +30,49 @@ const Paso5 = (props) => {
   const postToAPI = async () => {
     setLoading(true);
 
-    delete formData.dniPasaporte;
     delete formData.aceptoRecibirInfo;
     delete formData.aceptoSolicitud;
     delete formData.verificarCorreoElectronico;
     delete formData.verificarPassword;
-
-    /* formData.correoElectronico = formData.correoElectronico.toLower(); */
-
-    formData.linkPasaporte = "https://google.com";
-    formData.linkDiagnostico = "https://google.com";
+    formData.linkArchivos = "";
 
     const cookies = new Cookies();
 
+    if (formData.filesChanged === true) {
+      const uploadFiles = async () => {
+        const filesFormData = new FormData();
+
+        for (let i = 0; i < formData.linkDiagnostico.length; i++) {
+          filesFormData.append(
+            `Diagnóstico Médico - Archivo N${i}`,
+            formData.linkDiagnostico[i]
+          );
+        }
+        for (let i = 0; i < formData.dniPasaporte.length; i++) {
+          filesFormData.append(
+            `Pasaporte - Archivo N${i}`,
+            formData.dniPasaporte[i]
+          );
+        }
+        await axiosInstance.post(
+          `/inscripcion/subir-archivos/${formData.correoElectronico}`,
+          filesFormData,
+          {
+            headers: { "content-type": `multipart/form-data` },
+          }
+        );
+      };
+      await uploadFiles();
+    }
+
+    delete formData.filesChanged;
+    delete formData.linkDiagnostico;
+    delete formData.dniPasaporte;
+
+    // Si está modificando el usuario
     if (cookies.get("id")) {
       try {
-        await axios.put(
-          "https://ruidea.herokuapp.com/inscripcion/actualizar",
-          formData
-        );
+        await axiosInstance.put(`/inscripcion/actualizar`, formData);
         Swal.fire({
           icon: "success",
           title: "Perfecto!",
@@ -66,18 +89,17 @@ const Paso5 = (props) => {
           text: "Hubo un error al actualizar sus datos.",
         });
       }
-    } else {
+    }
+    // Si se está registrando
+    else {
       try {
-        const res = await axios.post(
-          "https://ruidea.herokuapp.com/inscripcion",
-          formData
-        );
+        const res = await axiosInstance.post(`/inscripcion`, formData);
         console.log(res);
         Swal.fire({
           icon: "success",
           title: "Excelente!",
           text:
-            "Su solicitud será analizada por especialistas dentro de los próximos días. Gracias!",
+            "Por favor, verifique el mail que enviamos a su dirección de correo para que los especialistas puedan analizar su solicitud.",
           showConfirmButton: true,
           confirmButtonText: "Aceptar",
           onAfterClose: () => {
@@ -89,7 +111,7 @@ const Paso5 = (props) => {
           },
         });
       } catch (err) {
-        console.log(err);
+        console.error(err);
         Swal.fire({
           icon: "error",
           title: "Lo sentimos",
