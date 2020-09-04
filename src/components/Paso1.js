@@ -87,8 +87,8 @@ const Paso1 = (props) => {
             <option value="México">México</option>
             <option value="Nicaragua">Nicaragua</option>
             <option value="Panamá">Panamá</option>
-            <option value="Perú">Perú</option>
             <option value="Paraguay">Paraguay</option>
+            <option value="Perú">Perú</option>
             <option value="Portugal">Portugal</option>
             <option value="República Dominicana">República Dominicana</option>
             <option value="Uruguay">Uruguay</option>

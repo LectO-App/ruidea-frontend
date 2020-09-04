@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import axios from "axios";
+import { axiosInstance } from "../axios";
 import { Link } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { Helmet } from "react-helmet";
 import Swal from "sweetalert2";
+import { motion } from "framer-motion";
 
 import auth from "../auth";
 
@@ -19,10 +20,7 @@ const Login = (props) => {
   const loginSuccess = async (data) => {
     setLoading(true);
     try {
-      const res = await axios.post(
-        "https://ruidea.herokuapp.com/usuario/login",
-        data
-      );
+      const res = await axiosInstance.post(`/usuario/login`, data);
       auth.login(() => {
         cookies.set("logged-in", true, { path: "/", expires: 0 });
         cookies.set("id", res.data.usuario._id, { path: "/", expires: 0 });
@@ -40,7 +38,11 @@ const Login = (props) => {
   };
 
   return (
-    <div>
+    <motion.div
+      exit={{ transform: "translateX(100vw)" }}
+      animate={{ transform: "translateX(0vw)" }}
+      initial={{ transform: "translateX(100vw)" }}
+    >
       <Helmet>
         <Helmet>
           <meta charSet="utf-8" />
@@ -90,7 +92,7 @@ const Login = (props) => {
           {loading ? "Cargando..." : "Iniciar sesión"}
         </button>
       </form>
-    </div>
+    </motion.div>
   );
 };
 

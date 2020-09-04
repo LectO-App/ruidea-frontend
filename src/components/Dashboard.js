@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { axiosInstance } from "../axios";
 import Cookies from "universal-cookie";
 import { Helmet } from "react-helmet";
 
@@ -13,7 +13,6 @@ import failureIcon from "../img/failure-icon.svg";
 
 import LoadingScreen from "./LoadingScreen";
 
-import auth from "../auth";
 import Navbar from "./Navbar";
 
 import { Link } from "react-router-dom";
@@ -23,13 +22,11 @@ const Dashboard = (props) => {
 
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [img, setImg] = useState("");
 
   const fetchFromAPI = async (id) => {
-    const res = await axios.get(
-      `https://ruidea.herokuapp.com/usuario/estado/${id}`
-    );
+    const res = await axiosInstance.get(`/usuario/estado/${id}`);
     setData(res.data);
+    console.log(res);
     setLoading(false);
   };
   const idUsuario = cookies.get("id");
@@ -37,6 +34,28 @@ const Dashboard = (props) => {
   useEffect(() => {
     fetchFromAPI(idUsuario);
   }, []);
+
+  const getFileFromServer = async (type) => {
+    const isPdf = type === "pdf";
+    const res = await axiosInstance.get(
+      `/usuario/descargar/${type}/${data._id}`,
+      {
+        responseType: "arraybuffer",
+        headers: {
+          Accept: isPdf ? "application/pdf" : "image/jpeg",
+        },
+      }
+    );
+    const blob = new Blob([res.data], {
+      type: isPdf ? "application/pdf" : "image/jpeg",
+    });
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = isPdf
+      ? `Certificado Ruidea.pdf`
+      : "Certificado Ruidea.jpeg";
+    link.click();
+  };
 
   const switchData = () => {
     switch (data.estado) {
@@ -48,18 +67,22 @@ const Dashboard = (props) => {
               <span className="txt-aprobada">Aprobada!</span>
             </div>
             <div className="botones-descargar">
-              <a
+              <button
                 role="button"
-                href={`https://api.urlbox.io/v1/fFZr9pUSCl4t4J0h/pdf?url=ruidea-template.netlify.app%2Fpdf.html%3Fnombre%3D${data.nombre}%26apellido%3D${data.apellidos}%26numeroDocumento%3D${data.numeroDocumento}%26numeroPasaporte%3D${data.numeroPasaporte}%26pais%3D${data.paisResidencia}&download=Pasaporte%20Ruidea.pdf&width=1123&height=796&force=true`}
+                onClick={() => {
+                  getFileFromServer("pdf");
+                }}
               >
                 Descargar como PDF
-              </a>
-              <a
+              </button>
+              <button
                 role="button"
-                href={`https://api.urlbox.io/v1/fFZr9pUSCl4t4J0h/png?url=ruidea-template.netlify.app%2F%3Fnombre%3D${data.nombre}%26apellido%3D${data.apellidos}%26numeroDocumento%3D${data.numeroDocumento}%26numeroPasaporte%3D${data.numeroPasaporte}%26pais%3D${data.paisResidencia}&download=Pasaporte%20Ruidea.png&width=480&height=960&force=true`}
+                onClick={() => {
+                  getFileFromServer("img");
+                }}
               >
-                Descargar como PNG
-              </a>
+                Descargar como JPG
+              </button>
               <Link
                 to={`/verificar/${data.numeroDocumento}/${data.numeroPasaporte}`}
                 role="button"
@@ -123,11 +146,39 @@ const Dashboard = (props) => {
         <>
           <Navbar />
           <main className="dashboard-main">
-            <h2>Hola, {data.nombre}!</h2>
-            <div className="card-estado">
-              <h5>Estado de tu solicitud</h5>
-              {switchData()}
-            </div>
+            <h1>Hola, {data.nombre}!</h1>
+            {data.emailVerificado ? (
+              <div className="card-estado">
+                <h5>Estado de tu solicitud</h5>
+                {switchData()}
+              </div>
+            ) : (
+              <div className="container-verificar-mail">
+                <h2 className="titulo-verificar-mail">
+                  Correo electrónico no verificado
+                </h2>
+                <h3 className="texto-verificar-mail">
+                  Por favor, entre al enlace que enviamos a su correo
+                  electrónico para verificar su identidad. Si no lo encuentra,
+                  revise la casilla de spam.
+                </h3>
+                <button
+                  className="btn-no-recibi-mail"
+                  onClick={() => {
+                    const resendEmail = async () => {
+                      console.log("J");
+                      const res = await axiosInstance.post(
+                        "/emailVerification/resend/${idUsuario}"
+                      );
+                      console.log(res);
+                    };
+                    resendEmail();
+                  }}
+                >
+                  No recibí ningún mail
+                </button>
+              </div>
+            )}
             <div className="creado-por-lecto">
               <p>Sistema creado por el equipo de LectO.</p>
               <div className="imagenes" id="card-estado">

@@ -3,7 +3,14 @@ import { Link } from "react-router-dom";
 
 import auth from "../auth";
 
-const Navbar = (props) => {
+const Navbar = () => {
+  window.addEventListener("scroll", function () {
+    const nav = document.querySelector("nav");
+    if (nav) {
+      nav.classList.toggle("nav-scroll", window.pageYOffset > nav.clientHeight);
+    }
+  });
+
   return (
     <nav>
       <Link to="/" className="logo-navbar" role="button">

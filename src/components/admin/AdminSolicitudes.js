@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { axiosInstance } from "../../axios";
 
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
@@ -38,10 +38,9 @@ const AdminSolicitudes = (props) => {
 
   const fetchFromAPI = async (condicion) => {
     setLoading(true);
-    const res = await axios.post(
-      "https://ruidea.herokuapp.com/admin/solicitudes",
-      { condicion }
-    );
+    const res = await axiosInstance.post("/admin/solicitudes", {
+      condicion: condicion,
+    });
     setData(res.data);
     setLoading(false);
   };
@@ -106,6 +105,9 @@ const AdminSolicitudes = (props) => {
   };
 
   const renderBtnEstado = (item) => {
+    if (item.emailVerificado === false) {
+      return <p className="text-info-solicitud">Email no verificado</p>;
+    }
     //eslint-disable-next-line
     switch (item.estado) {
       case "aceptado":
@@ -175,6 +177,7 @@ const AdminSolicitudes = (props) => {
                 <p>
                   {item.nombre} {item.apellidos}
                 </p>
+                <p class="correo">{item.correoElectronico}</p>
               </div>
             ))}
           </div>

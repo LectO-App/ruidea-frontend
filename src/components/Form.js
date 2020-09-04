@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import Cookies from "universal-cookie";
-import axios from "axios";
+import { axiosInstance } from "../axios";
 
 import Paso1 from "./Paso1";
 import Paso2 from "./Paso2";
@@ -11,6 +11,7 @@ import Paso4 from "./Paso4";
 import Paso5 from "./Paso5";
 
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Form = (props) => {
   const cookies = new Cookies();
@@ -22,9 +23,7 @@ const Form = (props) => {
   useEffect(() => {
     const fetchDataFromId = async () => {
       if (id) {
-        const res = await axios.post(
-          `https://ruidea.herokuapp.com/admin/solicitudes/${id}`
-        );
+        const res = await axiosInstance.post(`/admin/solicitudes/${id}`);
         let tempUsuario = res.data.usuario;
         delete tempUsuario.password;
 
@@ -108,7 +107,12 @@ const Form = (props) => {
   };
 
   return (
-    <div className="container-form">
+    <motion.div
+      className="container-form"
+      exit={{ transform: "translateX(100vw)" }}
+      animate={{ transform: "translateX(0vw)" }}
+      initial={{ transform: "translateX(100vw)" }}
+    >
       <Helmet>
         <meta charSet="utf-8" />
         <title>
@@ -158,7 +162,7 @@ const Form = (props) => {
         <h1 className="titulo">Inscribirse</h1>
         {showCurrentStep()}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

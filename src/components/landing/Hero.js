@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import auth from "../auth";
+import auth from "../../auth";
 
-import wave1 from "../img/waves1.svg";
-import wave2 from "../img/waves2.svg";
-import imagenHero from "../img/logoRuidea.webp";
+import wave1 from "../../img/waves1.svg";
+import wave2 from "../../img/waves2.svg";
+import imagenHero from "../../img/logoRuidea.webp";
 
 const Hero = () => {
   let loggedIn = auth.isAuthenticated();

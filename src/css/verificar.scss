@@ -1,21 +1,63 @@
-.main-verificar {
-  min-height: 88vh;
+.header-verificar {
+  background: #41a1ac;
+  width: 100%;
+  height: 15vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  .logo-ruidea {
-    height: 25vh;
-    margin: 4vh auto 0 auto;
-    display: block;
+  color: #fff;
+  h1 {
+    font-size: $fsHeader;
   }
-  .container-datos {
+  .pais {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: absolute;
+    left: 4vw;
+    font-size: $fsMedium;
+  }
+}
+.pasaporte {
+  position: absolute;
+  top: 2vh;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: $fsSubHeader;
+  color: #161616;
+  height: 6vh;
+}
+.main-verificar {
+  padding: 0 6vw;
+  min-height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  .flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+  }
+  .container-logo-ruidea {
+    padding: 0 5vmax 0 0;
+    .logo-ruidea {
+      height: 40vh;
+      display: block;
+    }
+  }
+  .container-datos {
+    flex: 1;
+    display: flex;
+    justify-content: center;
     flex-direction: column;
     padding: 3vh 0;
+
     .texto-main {
-      text-align: center;
       padding: 1vh 0 0 0;
       h1 {
         font-size: calc(50px + (60 - 50) * ((100vw - 300px) / (1600 - 300)));
@@ -29,32 +71,99 @@
       font-size: calc(50px + (56 - 50) * ((100vw - 300px) / (1600 - 300)));
       margin: 1vh 0 0 0;
       color: #161616;
-      text-align: center;
     }
   }
-
-  .container-qr {
-    width: 200px;
-    margin: auto;
-    canvas {
-      width: 100% !important;
-      height: auto !important;
-      padding: 1vmin;
-    }
-    p {
-      text-align: center;
-      font-size: $fsSmall;
+  .desarrollado-por-lecto {
+    --clr-font: #303030;
+    position: absolute;
+    bottom: 2vh;
+    color: var(--clr-font);
+    text-align: center;
+    a {
+      color: var(--clr-font);
     }
   }
 }
 
 .footer-verificar {
-  height: 12vh;
-  font-size: $fsMedium;
+  background: #41a1ac;
+  height: 15vh;
+  font-size: $fsSmall;
+  color: #fff;
   width: 100vw;
-  .ir-a-ruidea {
-    font-size: $fsXSmall;
-    margin: 1vh 0 0 0;
-    color: #202020;
+}
+
+.error-screen {
+  width: 100vw;
+  height: 100vh;
+  font-size: 1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: var(--padding-sides);
+  position: fixed;
+  top: 0;
+  background: #fff;
+  z-index: 1000;
+  h1 {
+    text-align: center;
+  }
+  a {
+    background: $clrMain;
+    color: #fff;
+    padding: 0.6em 1.5em;
+    margin: 3vh 0;
+    font-size: $fsSmall;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: 0.2s;
+    &:hover {
+      filter: brightness(1.1);
+    }
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .main-verificar {
+    .container-logo-ruidea {
+      img {
+        height: 30vh !important;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .main-verificar {
+    .pasaporte,
+    .desarrollado-por-lecto {
+      position: static;
+      transform: unset;
+      margin: 2vh 0;
+    }
+    .flex {
+      flex-direction: column !important;
+    }
+    .container-logo-ruidea {
+      padding: 0;
+    }
+    .container-datos {
+      * {
+        text-align: center;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .header-verificar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column-reverse;
+    .pais {
+      position: static;
+    }
   }
 }
