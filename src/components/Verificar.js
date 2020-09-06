@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { axiosInstance } from "../axios";
 import LoadingScreen from "./LoadingScreen";
+import {motion} from "framer-motion";
 
-import logoRuidea from "../img/logoRuidea.webp";
+import logoRuidea from "../img/Recurso 2.svg";
 
 const Verificar = (props) => {
   const { nroPasaporte, nroDocumento } = props.match.params;
@@ -39,7 +40,11 @@ const Verificar = (props) => {
   }, []);
 
   return (
-    <>
+    <motion.div 
+      exit={{ transform: "translateX(100vw)" }}
+      animate={{ transform: "translateX(0vw)" }}
+      initial={{ transform: "translateX(100vw)" }}
+    >
       {error && (
         <div className="error-screen">
           <h1>
@@ -85,7 +90,7 @@ const Verificar = (props) => {
           la legislación vigente
         </p>
       </footer>
-    </>
+    </motion.div>
   );
 };
 

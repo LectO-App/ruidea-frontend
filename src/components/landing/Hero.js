@@ -4,7 +4,7 @@ import auth from "../../auth";
 
 import wave1 from "../../img/waves1.svg";
 import wave2 from "../../img/waves2.svg";
-import imagenHero from "../../img/logoRuidea.webp";
+import imagenHero from "../../img/Recurso 2.svg";
 
 const Hero = () => {
   let loggedIn = auth.isAuthenticated();
@@ -31,6 +31,7 @@ const Hero = () => {
           </div>
         </div>
       </section>
+
       <div className="waves">
         <img src={wave1} alt="Olas" />
         <img src={wave2} alt="Olas" className="second-wave" />

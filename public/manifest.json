@@ -3,17 +3,17 @@
   "name": "RUIDEA - Registro Único Iberoamericano de personas con Dificultades Específicas del Aprendizaje.",
   "icons": [
     {
-      "src": "logoRuidea64.png",
+      "src": "iconRuidea.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/png"
     },
     {
-      "src": "logoRuidea256.png",
+      "src": "iconRuidea.png",
       "type": "image/png",
       "sizes": "256x256"
     },
     {
-      "src": "logoRuidea512.png",
+      "src": "iconRuidea.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any maskable"

@@ -51,6 +51,7 @@ main {
   .waves {
     position: relative;
     height: auto;
+    margin-bottom: -3px;
 
     .second-wave {
       margin-top: -100%;
@@ -58,8 +59,6 @@ main {
   }
 }
 
-@media screen and (max-width: 1300px) {
-}
 
 @media screen and (max-width: 1000px) {
   section {
@@ -76,13 +75,13 @@ main {
   .imagen {
     padding: 2rem 0;
     img {
-      height: 20vh !important;
+      height: 35vh !important;
       width: auto !important;
       padding: 0 !important;
     }
   }
   .text {
-    padding: 0;
+    padding: 5vh 0;
     h1 {
       padding: 0 !important;
     }
