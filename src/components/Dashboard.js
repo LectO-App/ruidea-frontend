@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { axiosInstance } from "../axios";
 import Cookies from "universal-cookie";
 import { Helmet } from "react-helmet";
+import {motion} from "framer-motion";
 
 import logoLecto from "../img/logo-lecto.webp";
 import logoDisfam from "../img/logo-disfam.webp";
@@ -36,6 +37,7 @@ const Dashboard = (props) => {
   }, []);
 
   const getFileFromServer = async (type) => {
+    setLoading(true);
     const isPdf = type === "pdf";
     const res = await axiosInstance.get(
       `/usuario/descargar/${type}/${data._id}`,
@@ -55,6 +57,7 @@ const Dashboard = (props) => {
       ? `Certificado Ruidea.pdf`
       : "Certificado Ruidea.jpeg";
     link.click();
+    setLoading(false);
   };
 
   const switchData = () => {
@@ -69,7 +72,7 @@ const Dashboard = (props) => {
             <div className="botones-descargar">
               <button
                 role="button"
-                onClick={() => {
+                onClick={(e) => {
                   getFileFromServer("pdf");
                 }}
               >
@@ -132,7 +135,12 @@ const Dashboard = (props) => {
   };
 
   return (
-    <>
+    <motion.div 
+      exit={{ transform: "translateX(100vw)" }}
+      animate={{ transform: "translateX(0vw)" }}
+      initial={{ transform: "translateX(100vw)" }}
+      className="dashboard-div-main"
+    >
       <Helmet>
         <meta charSet="utf-8" />
         <title>
@@ -140,9 +148,9 @@ const Dashboard = (props) => {
           Dificultades Específicas del Aprendizaje
         </title>
       </Helmet>
-      {loading ? (
+      {loading && (
         <LoadingScreen />
-      ) : (
+      ) } 
         <>
           <Navbar />
           <main className="dashboard-main">
@@ -166,9 +174,8 @@ const Dashboard = (props) => {
                   className="btn-no-recibi-mail"
                   onClick={() => {
                     const resendEmail = async () => {
-                      console.log("J");
                       const res = await axiosInstance.post(
-                        "/emailVerification/resend/${idUsuario}"
+                        `/emailVerification/resend/${idUsuario}`
                       );
                       console.log(res);
                     };
@@ -196,8 +203,8 @@ const Dashboard = (props) => {
             </div>
           </main>
         </>
-      )}
-    </>
+      
+    </motion.div>
   );
 };
 

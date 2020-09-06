@@ -24,7 +24,6 @@ const LandingPage = () => {
     >
       {loading && <LoadingScreen />}
       <Navbar />
-      <div id="que-es-ruidea"></div>
       <Hero />
       <hr />
       <Info />

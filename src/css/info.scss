@@ -1,5 +1,10 @@
 .section-que-es-ruidea {
   padding: 5vh var(--padding-sides);
+  position:relative;
+  #que-es-ruidea{
+    margin: -18vh 0 0 0;
+    position:absolute;
+  }
   .titulo-info {
     h1 {
       font-size: $fsHeader;
