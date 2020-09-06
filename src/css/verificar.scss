@@ -17,6 +17,19 @@
     left: 4vw;
     font-size: $fsMedium;
   }
+  a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .logo-disfam {
+    right: 4vw;
+    position: absolute;
+    height: 10vh;
+    background: #fff;
+    border-radius: 50%;
+    padding: 1vh;
+  }
 }
 .pasaporte {
   position: absolute;
@@ -162,8 +175,14 @@
     justify-content: center;
     align-items: center;
     flex-direction: column-reverse;
-    .pais {
+    height: auto;
+    padding: 2vh 0;
+    .pais,
+    .logo-disfam {
       position: static;
+    }
+    .logo-disfam {
+      margin: 0 0 1vh 0;
     }
   }
 }

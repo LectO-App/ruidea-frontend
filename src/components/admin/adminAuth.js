@@ -25,7 +25,6 @@ class AdminAuth {
   logout(cb) {
     const cookies = new Cookies();
     cookies.remove("admin");
-    console.log(this.authenticated);
     this.authenticated = false;
     cb && cb();
   }

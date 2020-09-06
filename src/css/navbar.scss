@@ -48,18 +48,18 @@ nav {
     .logo-navbar {
       display: none;
     }
-  }
-  .links {
-    justify-content: space-between !important;
+    .links {
+      justify-content: space-between !important;
 
-    a {
-      font-size: 1.3em !important;
-      margin: 0 !important;
-      flex: 1;
-      text-align: center;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      a {
+        font-size: 1.3em !important;
+        margin: 0 !important;
+        flex: 1;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
     }
   }
 }

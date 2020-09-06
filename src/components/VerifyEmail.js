@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { axiosInstance } from "../axios";
+import Cookies from "universal-cookie";
 
 import LoadingScreen from "./LoadingScreen";
 
 import logoRuidea from "../img/logoRuidea.webp";
 
 const VerifyEmail = (props) => {
+  const cookies = new Cookies();
   const [loading, setLoading] = useState(true);
   const [verificado, setVerificado] = useState(false);
+  const idUsuario = cookies.get("id");
 
   useEffect(() => {
     const fetchFromAPI = async () => {
@@ -42,7 +45,32 @@ const VerifyEmail = (props) => {
             <Link to="/login">Iniciar sesión</Link>
           </>
         ) : (
-          <h1>No verificado</h1>
+          <>
+            <h1>El link que ingresó es incorrecto o ya venció.</h1>
+            {idUsuario ? (
+              <button
+                onClick={() => {
+                  /* const resendEmail = async () => {
+                  await axiosInstance.post(
+                    `/emailVerification/resend/${idUsuario}`
+                  );
+                };
+                resendEmail(); */
+                  console.log(idUsuario);
+                }}
+              >
+                Volver a enviar correo electrónico
+              </button>
+            ) : (
+              <>
+                <h1>
+                  Por favor, inicie sesión y solicite que se le envíe el correo
+                  electrónico nuevamente.
+                </h1>
+                <Link to="/login">Iniciar sesión</Link>
+              </>
+            )}
+          </>
         )}
       </main>
     </>
