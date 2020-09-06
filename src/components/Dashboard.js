@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { axiosInstance } from "../axios";
 import Cookies from "universal-cookie";
 import { Helmet } from "react-helmet";
-import {motion} from "framer-motion";
+import { motion } from "framer-motion";
 
 import logoLecto from "../img/logo-lecto.webp";
 import logoDisfam from "../img/logo-disfam.webp";
@@ -27,7 +27,7 @@ const Dashboard = (props) => {
   const fetchFromAPI = async (id) => {
     const res = await axiosInstance.get(`/usuario/estado/${id}`);
     setData(res.data);
-    console.log(res);
+
     setLoading(false);
   };
   const idUsuario = cookies.get("id");
@@ -135,7 +135,7 @@ const Dashboard = (props) => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       exit={{ transform: "translateX(100vw)" }}
       animate={{ transform: "translateX(0vw)" }}
       initial={{ transform: "translateX(100vw)" }}
@@ -148,62 +148,54 @@ const Dashboard = (props) => {
           Dificultades Específicas del Aprendizaje
         </title>
       </Helmet>
-      {loading && (
-        <LoadingScreen />
-      ) } 
-        <>
-          <Navbar />
-          <main className="dashboard-main">
-            <h1>Hola, {data.nombre}!</h1>
-            {data.emailVerificado ? (
-              <div className="card-estado">
-                <h5>Estado de tu solicitud</h5>
-                {switchData()}
-              </div>
-            ) : (
-              <div className="container-verificar-mail">
-                <h2 className="titulo-verificar-mail">
-                  Correo electrónico no verificado
-                </h2>
-                <h3 className="texto-verificar-mail">
-                  Por favor, entre al enlace que enviamos a su correo
-                  electrónico para verificar su identidad. Si no lo encuentra,
-                  revise la casilla de spam.
-                </h3>
-                <button
-                  className="btn-no-recibi-mail"
-                  onClick={() => {
-                    const resendEmail = async () => {
-                      const res = await axiosInstance.post(
-                        `/emailVerification/resend/${idUsuario}`
-                      );
-                      console.log(res);
-                    };
-                    resendEmail();
-                  }}
-                >
-                  No recibí ningún mail
-                </button>
-              </div>
-            )}
-            <div className="creado-por-lecto">
-              <p>Sistema creado por el equipo de LectO.</p>
-              <div className="imagenes" id="card-estado">
-                <img
-                  src={logoLecto}
-                  alt="Logo LectO"
-                  className="imagen-lecto"
-                />
-                <img
-                  src={logoDisfam}
-                  alt="Logo Disfam"
-                  className="imagen-disfam"
-                />
-              </div>
+      {loading && <LoadingScreen />}
+      <>
+        <Navbar />
+        <main className="dashboard-main">
+          <h1>Hola, {data.nombre}!</h1>
+          {data.emailVerificado ? (
+            <div className="card-estado">
+              <h5>Estado de tu solicitud</h5>
+              {switchData()}
             </div>
-          </main>
-        </>
-      
+          ) : (
+            <div className="container-verificar-mail">
+              <h2 className="titulo-verificar-mail">
+                Correo electrónico no verificado
+              </h2>
+              <h3 className="texto-verificar-mail">
+                Por favor, entre al enlace que enviamos a su correo electrónico
+                para verificar su identidad. Si no lo encuentra, revise la
+                casilla de spam.
+              </h3>
+              <button
+                className="btn-no-recibi-mail"
+                onClick={() => {
+                  const resendEmail = async () => {
+                    await axiosInstance.post(
+                      `/emailVerification/resend/${idUsuario}`
+                    );
+                  };
+                  resendEmail();
+                }}
+              >
+                No recibí ningún mail
+              </button>
+            </div>
+          )}
+          <div className="creado-por-lecto">
+            <p>Sistema creado por el equipo de LectO.</p>
+            <div className="imagenes" id="card-estado">
+              <img src={logoLecto} alt="Logo LectO" className="imagen-lecto" />
+              <img
+                src={logoDisfam}
+                alt="Logo Disfam"
+                className="imagen-disfam"
+              />
+            </div>
+          </div>
+        </main>
+      </>
     </motion.div>
   );
 };

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
+import { axiosInstance } from "../../axios";
+import Cookies from "universal-cookie";
 
 import AdminAuth from "./adminAuth";
 
@@ -12,7 +14,17 @@ const AdminLogin = (props) => {
   const submitLogin = (data) => {
     AdminAuth.login(
       data,
-      () => {
+      async () => {
+        const { user, password } = data;
+
+        await axiosInstance.post(`/admin/login`, {
+          user,
+          password,
+        });
+
+        const cookies = new Cookies();
+        cookies.set("admin", true, { expires: 0 });
+        AdminAuth.authenticated = true;
         setLoading(true);
         props.history.push("/admin/solicitudes");
       },

@@ -17,7 +17,14 @@
     font-size: $fsSubHeader;
     color: #141414;
   }
-  a {
+  h1 {
+    font-size: calc(30px + (36 - 30) * ((100vw - 300px) / (1600 - 300)));
+    margin: 0.5vh 0;
+    text-align: center;
+    padding: 0 var(--padding-sides);
+  }
+  a,
+  button {
     padding: 1em 1.8em;
     background: $clrMain;
     color: #fff;

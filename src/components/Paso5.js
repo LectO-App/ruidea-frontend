@@ -94,7 +94,6 @@ const Paso5 = (props) => {
     else {
       try {
         const res = await axiosInstance.post(`/inscripcion`, formData);
-        console.log(res);
         Swal.fire({
           icon: "success",
           title: "Excelente!",
