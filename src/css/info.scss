@@ -1,9 +1,9 @@
 .section-que-es-ruidea {
   padding: 5vh var(--padding-sides);
-  position:relative;
-  #que-es-ruidea{
+  position: relative;
+  #que-es-ruidea {
     margin: -18vh 0 0 0;
-    position:absolute;
+    position: absolute;
   }
   .titulo-info {
     h1 {
@@ -11,7 +11,7 @@
       color: #0a0a0a;
     }
     p {
-      font-size: $fsMedium;
+      font-size: calc(22px + (28 - 22) * ((100vw - 300px) / (1600 - 300)));
       margin: 1rem 0;
       color: rgb(20, 20, 20);
     }
@@ -22,7 +22,7 @@
     margin: 2rem 0;
     display: flex;
     align-items: center;
-    height: 40vh;
+    min-height: 40vh;
     .container-texto,
     .container-imagen {
       height: 100%;
@@ -37,9 +37,13 @@
         color: rgb(17, 17, 17);
         font-size: $fsSubHeader;
       }
-      p {
-        color: rgb(20, 20, 20);
-        font-size: $fsSmall;
+      .container-textos {
+        font-size: calc(22px + (28 - 22) * ((100vw - 300px) / (1600 - 300)));
+
+        p {
+          margin: 2vh 0 0 0;
+          color: rgb(20, 20, 20);
+        }
       }
     }
     .container-imagen {
@@ -47,7 +51,7 @@
       justify-content: center;
       align-items: center;
       img {
-        height: 100%;
+        height: 60vh;
       }
     }
   }
