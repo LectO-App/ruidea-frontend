@@ -21,6 +21,7 @@ const Paso2 = (props) => {
       const res = await axiosInstance.post(`/inscripcion/comprobar-mail`, {
         mail: email,
       });
+
       if (res.data.disponible) {
         handleFormChange(data);
         siguientePaso();

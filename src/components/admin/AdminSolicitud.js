@@ -3,26 +3,34 @@ import { axiosInstance } from "../../axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 
-import iconSuccess from "../../img/success-icon.svg";
-import iconFail from "../../img/failure-icon.svg";
+import iconSuccess from "../../img/svg/success-icon.svg";
+import iconSuccessPNG from "../../img/png/success-icon.png";
+import iconFail from "../../img/svg/failure-icon.svg";
+import iconFailPNG from "../../img/png/failure-icon.png";
 
 import LoadingScreen from "../LoadingScreen";
 
 const AdminSolicitud = (props) => {
   const [user, setUser] = useState({});
 
-  const postResultToAPI = async (estado, mensajeMedico = "") => {
+  const postResultToAPI = async (
+    estado,
+    mensajeMedico = "",
+    mostrarPopup = true
+  ) => {
     try {
       await axiosInstance.post(`/admin/respuesta`, {
         estado,
         mensajeMedico,
         emailUsuario: user.correoElectronico,
       });
-
-      Swal.fire({
-        icon: "success",
-        title: "Enviado!",
-      });
+      mostrarPopup &&
+        Swal.fire({
+          icon: "success",
+          title: "Enviado!",
+        }).then(() => {
+          props.history.push("/admin/solicitudes");
+        });
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -153,7 +161,7 @@ const AdminSolicitud = (props) => {
                   onClick={(e) => {
                     e.preventDefault();
                     const showDialog = async () => {
-                      const { value: text } = await Swal.fire({
+                      await Swal.fire({
                         input: "textarea",
                         inputPlaceholder: "Enviar un mensaje al usuario",
                         inputAttributes: {
@@ -162,10 +170,14 @@ const AdminSolicitud = (props) => {
                           onChange: "",
                         },
                         showCancelButton: true,
+                      }).then((result) => {
+                        console.log(result.value);
+                        postResultToAPI(
+                          "revision",
+                          result.value,
+                          !result.value ? true : false
+                        );
                       });
-
-                      (text !== "" || text !== " ") &&
-                        postResultToAPI("revision", text);
                     };
                     showDialog();
                   }}
@@ -187,14 +199,20 @@ const AdminSolicitud = (props) => {
           )}
           {user.estado === "aceptado" && (
             <div className="estado-solicitud">
-              <img src={iconSuccess} alt="Ícono Aprobada" />
+              <picture>
+                <source srcSet={iconSuccess} />
+                <img src={iconSuccessPNG} alt="Ícono Solicitud Aprobada" />
+              </picture>
               <span className="txt-aprobada">Aprobada!</span>
             </div>
           )}
 
           {user.estado === "rechazado" && (
             <div className="estado-solicitud">
-              <img src={iconFail} alt="Ícono Rechazada" />
+              <picture>
+                <source srcSet={iconFail} />
+                <img src={iconFailPNG} alt="Ícono Solicitud Rechazada" />
+              </picture>
               <span className="txt-rechazado">Rechazada</span>
             </div>
           )}

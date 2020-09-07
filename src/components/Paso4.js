@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { axiosInstance } from "../axios";
-import upload from "../img/upload.svg";
+
+import upload from "../img/svg/upload.svg";
+import uploadPNG from "../img/png/upload.png";
 
 const Paso4 = (props) => {
   const { siguientePaso, handleFormChange, formData, pasoAnterior } = props;
@@ -36,7 +37,10 @@ const Paso4 = (props) => {
           }}
         />
         <label htmlFor="linkDiagnostico">
-          <img src={upload} alt="Icono Upload" />
+          <picture>
+            <source srcSet={upload} />
+            <img src={uploadPNG} alt="Ícono Subir Archivos" />
+          </picture>
           <span> Adjuntar diagnostico</span>
         </label>
         {errors.linkDiagnostico && (
@@ -57,7 +61,10 @@ const Paso4 = (props) => {
           }}
         />
         <label htmlFor="dniPasaporte">
-          <img src={upload} alt="Icono Subir Archivo"></img>
+          <picture>
+            <source srcSet={upload} />
+            <img src={uploadPNG} alt="Ícono Subir Archivos" />
+          </picture>
           <span> Adjuntar DNI o Pasaporte</span>
         </label>
         {errors.dniPasaporte && (

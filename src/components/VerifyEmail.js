@@ -5,7 +5,7 @@ import Cookies from "universal-cookie";
 
 import LoadingScreen from "./LoadingScreen";
 
-import logoRuidea from "../img/logoRuidea.webp";
+import logoRuideaPNG from "../img/png/logo-ruidea.png";
 
 const VerifyEmail = (props) => {
   const cookies = new Cookies();
@@ -37,7 +37,7 @@ const VerifyEmail = (props) => {
       <main className="main-verificar-mail">
         {verificado ? (
           <>
-            <img src={logoRuidea} alt="Logo RUIDEA" />
+            <img src={logoRuideaPNG} alt="Logo RUIDEA" />
             <div className="texto">
               <h4>Su correo electrónico ha sido verificado correctamente.</h4>
               <h4>Pronto, profesionales verificarán su solicitud.</h4>
