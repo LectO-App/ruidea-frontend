@@ -4,8 +4,8 @@ import { axiosInstance } from "../axios";
 import LoadingScreen from "./LoadingScreen";
 import { motion } from "framer-motion";
 
-import logoRuidea from "../img/Recurso 2.svg";
-import logoDisfam from "../img/logo-disfam.webp";
+import logoRuidea from "../img/svg/logo-ruidea.svg";
+import logoRuideaPNG from "../img/png/logo-ruidea.png";
 
 const Verificar = (props) => {
   const { nroPasaporte, nroDocumento } = props.match.params;
@@ -69,7 +69,14 @@ const Verificar = (props) => {
         <p className="pais">{usuario.paisResidencia}</p>
         <h1>PASAPORTE DEA</h1>
         <a href="https://disfam.org" target="_blank" rel="noopener noreferrer">
-          <img src={logoDisfam} alt="Logo Disfam" className="logo-disfam" />
+          <picture>
+            <source srcSet={logoRuidea} />
+            <img
+              src={logoRuideaPNG}
+              alt="Ícono RUIDEA"
+              className="logo-disfam"
+            />
+          </picture>
         </a>
       </header>
 

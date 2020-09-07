@@ -5,12 +5,19 @@ import Cookies from "universal-cookie";
 import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
 
-import logoLecto from "../img/logo-lecto.webp";
-import logoDisfam from "../img/logo-disfam.webp";
+import logoLecto from "../img/webp/logo-lecto.webp";
+import logoLectoPNG from "../img/png/logo-lecto.png";
+import logoDisfam from "../img/webp/logo-disfam.webp";
+import logoDisfamPNG from "../img/png/logo-disfam.png";
 
-import successIcon from "../img/success-icon.svg";
-import pendingIcon from "../img/pending-icon.svg";
-import failureIcon from "../img/failure-icon.svg";
+import successIcon from "../img/svg/success-icon.svg";
+import successIconPNG from "../img/png/success-icon.png";
+import pendingIcon from "../img/svg/pending-icon.svg";
+import pendingIconPNG from "../img/png/pending-icon.png";
+import revisionIcon from "../img/png/miss-verification-icon.png";
+import revisionIconPNG from "../img/png/miss-verification-icon.png";
+import failureIcon from "../img/svg/failure-icon.svg";
+import failureIconPNG from "../img/png/failure-icon.png";
 
 import LoadingScreen from "./LoadingScreen";
 
@@ -66,7 +73,10 @@ const Dashboard = (props) => {
         return (
           <div className="texto-aprobado">
             <div className="estado-solicitud">
-              <img src={successIcon} alt="Ícono Aprobada" />
+              <picture>
+                <source srcSet={successIcon} />
+                <img src={successIconPNG} alt="Ícono Solicitud Aprobada" />
+              </picture>
               <span className="txt-aprobada">Aprobada!</span>
             </div>
             <div className="botones-descargar">
@@ -99,7 +109,10 @@ const Dashboard = (props) => {
         return (
           <div className="texto-pendiente">
             <div className="estado-solicitud">
-              <img src={pendingIcon} alt="Ícono Pendiente" />
+              <picture>
+                <source srcSet={pendingIcon} />
+                <img src={pendingIconPNG} alt="Ícono Solicitud Pendiente" />
+              </picture>
               <span className="txt-pendiente">Pendiente...</span>
             </div>
           </div>
@@ -108,7 +121,10 @@ const Dashboard = (props) => {
         return (
           <div className="texto-pendiente">
             <div className="estado-solicitud">
-              <img src={pendingIcon} alt="Ícono Pendiente" />
+              <picture>
+                <source srcSet={revisionIcon} />
+                <img src={revisionIconPNG} alt="Ícono Revisión de Solicitud" />
+              </picture>
               <span className="txt-pendiente">Revisión</span>
             </div>
             <p className="mensaje-especialista-label">
@@ -126,7 +142,10 @@ const Dashboard = (props) => {
         return (
           <div className="texto-rechazado">
             <div className="estado-solicitud">
-              <img src={failureIcon} alt="Ícono Rechazada" />
+              <picture>
+                <source srcSet={failureIcon} />
+                <img src={failureIconPNG} alt="Ícono Solicitud Rechazada" />
+              </picture>
               <span className="txt-rechazado">Rechazada</span>
             </div>
           </div>
@@ -186,12 +205,22 @@ const Dashboard = (props) => {
           <div className="creado-por-lecto">
             <p>Sistema creado por el equipo de LectO.</p>
             <div className="imagenes" id="card-estado">
-              <img src={logoLecto} alt="Logo LectO" className="imagen-lecto" />
-              <img
-                src={logoDisfam}
-                alt="Logo Disfam"
-                className="imagen-disfam"
-              />
+              <picture>
+                <source srcSet={logoLecto} />
+                <img
+                  src={logoLectoPNG}
+                  alt="Logo LectO"
+                  className="imagen-lecto"
+                />
+              </picture>
+              <picture>
+                <source srcSet={logoDisfam} />
+                <img
+                  src={logoDisfamPNG}
+                  alt="Logo Disfam"
+                  className="imagen-disfam"
+                />
+              </picture>
             </div>
           </div>
         </main>

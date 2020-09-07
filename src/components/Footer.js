@@ -3,8 +3,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import auth from "../auth";
 
-import logoLecto from "../img/logo-lecto.webp";
-import logoDisfam from "../img/logo-disfam.webp";
+import logoLecto from "../img/webp/logo-lecto.webp";
+import logoLectoPNG from "../img/png/logo-lecto.png";
+import logoDisfam from "../img/webp/logo-disfam.webp";
+import logoDisfamPNG from "../img/png/logo-disfam.png";
 
 const Footer = () => {
   return (
@@ -12,8 +14,18 @@ const Footer = () => {
       <div className="creado-por-lecto">
         <p>Sistema creado por el equipo de LectO</p>
         <div className="imagenes">
-          <img src={logoLecto} className="imagen-lecto" alt="Logo LectO" />
-          <img src={logoDisfam} className="imagen-disfam" alt="Logo Disfam" />
+          <picture>
+            <source srcSet={logoLecto} />
+            <img src={logoLectoPNG} alt="Logo LectO" className="imagen-lecto" />
+          </picture>
+          <picture>
+            <source srcSet={logoDisfam} />
+            <img
+              src={logoDisfamPNG}
+              alt="Logo Disfam"
+              className="imagen-disfam"
+            />
+          </picture>
         </div>
       </div>
       <div className="links">

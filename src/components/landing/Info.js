@@ -1,6 +1,7 @@
 import React from "react";
 
-import pasaporte from "../../img/pasaporte.svg";
+import pasaporte from "../../img/svg/pasaporte-illustration.svg";
+import pasaportePNG from "../../img/png/pasaporte-illustration.png";
 
 const Info = () => {
   return (
@@ -20,7 +21,10 @@ const Info = () => {
       <div>
         <div className="item">
           <div className="container-imagen">
-            <img src={pasaporte} alt="Logo RUIDEA" />
+            <picture>
+              <source srcSet={pasaporte} />
+              <img src={pasaportePNG} alt="Ilustración Pasaporte" />
+            </picture>
           </div>
           <div className="container-texto">
             <h2>¿Cómo funciona?</h2>
