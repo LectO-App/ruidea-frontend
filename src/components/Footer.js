@@ -15,11 +15,11 @@ const Footer = () => {
         <p>Sistema creado por el equipo de LectO</p>
         <div className="imagenes">
           <picture>
-            <source srcSet={logoLecto} />
+            <source srcSet={logoLecto} type="image/webp" />
             <img src={logoLectoPNG} alt="Logo LectO" className="imagen-lecto" />
           </picture>
           <picture>
-            <source srcSet={logoDisfam} />
+            <source srcSet={logoDisfam} type="image/webp" />
             <img
               src={logoDisfamPNG}
               alt="Logo Disfam"

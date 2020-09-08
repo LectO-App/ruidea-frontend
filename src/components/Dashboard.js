@@ -74,7 +74,7 @@ const Dashboard = (props) => {
           <div className="texto-aprobado">
             <div className="estado-solicitud">
               <picture>
-                <source srcSet={successIcon} />
+                <source srcSet={successIcon} type="image/svg+xml" />
                 <img src={successIconPNG} alt="Ícono Solicitud Aprobada" />
               </picture>
               <span className="txt-aprobada">Aprobada!</span>
@@ -110,7 +110,7 @@ const Dashboard = (props) => {
           <div className="texto-pendiente">
             <div className="estado-solicitud">
               <picture>
-                <source srcSet={pendingIcon} />
+                <source srcSet={pendingIcon} type="image/svg+xml" />
                 <img src={pendingIconPNG} alt="Ícono Solicitud Pendiente" />
               </picture>
               <span className="txt-pendiente">Pendiente...</span>
@@ -122,7 +122,7 @@ const Dashboard = (props) => {
           <div className="texto-pendiente">
             <div className="estado-solicitud">
               <picture>
-                <source srcSet={revisionIcon} />
+                <source srcSet={revisionIcon} type="image/svg+xml" />
                 <img src={revisionIconPNG} alt="Ícono Revisión de Solicitud" />
               </picture>
               <span className="txt-pendiente">Revisión</span>
@@ -143,7 +143,7 @@ const Dashboard = (props) => {
           <div className="texto-rechazado">
             <div className="estado-solicitud">
               <picture>
-                <source srcSet={failureIcon} />
+                <source srcSet={failureIcon} type="image/svg+xml" />
                 <img src={failureIconPNG} alt="Ícono Solicitud Rechazada" />
               </picture>
               <span className="txt-rechazado">Rechazada</span>
@@ -206,7 +206,7 @@ const Dashboard = (props) => {
             <p>Sistema creado por el equipo de LectO.</p>
             <div className="imagenes" id="card-estado">
               <picture>
-                <source srcSet={logoLecto} />
+                <source srcSet={logoLecto} type="image/webp" />
                 <img
                   src={logoLectoPNG}
                   alt="Logo LectO"
@@ -214,7 +214,7 @@ const Dashboard = (props) => {
                 />
               </picture>
               <picture>
-                <source srcSet={logoDisfam} />
+                <source srcSet={logoDisfam} type="image/webp" />
                 <img
                   src={logoDisfamPNG}
                   alt="Logo Disfam"

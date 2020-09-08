@@ -200,7 +200,7 @@ const AdminSolicitud = (props) => {
           {user.estado === "aceptado" && (
             <div className="estado-solicitud">
               <picture>
-                <source srcSet={iconSuccess} />
+                <source srcSet={iconSuccess} type="image/svg+xml" />
                 <img src={iconSuccessPNG} alt="Ícono Solicitud Aprobada" />
               </picture>
               <span className="txt-aprobada">Aprobada!</span>
@@ -210,7 +210,7 @@ const AdminSolicitud = (props) => {
           {user.estado === "rechazado" && (
             <div className="estado-solicitud">
               <picture>
-                <source srcSet={iconFail} />
+                <source srcSet={iconFail} type="image/svg+xml" />
                 <img src={iconFailPNG} alt="Ícono Solicitud Rechazada" />
               </picture>
               <span className="txt-rechazado">Rechazada</span>

@@ -38,7 +38,7 @@ const Paso4 = (props) => {
         />
         <label htmlFor="linkDiagnostico">
           <picture>
-            <source srcSet={upload} />
+            <source srcSet={upload} type="image/svg+xml" />
             <img src={uploadPNG} alt="Ícono Subir Archivos" />
           </picture>
           <span> Adjuntar diagnostico</span>
@@ -62,7 +62,7 @@ const Paso4 = (props) => {
         />
         <label htmlFor="dniPasaporte">
           <picture>
-            <source srcSet={upload} />
+            <source srcSet={upload} type="image/svg+xml" />
             <img src={uploadPNG} alt="Ícono Subir Archivos" />
           </picture>
           <span> Adjuntar DNI o Pasaporte</span>

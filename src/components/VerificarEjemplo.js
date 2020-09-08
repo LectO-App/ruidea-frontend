@@ -11,12 +11,11 @@ import logoRuidea from "../img/svg/logo-ruidea.svg";
 import logoRuideaPNG from "../img/png/logo-ruidea.png";
 
 const Verificar = (props) => {
+  const [loading, setLoading] = useState(true);
 
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        setLoading(false)
-    }, [])
+  useEffect(() => {
+    setLoading(false);
+  }, []);
 
   return (
     <>
@@ -26,7 +25,7 @@ const Verificar = (props) => {
         <h1>PASAPORTE DEA</h1>
         <a href="https://disfam.org" target="_blank" rel="noopener noreferrer">
           <picture>
-            <source srcSet={logoDisfam} />
+            <source srcSet={logoDisfam} type="image/webp" />
             <img
               src={logoDisfamPNG}
               alt="Ícono Disfam"
@@ -44,9 +43,7 @@ const Verificar = (props) => {
           </div>
           <div className="container-datos">
             <div className="texto-main">
-              <h1>
-                Hugo Salas Ocaña
-              </h1>
+              <h1>Hugo Salas Ocaña</h1>
               <h3>12/04/2017</h3>
               <h2>12180427Z</h2>
             </div>

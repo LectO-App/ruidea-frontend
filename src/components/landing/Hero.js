@@ -42,7 +42,7 @@ const Hero = () => {
           </div>
           <div className="imagen">
             <picture>
-              <source srcSet={logoRuidea} />
+              <source srcSet={logoRuidea} type="image/svg+xml" />
               <img src={logoRuideaPNG} alt="Logo RUIDEA" />
             </picture>
           </div>
@@ -51,11 +51,11 @@ const Hero = () => {
 
       <div className="waves">
         <picture>
-          <source srcSet={wave1} />
+          <source srcSet={wave1} type="image/svg+xml" />
           <img src={wave1PNG} alt="Primera Ola" />
         </picture>
         <picture>
-          <source srcSet={wave2} />
+          <source srcSet={wave2} type="image/svg+xml" />
           <img src={wave2PNG} alt="Segunda Ola" className="second-wave" />
         </picture>
       </div>
