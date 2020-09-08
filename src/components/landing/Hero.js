@@ -9,6 +9,8 @@ import wave2PNG from "../../img/png/waves2.png";
 import logoRuidea from "../../img/svg/logo-ruidea.svg";
 import logoRuideaPNG from "../../img/png/logo-ruidea.png";
 
+import ReactGA from "react-ga";
+
 const Hero = () => {
   let loggedIn = auth.isAuthenticated();
 
@@ -25,6 +27,15 @@ const Hero = () => {
               role="button"
               to={loggedIn ? "/dashboard" : "/inscribirse"}
               className="btn-inscribirme"
+              onClick={() => {
+                ReactGA.event({
+                  category: "NuevoUsuario", // Required
+                  action: "IniciarRegistro", // Required
+                  label: "labelName",
+                  value: 10,
+                  nonInteraction: false,
+                });
+              }}
             >
               {loggedIn ? "Ver mi solicitud" : "Inscribirme"}
             </Link>
