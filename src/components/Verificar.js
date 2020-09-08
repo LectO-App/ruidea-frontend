@@ -4,6 +4,9 @@ import { axiosInstance } from "../axios";
 import LoadingScreen from "./LoadingScreen";
 import { motion } from "framer-motion";
 
+import logoDisfam from "../img/webp/logo-disfam.webp";
+import logoDisfamPNG from "../img/png/logo-disfam.png";
+
 import logoRuidea from "../img/svg/logo-ruidea.svg";
 import logoRuideaPNG from "../img/png/logo-ruidea.png";
 
@@ -70,10 +73,10 @@ const Verificar = (props) => {
         <h1>PASAPORTE DEA</h1>
         <a href="https://disfam.org" target="_blank" rel="noopener noreferrer">
           <picture>
-            <source srcSet={logoRuidea} />
+            <source srcSet={logoDisfam} />
             <img
-              src={logoRuideaPNG}
-              alt="Ícono RUIDEA"
+              src={logoDisfamPNG}
+              alt="Ícono Disfam"
               className="logo-disfam"
             />
           </picture>

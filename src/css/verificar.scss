@@ -29,6 +29,7 @@
     background: #fff;
     border-radius: 50%;
     padding: 1vh;
+    transform: translateY(-50%);
   }
 }
 .pasaporte {
@@ -177,9 +178,13 @@
     flex-direction: column-reverse;
     height: auto;
     padding: 2vh 0;
+    * {
+      text-align:center;
+    }
     .pais,
     .logo-disfam {
       position: static;
+      transform: none;
     }
     .logo-disfam {
       margin: 0 0 1vh 0;
