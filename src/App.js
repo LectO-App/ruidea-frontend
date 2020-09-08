@@ -15,6 +15,7 @@ import Form from "./components/Form";
 import LandingPage from "./components/LandingPage";
 import Login from "./components/Login";
 import Verificar from "./components/Verificar";
+import VerificarEjemplo from "./components/VerificarEjemplo";
 import VerificarEmail from "./components/VerifyEmail";
 import AdminLogin from "./components/admin/AdminLogin";
 import AdminSolicitudes from "./components/admin/AdminSolicitudes";
@@ -56,6 +57,11 @@ function App() {
               exact
               path="/admin"
               component={() => <Redirect to="/admin/login" />}
+            />
+            <Route
+            exact
+              path="/verificar/ejemplo"
+              component={VerificarEjemplo}
             />
             <Route
               path="/verificar/:nroDocumento/:nroPasaporte"
