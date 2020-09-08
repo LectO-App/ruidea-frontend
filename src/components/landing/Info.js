@@ -22,7 +22,7 @@ const Info = () => {
         <div className="item">
           <div className="container-imagen">
             <picture>
-              <source srcSet={pasaporte} />
+              <source srcSet={pasaporte} type="image/svg+xml" />
               <img src={pasaportePNG} alt="Ilustración Pasaporte" />
             </picture>
           </div>
