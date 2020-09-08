@@ -54,7 +54,7 @@ const Paso5 = (props) => {
             formData.dniPasaporte[i]
           );
         }
-        await axiosInstance.post(
+        axiosInstance.post(
           `/inscripcion/subir-archivos/${formData.correoElectronico}`,
           filesFormData,
           {
