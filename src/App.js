@@ -20,7 +20,12 @@ import AdminLogin from "./components/admin/AdminLogin";
 import AdminSolicitudes from "./components/admin/AdminSolicitudes";
 import AdminSolicitud from "./components/admin/AdminSolicitud";
 
+import ReactGA from "react-ga";
+
 function App() {
+  ReactGA.initialize(process.env.REACT_APP_GA_KEY);
+  ReactGA.pageview(window.location.pathname + window.location.search);
+
   return (
     <div className="App">
       <Helmet>
