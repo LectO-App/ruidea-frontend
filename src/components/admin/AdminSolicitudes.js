@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { axiosInstance } from "../../axios";
 
 import Dropdown from "react-dropdown";
@@ -36,23 +36,24 @@ const AdminSolicitudes = (props) => {
     setSearchData(matches);
   };
 
-  const fetchFromAPI = async (condicion) => {
+  const fetchFromAPI = useCallback(async (condicion) => {
     setLoading(true);
     const res = await axiosInstance.post("/admin/solicitudes", {
-      condicion: condicion,
+      condicion,
     });
     setData(res.data);
     setLoading(false);
-  };
+  }, []);
 
-  const checkLoggedIn = () => {
+  const checkLoggedIn = useCallback(() => {
+    console.log(AdminAuth.isAuthenticated());
     !AdminAuth.isAuthenticated() && props.history.push("/admin/login");
-  };
+  }, [props.history]);
 
   useEffect(() => {
     checkLoggedIn();
     fetchFromAPI(condicion);
-  }, []);
+  }, [fetchFromAPI, checkLoggedIn, condicion]);
 
   const cerrarSesion = () => {
     AdminAuth.logout(() => {

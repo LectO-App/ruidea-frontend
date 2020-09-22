@@ -87,8 +87,14 @@
   font-size: calc(40px + (60 - 40) * ((100vw - 300px) / (1600 - 300)));
   display: flex;
   align-items: center;
+  justify-content: center;
   span {
     font-weight: bold;
+  }
+  picture {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   img {
     height: 1.3em;

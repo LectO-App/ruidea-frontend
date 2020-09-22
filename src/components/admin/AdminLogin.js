@@ -40,7 +40,7 @@ const AdminLogin = (props) => {
 
   useEffect(() => {
     AdminAuth.isAuthenticated() && props.history.push("/admin/solicitudes");
-  }, []);
+  }, [props.history]);
 
   return (
     <div>
