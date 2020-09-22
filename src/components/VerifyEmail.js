@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { axiosInstance } from "../axios";
 import Cookies from "universal-cookie";
@@ -13,23 +13,24 @@ const VerifyEmail = (props) => {
   const [verificado, setVerificado] = useState(false);
   const idUsuario = cookies.get("id");
 
-  useEffect(() => {
-    const fetchFromAPI = async () => {
-      setLoading(true);
-      try {
-        const res = await axiosInstance.post(
-          `/emailVerification/confirm/${props.match.params.token}`
-        );
-        if (res.status === 200) {
-          setVerificado(true);
-        }
-      } catch (err) {
-        setVerificado(false);
+  const fetchFromAPI = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await axiosInstance.post(
+        `/emailVerification/confirm/${props.match.params.token}`
+      );
+      if (res.status === 200) {
+        setVerificado(true);
       }
-      setLoading(false);
-    };
+    } catch (err) {
+      setVerificado(false);
+    }
+    setLoading(false);
+  }, [props.match.params.token]);
+
+  useEffect(() => {
     fetchFromAPI();
-  }, []);
+  }, [fetchFromAPI]);
 
   return (
     <>

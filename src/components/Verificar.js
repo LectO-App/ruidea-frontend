@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { axiosInstance } from "../axios";
 import LoadingScreen from "./LoadingScreen";
@@ -18,39 +18,39 @@ const Verificar = (props) => {
   const [error, setError] = useState(false);
   const [nuevoPasaporte, setNuevoPasaporte] = useState("");
 
+  const requestToAPI = useCallback(async () => {
+    setLoading(true);
+    const res = await axiosInstance.post(
+      `/usuario/verificar/${nroDocumento}/${nroPasaporte}`
+    );
+    if (res.data.existe) {
+      setUsuario(res.data.usuario);
+    } else {
+      setError(true);
+    }
+    if (res.data.usuario) {
+      const string = new Date(Date.parse(res.data.usuario.fechaNacimiento))
+        .toISOString()
+        .split("-");
+
+      setFecha(`${string[2].split("T")[0]}/${string[1]}/${string[0]}`);
+    }
+    const numeroPasaporte = res.data.usuario.numeroPasaporte.toString();
+    let txt = "0000000".split("");
+    txt.splice(-txt.length - numeroPasaporte.length, numeroPasaporte.length);
+    console.log(numeroPasaporte.length);
+    numeroPasaporte.length === 1
+      ? txt.push(numeroPasaporte)
+      : numeroPasaporte.split("").forEach((item) => txt.push(item));
+    console.log(txt);
+    setNuevoPasaporte(txt.join(""));
+
+    setLoading(false);
+  }, [nroDocumento, nroPasaporte]);
+
   useEffect(() => {
-    const requestToAPI = async () => {
-      setLoading(true);
-      const res = await axiosInstance.post(
-        `/usuario/verificar/${nroDocumento}/${nroPasaporte}`
-      );
-      if (res.data.existe) {
-        setUsuario(res.data.usuario);
-      } else {
-        setError(true);
-      }
-      if (res.data.usuario) {
-        const string = new Date(Date.parse(res.data.usuario.fechaNacimiento))
-          .toISOString()
-          .split("-");
-
-        setFecha(`${string[2].split("T")[0]}/${string[1]}/${string[0]}`);
-      }
-      const numeroPasaporte = res.data.usuario.numeroPasaporte.toString();
-      let txt = "0000000".split("");
-      txt.splice(-txt.length - numeroPasaporte.length, numeroPasaporte.length);
-      console.log(numeroPasaporte.length);
-      numeroPasaporte.length === 1
-        ? txt.push(numeroPasaporte)
-        : numeroPasaporte.split("").forEach((item) => txt.push(item));
-      console.log(txt);
-      setNuevoPasaporte(txt.join(""));
-
-      setLoading(false);
-    };
-
     requestToAPI();
-  }, []);
+  }, [requestToAPI]);
 
   return (
     <motion.div
@@ -73,7 +73,7 @@ const Verificar = (props) => {
         <h1>PASAPORTE DEA</h1>
         <a href="https://disfam.org" target="_blank" rel="noopener noreferrer">
           <picture>
-            <source srcSet={logoDisfam} />
+            <source srcSet={logoDisfam} type="image/webp" />
             <img
               src={logoDisfamPNG}
               alt="Ícono Disfam"
@@ -87,7 +87,14 @@ const Verificar = (props) => {
         <h2 className="pasaporte">Pasaporte N° {nuevoPasaporte}</h2>
         <div className="flex">
           <div className="container-logo-ruidea">
-            <img src={logoRuidea} alt="Logo Ruidea" className="logo-ruidea" />
+            <picture>
+              <source srcSet={logoRuidea} type="image/svg+xml" />
+              <img
+                src={logoRuideaPNG}
+                alt="Logo RUIDEA"
+                className="logo-ruidea"
+              />
+            </picture>
           </div>
           <div className="container-datos">
             <div className="texto-main">

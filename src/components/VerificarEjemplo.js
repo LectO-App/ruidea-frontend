@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { axiosInstance } from "../axios";
 import LoadingScreen from "./LoadingScreen";
-import { motion } from "framer-motion";
 
 import logoDisfam from "../img/webp/logo-disfam.webp";
 import logoDisfamPNG from "../img/png/logo-disfam.png";
@@ -39,7 +36,14 @@ const Verificar = (props) => {
         <h2 className="pasaporte">Pasaporte N° 00123456</h2>
         <div className="flex">
           <div className="container-logo-ruidea">
-            <img src={logoRuidea} alt="Logo Ruidea" className="logo-ruidea" />
+            <picture>
+              <source srcSet={logoRuidea} type="image/svg+xml" />
+              <img
+                src={logoRuideaPNG}
+                alt="Logo RUIDEA"
+                className="logo-ruidea"
+              />
+            </picture>
           </div>
           <div className="container-datos">
             <div className="texto-main">

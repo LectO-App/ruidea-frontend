@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { axiosInstance } from "../../axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
@@ -40,7 +40,7 @@ const AdminSolicitud = (props) => {
     }
   };
 
-  const getUserFromAPI = async () => {
+  const getUserFromAPI = useCallback(async () => {
     try {
       const res = await axiosInstance.post(
         `/admin/solicitudes/${props.match.params.id}`
@@ -49,11 +49,11 @@ const AdminSolicitud = (props) => {
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [props.match.params.id]);
 
   useEffect(() => {
     getUserFromAPI();
-  }, []);
+  }, [getUserFromAPI]);
 
   return (
     <>
