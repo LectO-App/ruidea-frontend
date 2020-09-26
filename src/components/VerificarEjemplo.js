@@ -63,7 +63,7 @@ const Verificar = (props) => {
       <footer className="footer-verificar">
         <p>
           Rogamos tengan en consideración las circunstancias que concurren en la
-          persona portadora de este documento, asi cómo lo derechos recogidos en
+          persona portadora de este documento, asi cómo los derechos recogidos en
           la legislación vigente
         </p>
       </footer>
