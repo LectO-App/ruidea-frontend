@@ -1,54 +1,55 @@
-@import "variables";
-@import "navbar";
-@import "Login";
-@import "hero";
-@import "info";
-@import "footer";
-@import "dashboard";
-@import "form";
-@import "admin";
-@import "verificar";
-@import "verificarMail";
+@import 'variables';
+@import 'navbar';
+@import 'Login';
+@import 'hero';
+@import 'info';
+@import 'footer';
+@import 'dashboard';
+@import 'form';
+@import 'admin';
+@import 'verificar';
+@import 'verificarMail';
+@import 'changePassword';
 
 * {
-  margin: 0;
-  box-sizing: border-box;
-  padding: 0;
-  font-family: "Mulish", sans-serif;
+	margin: 0;
+	box-sizing: border-box;
+	padding: 0;
+	font-family: 'Mulish', sans-serif;
 }
 html {
-  scroll-behavior: smooth;
+	scroll-behavior: smooth;
 }
 :root {
-  --padding-sides: 15%;
+	--padding-sides: 15%;
 }
 
 .swal2-icon {
-  overflow: hidden;
+	overflow: hidden;
 }
 hr {
-  width: calc(100vw - var(--padding-sides));
-  display: none;
-  margin: auto;
+	width: calc(100vw - var(--padding-sides));
+	display: none;
+	margin: auto;
 }
 body {
-  overflow-x: hidden;
+	overflow-x: hidden;
 }
 
 @media screen and (max-width: 1400px) {
-  hr {
-    display: block;
-  }
-  :root {
-    --padding-sides: 8%;
-  }
+	hr {
+		display: block;
+	}
+	:root {
+		--padding-sides: 8%;
+	}
 }
 .switch-wrapper {
-  position: relative;
-  width: 100vw;
+	position: relative;
+	width: 100vw;
 }
 
 .switch-wrapper > div {
-  width: 100vw;
-  position: absolute;
+	width: 100vw;
+	position: absolute;
 }
