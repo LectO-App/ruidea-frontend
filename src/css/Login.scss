@@ -62,12 +62,22 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+
 	.forgot-password-modal {
 		position: absolute;
 		width: 35vw;
 		background-color: #fff;
 		border-radius: 12px;
-		padding: 6vh 0;
+		padding: 6vh 0 4vh 0;
+
+		@media screen and (max-width: 1400px) {
+			width: 65vw;
+		}
+
+		@media screen and (max-width: 1000px) {
+			width: 90vw;
+		}
+
 		.title {
 			font-size: $fsSubHeader;
 			text-align: center;
@@ -103,6 +113,12 @@
 				font-size: $fsSmall;
 				margin: 1.5rem auto 0 auto;
 				cursor: pointer;
+			}
+			.cancel {
+				color: #303030;
+				text-decoration: underline;
+				text-align: center;
+				margin-top: 1rem;
 			}
 		}
 	}
