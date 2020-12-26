@@ -69,6 +69,9 @@ const ForgotPasswordModal = props => {
 							/>
 							{errors.email && <span className='error-message'>{errors.email.message}</span>}
 							<button>{loading ? 'Enviando...' : 'Enviar'}</button>
+							<p className='cancel' onClick={() => setForgotPassword(false)}>
+								Cancelar
+							</p>
 						</form>
 					</div>
 				</motion.div>
