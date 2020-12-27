@@ -1,5 +1,8 @@
 .privacy-policy {
 	padding: 6vh var(--padding-sides);
+	h1 {
+		font-size: $fsSubHeader;
+	}
 	.roman {
 		list-style-type: upper-roman;
 		list-style-position: inside;
