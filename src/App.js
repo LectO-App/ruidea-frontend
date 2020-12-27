@@ -19,6 +19,7 @@ const ChangePassword = lazy(() => import('./components/ChangePassword'));
 const AdminLogin = lazy(() => import('./components/admin/AdminLogin'));
 const AdminSolicitudes = lazy(() => import('./components/admin/AdminSolicitudes'));
 const AdminSolicitud = lazy(() => import('./components/admin/AdminSolicitud'));
+const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
 
 function App() {
 	ReactGA.initialize(process.env.REACT_APP_GA_KEY);
@@ -56,6 +57,7 @@ function App() {
 							<Route exact path='/cambiarContraseña/:token' component={ChangePassword} />
 							<Route exact path='/admin/solicitudes/:id' component={AdminSolicitud} />
 							<Route exact path='/verificarEmail/:token' component={VerificarEmail} />
+							<Route exact path='/politica-privacidad' component={PrivacyPolicy} />
 						</Suspense>
 					</Switch>
 				</AnimatePresence>
