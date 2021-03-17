@@ -19,6 +19,7 @@ const ChangePassword = lazy(() => import('./components/ChangePassword'));
 const AdminLogin = lazy(() => import('./components/admin/AdminLogin'));
 const AdminSolicitudes = lazy(() => import('./components/admin/AdminSolicitudes'));
 const AdminSolicitud = lazy(() => import('./components/admin/AdminSolicitud'));
+const AdminModify = lazy(() => import('./components/admin/AdminModify'));
 const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
 							<Route exact path='/admin/login' component={AdminLogin} />
 							<Route exact path='/admin/solicitudes' component={AdminSolicitudes} />
 							<Route exact path='/cambiarContraseña/:token' component={ChangePassword} />
+							<Route exact path='/admin/solicitudes/:id/modify' component={AdminModify} />
 							<Route exact path='/admin/solicitudes/:id' component={AdminSolicitud} />
 							<Route exact path='/verificarEmail/:token' component={VerificarEmail} />
 							<Route exact path='/politica-privacidad' component={PrivacyPolicy} />

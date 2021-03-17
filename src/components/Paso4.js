@@ -4,12 +4,14 @@ import { useForm } from 'react-hook-form';
 import upload from '../img/svg/upload.svg';
 import uploadPNG from '../img/png/upload.png';
 import { Link } from 'react-router-dom';
+import { BsCheckCircle } from 'react-icons/bs';
 
 const Paso4 = props => {
 	const { siguientePaso, handleFormChange, formData, pasoAnterior } = props;
 	const { register, handleSubmit, errors, getValues } = useForm();
 
 	const [filesChanged, setFilesChanged] = useState(false);
+	const [filesInfo, setFilesInfo] = useState({});
 
 	const irAlSiguientePaso = data => {
 		data.filesChanged = filesChanged;
@@ -33,7 +35,9 @@ const Paso4 = props => {
 					ref={register({
 						required: 'Por favor adjunte su diagnóstico médico.',
 					})}
-					onChange={() => {
+					onChange={e => {
+						const file = e.target.files[0];
+						setFilesInfo(prev => ({ ...prev, 0: file }));
 						setFilesChanged(true);
 					}}
 				/>
@@ -44,6 +48,12 @@ const Paso4 = props => {
 					</picture>
 					<span> Adjuntar diagnostico</span>
 				</label>
+				{filesInfo[0] && (
+					<div className='success-message'>
+						<BsCheckCircle size={20} />
+						<span>Subido - {filesInfo[0].name}</span>
+					</div>
+				)}
 				{errors.linkDiagnostico && <span className='error-message'>{errors.linkDiagnostico.message}</span>}
 			</div>
 
@@ -53,7 +63,9 @@ const Paso4 = props => {
 					name='dniPasaporte'
 					id='dniPasaporte'
 					ref={register({ required: 'Por favor adjunte su DNI o pasaporte.' })}
-					onChange={() => {
+					onChange={e => {
+						const file = e.target.files[0];
+						setFilesInfo(prev => ({ ...prev, 1: file }));
 						setFilesChanged(true);
 					}}
 				/>
@@ -64,6 +76,12 @@ const Paso4 = props => {
 					</picture>
 					<span> Adjuntar DNI o Pasaporte</span>
 				</label>
+				{filesInfo[1] && (
+					<div className='success-message'>
+						<BsCheckCircle size={20} />
+						<span>Subido - {filesInfo[1].name}</span>
+					</div>
+				)}
 				{errors.dniPasaporte && <span className='error-message'>{errors.dniPasaporte.message}</span>}
 			</div>
 			<div className='btn-aceptar'>

@@ -1,321 +1,332 @@
 .container-form {
-  display: flex;
-  justify-content: center;
-  .container-inscripcion {
-    flex: 1;
-    padding: 5vw 0;
-  }
+	display: flex;
+	justify-content: center;
+	.container-inscripcion {
+		flex: 1;
+		padding: 5vw 0;
+	}
 }
 .container-barra {
-  position: sticky;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 20vw;
-  height: 100vh;
-  left: 0;
-  top: 0;
+	position: sticky;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 20vw;
+	height: 100vh;
+	left: 0;
+	top: 0;
 }
 .titulo {
-  font-size: calc(40px + (60 - 40) * ((100vw - 300px) / (1600 - 300)));
+	font-size: calc(40px + (60 - 40) * ((100vw - 300px) / (1600 - 300)));
 }
 
 .formulario {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  padding: 4vh var(--padding-sides) 0 0;
-  .row {
-    display: flex;
-    align-items: center;
-  }
-  .wrapper-form {
-    display: flex;
-    flex-direction: column;
-    margin-right: 5vw;
-    input[type="text"],
-    input[type="date"],
-    input[type="password"],
-    select {
-      font-size: 1.6em;
-      background: #f0f0f0;
-      border: none;
-      padding: 0.5em;
-      width: 25vw;
-      color: #202020;
-      margin: 0 0 3rem 0;
-      position: relative;
-      &:focus {
-        outline: 3px solid $clrMain;
-        outline-offset: -4px;
-      }
-    }
-
-    label {
-      color: #1f1f1f;
-      font-size: 1.5em;
-      margin: 0 0 0.5rem 0;
-    }
-  }
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	padding: 4vh var(--padding-sides) 0 0;
 }
+.row {
+	display: flex;
+	align-items: center;
+}
+.wrapper-form {
+	display: flex;
+	flex-direction: column;
+	margin-right: 5vw;
+	input[type='text'],
+	input[type='date'],
+	input[type='password'],
+	select {
+		font-size: 1.6em;
+		background: #f0f0f0;
+		border: none;
+		padding: 0.5em;
+		width: 25vw;
+		color: #202020;
+		margin: 0 0 3rem 0;
+		position: relative;
+		&:focus {
+			outline: 3px solid $clrMain;
+			outline-offset: -4px;
+		}
+	}
 
+	label {
+		color: #1f1f1f;
+		font-size: 1.5em;
+		margin: 0 0 0.5rem 0;
+	}
+}
 .checkform {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  padding: 4vh 10vw 0 0;
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	padding: 4vh 10vw 0 0;
 
-  h3 {
-    font-size: 1.75em;
-    width: 100%;
-    margin-bottom: 2vh;
-    color: #4f4f4f;
-  }
-
-  .checkbox-wrapper {
-    height: 6vh;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    font-size: 1.5rem;
-    label {
-      padding-left: 0.8rem;
-      color: #3f3f3f;
-    }
-    input[type="checkbox"] {
-      width: 1.5em;
-      height: 1.5em;
-    }
-  }
+	h3 {
+		font-size: 1.75em;
+		width: 100%;
+		margin-bottom: 2vh;
+		color: #4f4f4f;
+	}
 }
-
+.checkbox-wrapper {
+	height: 6vh;
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	font-size: 1.5rem;
+	label {
+		padding-left: 0.8rem;
+		color: #3f3f3f;
+	}
+	input[type='checkbox'] {
+		width: 1.5em;
+		height: 1.5em;
+	}
+}
 .fileform {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  padding: 4vh 10vw 0 0;
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	padding: 4vh 10vw 0 0;
 
-  .filePicker {
-    input[type="file"] {
-      width: 0.1px;
-      height: 0.1px;
-      opacity: 0;
-      overflow: hidden;
-      position: absolute;
-      z-index: -1;
-    }
+	.filePicker {
+		input[type='file'] {
+			width: 0.1px;
+			height: 0.1px;
+			opacity: 0;
+			overflow: hidden;
+			position: absolute;
+			z-index: -1;
+		}
 
-    input[type="file"] + label {
-      background-color: $clrMainAccent;
-      padding: 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 30%;
-      cursor: pointer;
-      margin: 1rem 0;
-      font-size: 1.3rem;
-      color: #1f1f1f;
-      font-weight: 500;
-      img {
-        height: 1.4rem;
-        margin: 0 1.5rem 0 0;
-        justify-content: flex-start;
-      }
-      span {
-        text-align: center;
-        flex: 1;
-      }
-    }
-  }
+		input[type='file'] + label {
+			background-color: $clrMainAccent;
+			padding: 2rem;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			width: 30%;
+			cursor: pointer;
+			margin: 1rem 0;
+			font-size: 1.3rem;
+			color: #1f1f1f;
+			font-weight: 500;
+			img {
+				height: 1.4rem;
+				margin: 0 1.5rem 0 0;
+				justify-content: flex-start;
+			}
+			span {
+				text-align: center;
+				flex: 1;
+			}
+		}
+	}
 
-  .btn-aceptar {
-    display: flex;
-    align-items: center;
-    padding: 1rem 0 0.5rem 0;
-    input {
-      width: 1.3rem;
-      height: 1.3rem;
-    }
-    label {
-      font-weight: 500;
-      color: #1f1f1f;
-      font-size: 1.3rem;
-      margin: 0 0.5rem;
-    }
-    p {
-      display: block;
-    }
-  }
+	.btn-aceptar {
+		display: flex;
+		align-items: center;
+		padding: 1rem 0 0.5rem 0;
+		input {
+			width: 1.3rem;
+			height: 1.3rem;
+		}
+		label {
+			font-weight: 500;
+			color: #1f1f1f;
+			font-size: 1.3rem;
+			margin: 0 0.5rem;
+		}
+		p {
+			display: block;
+		}
+	}
 }
 
 .cross {
-  position: absolute;
-  right: 32px;
-  top: 32px;
-  width: 32px;
-  height: 32px;
-  opacity: 0.7;
-  &::before,
-  &::after {
-    position: absolute;
-    left: 15px;
-    content: " ";
-    height: 33px;
-    width: 2px;
-    background-color: #333;
-  }
-  &::before {
-    transform: rotate(45deg);
-  }
-  &::after {
-    transform: rotate(-45deg);
-  }
+	position: absolute;
+	right: 32px;
+	top: 32px;
+	width: 32px;
+	height: 32px;
+	opacity: 0.7;
+	&::before,
+	&::after {
+		position: absolute;
+		left: 15px;
+		content: ' ';
+		height: 33px;
+		width: 2px;
+		background-color: #333;
+	}
+	&::before {
+		transform: rotate(45deg);
+	}
+	&::after {
+		transform: rotate(-45deg);
+	}
 }
 
 .botones {
-  margin: 4rem 0;
-  button {
-    width: fit-content;
-    border: none;
-    font-size: 1.2em;
-    margin: 0 1.5rem 0 0;
-    cursor: pointer;
-  }
-  .btn-siguiente {
-    background: $clrMain;
-    color: white;
-    border-radius: 5px;
-    padding: 1rem 2rem;
-  }
-  .btn-anterior {
-    background: #fff;
-    color: $clrMain;
-    margin: 0 2rem;
-  }
+	margin: 4rem 0;
+	button {
+		width: fit-content;
+		border: none;
+		font-size: 1.2em;
+		margin: 0 1.5rem 0 0;
+		cursor: pointer;
+	}
+	.btn-siguiente {
+		background: $clrMain;
+		color: white;
+		border-radius: 5px;
+		padding: 1rem 2rem;
+	}
+	.btn-anterior {
+		background: #fff;
+		color: $clrMain;
+		margin: 0 2rem;
+	}
 }
 
 .error-message {
-  color: #d31f1f;
-  line-height: 2;
-  display: block;
+	color: #d31f1f;
+	line-height: 2;
+	display: block;
 }
+
+.success-message {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 0.6em 2em;
+	border-radius: 4px;
+	background-color: #47c034;
+	width: fit-content;
+	color: #fff;
+	gap: 0.6em;
+	margin: 0 0 1vh 0;
+}
+
 .barra-lateral {
-  width: 8px;
-  height: 70vh;
-  background-color: #ccc;
-  z-index: 1;
-  overflow: visible;
-  position: relative;
+	width: 8px;
+	height: 70vh;
+	background-color: #ccc;
+	z-index: 1;
+	overflow: visible;
+	position: relative;
 }
 
 .barra-verde {
-  position: absolute;
-  height: 0%;
-  width: 8px;
-  background: green;
-  z-index: 1;
-  transition: 0.3s;
+	position: absolute;
+	height: 0%;
+	width: 8px;
+	background: green;
+	z-index: 1;
+	transition: 0.3s;
 }
 
 .barra-verde-2 {
-  height: 25%;
+	height: 25%;
 }
 .barra-verde-3 {
-  height: 50%;
+	height: 50%;
 }
 .barra-verde-4 {
-  height: 75%;
+	height: 75%;
 }
 .barra-verde-5 {
-  height: 100%;
+	height: 100%;
 }
 
 .puntos {
-  position: absolute;
-  height: 70vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 2;
-  overflow: visible;
+	position: absolute;
+	height: 70vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	z-index: 2;
+	overflow: visible;
 }
 .punto {
-  z-index: 3;
-  height: 30px;
-  width: 30px;
-  border-radius: 50%;
-  background: #ccc;
-  margin: -11px;
+	z-index: 3;
+	height: 30px;
+	width: 30px;
+	border-radius: 50%;
+	background: #ccc;
+	margin: -11px;
 }
 .pointer {
-  cursor: pointer;
+	cursor: pointer;
 }
-.punto[data-selected="true"] {
-  transition-delay: 0.25s;
-  transition-duration: 0.3s;
-  background: green;
+.punto[data-selected='true'] {
+	transition-delay: 0.25s;
+	transition-duration: 0.3s;
+	background: green;
 }
 
 .resultados {
-  padding: 2rem 0;
-  h2 {
-    margin: 0 0 2rem 0;
-  }
-  li {
-    margin: 0.5rem 0;
-    font-size: 1.2rem;
-  }
+	padding: 2rem 0;
+	h2 {
+		margin: 0 0 2rem 0;
+	}
+	li {
+		margin: 0.5rem 0;
+		font-size: 1.2rem;
+	}
 }
 
 @media screen and (max-width: 1000px) {
-  .container-inscripcion {
-    padding: 32px 0 0 0 !important;
-  }
-  .container-barra {
-    width: 16vw !important;
+	.container-inscripcion {
+		padding: 32px 0 0 0 !important;
+	}
+	.container-barra {
+		width: 16vw !important;
 
-    padding: 0 2vw;
-    .barra-lateral {
-      transform: scale(0.8);
-    }
-  }
-  .botones {
-    margin: 2vh 0 !important;
-    display: flex;
-    flex-direction: row-reverse;
-    width: 100%;
-    button {
-      margin: 0 !important;
-    }
-    .btn-anterior {
-      flex: 1;
-    }
-  }
-  .titulo {
-    text-align: start;
-    line-height: 0.8em;
-  }
-  .row {
-    flex-direction: column;
-    .wrapper-form {
-      margin: 0 0 4vh 0;
-      width: 100%;
-      input,
-      label,
-      select {
-        width: 100% !important;
-      }
-      input,
-      select {
-        margin: 0 !important;
-      }
-    }
-  }
-  .filePicker {
-    label {
-      width: 100% !important;
-    }
-  }
+		padding: 0 2vw;
+		.barra-lateral {
+			transform: scale(0.8);
+		}
+	}
+	.botones {
+		margin: 2vh 0 !important;
+		display: flex;
+		flex-direction: row-reverse;
+		width: 100%;
+		button {
+			margin: 0 !important;
+		}
+		.btn-anterior {
+			flex: 1;
+		}
+	}
+	.titulo {
+		text-align: start;
+		line-height: 0.8em;
+	}
+	.row {
+		flex-direction: column;
+		.wrapper-form {
+			margin: 0 0 4vh 0;
+			width: 100%;
+			input,
+			label,
+			select {
+				width: 100% !important;
+			}
+			input,
+			select {
+				margin: 0 !important;
+			}
+		}
+	}
+	.filePicker {
+		label {
+			width: 100% !important;
+		}
+	}
 }
