@@ -130,10 +130,9 @@ const AdminSolicitud = props => {
 									Aceptar solicitud
 								</button>
 								<Link
-									to={`/solicitudes/${props.match.params.id}/modify`}
+									to={`/admin/solicitudes/${props.match.params.id}/modify`}
 									className='btn-revision-solicitud'
 									name='aceptado'
-									onClick={e => {}}
 								>
 									Modificar solicitud
 								</Link>
