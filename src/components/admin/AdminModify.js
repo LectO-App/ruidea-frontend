@@ -6,13 +6,14 @@ import { axiosInstance } from '../../axios';
 const AdminModify = props => {
 	const { id } = props.match.params;
 	const [user, setUser] = useState({});
+	const [pais, setPais] = useState('');
 	const { register, handleSubmit, errors } = useForm();
 
 	const getUserFromAPI = useCallback(async () => {
 		try {
 			const res = await axiosInstance.post(`/admin/solicitudes/${id}`);
 			setUser(res.data.usuario);
-			console.log(res.data.usuario);
+			setPais(res.data.usuario.paisResidencia);
 		} catch (err) {
 			console.log(err);
 		}
@@ -25,7 +26,7 @@ const AdminModify = props => {
 	}, [getUserFromAPI]);
 
 	const sendDataToAPI = async data => {
-		const dataToSend = { ...data, id, estado: 'aceptado' };
+		const dataToSend = { ...data, id, estado: 'aceptado', paisResidencia: pais };
 		const res = await axiosInstance.post('/admin/modificarSolicitud', dataToSend);
 		if (res.status === 200)
 			Swal.fire({
@@ -87,7 +88,8 @@ const AdminModify = props => {
 							name='paisResidencia'
 							id='paisResidencia'
 							ref={register({ required: 'Por favor, rellene este campo' })}
-							defaultValue={user.paisResidencia}
+							value={pais}
+							onChange={e => setPais(e.target.value)}
 						>
 							<option value='' disabled>
 								Seleccione un país
