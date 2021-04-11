@@ -32,7 +32,6 @@ const Login = props => {
 				props.history.push('/dashboard');
 			});
 		} catch (err) {
-			console.log(err.request);
 			Swal.fire({
 				icon: 'error',
 				title: 'Email y/o contraseña incorrecta',

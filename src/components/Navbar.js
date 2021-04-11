@@ -1,18 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 import auth from '../auth';
-import { axiosInstance } from '../axios';
 
 const Navbar = () => {
-	useEffect(() => {
-		const fetchAPI = async () => {
-			const res = await axiosInstance.get('/inscripcion');
-			console.log(res);
-		};
-		fetchAPI();
-	}, []);
-
 	window.addEventListener('scroll', function () {
 		const nav = document.querySelector('nav');
 		if (nav) {

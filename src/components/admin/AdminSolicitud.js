@@ -73,6 +73,7 @@ const AdminSolicitud = props => {
 						<p className='campo-informacion'>
 							Localidad: <span className='txt-info-usuario'>{user.localidadResidencia}</span>
 						</p>
+
 						<p className='campo-informacion'>
 							Fecha de nacimiento: <span className='txt-info-usuario'>{user.fechaNacimiento.substring(0, 10)}</span>
 						</p>
@@ -115,6 +116,13 @@ const AdminSolicitud = props => {
 								</button>
 							</span>
 						</p>
+						<p className='campo-informacion'>
+							Aceptó política de protección de datos: <span className='txt-info-usuario'>Sí</span>
+						</p>
+						<p className='campo-informacion'>
+							Aceptó recibir información actualizada sobre dislexia y otras DEAs:{' '}
+							<span className='txt-info-usuario'>{user.aceptoRecibirInfo ? 'Sí' : 'No'}</span>
+						</p>
 					</div>
 					{user.estado === 'pendiente' && (
 						<form>
@@ -152,7 +160,6 @@ const AdminSolicitud = props => {
 												},
 												showCancelButton: true,
 											}).then(result => {
-												console.log(result.value);
 												postResultToAPI('revision', result.value, !result.value ? true : false);
 											});
 										};

@@ -90,12 +90,10 @@ const Paso4 = props => {
 					name='aceptoRecibirInfo'
 					id='aceptoRecibirInfo'
 					defaultChecked={formData.aceptoRecibirInfo || false}
-					ref={register({ required: 'Por favor acepte esta casilla.' })}
+					ref={register()}
 				/>
 				<label htmlFor='aceptoRecibirInfo'>Acepto recibir información actualizada sobre dislexia y otras DEAs.</label>
 			</div>
-
-			{errors.aceptoRecibirInfo && <p className='error-message'>{errors.aceptoRecibirInfo.message}</p>}
 
 			<div className='btn-aceptar'>
 				<input
