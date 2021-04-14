@@ -95,7 +95,18 @@ const AdminSolicitudes = props => {
 	};
 
 	const downloadExcel = async () => {
-		console.log(condicion);
+		const res = await axiosInstance.get('/admin/excel', { responseType: 'blob' });
+
+		const url = window.URL.createObjectURL(
+			new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+		);
+
+		const link = document.createElement('a');
+		link.href = url;
+		link.setAttribute('download', 'Usuarios.xlsx');
+		document.body.appendChild(link);
+		link.click();
+		link.remove();
 	};
 
 	const renderBtnEstado = item => {
