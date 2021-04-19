@@ -29,7 +29,8 @@ const AdminModify = props => {
 	}, [getUserFromAPI]);
 
 	const sendDataToAPI = async data => {
-		const dataToSend = { ...data, id, estado: 'aceptado', paisResidencia: pais };
+		const numeroPasaporte = data.numeroPasaporte > 0 ? data.numeroPasaporte : null;
+		const dataToSend = { ...data, id, estado: 'aceptado', paisResidencia: pais, numeroPasaporte };
 		const res = await axiosInstance.post('/admin/modificarSolicitud', dataToSend);
 		if (res.status === 200)
 			Swal.fire({
