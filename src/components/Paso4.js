@@ -32,12 +32,16 @@ const Paso4 = props => {
 					type='file'
 					name='linkDiagnostico'
 					id='linkDiagnostico'
+					multiple
 					ref={register({
 						required: 'Por favor adjunte su diagnóstico médico.',
 					})}
 					onChange={e => {
-						const file = e.target.files[0];
-						setFilesInfo(prev => ({ ...prev, 0: file }));
+						const files = e.target.files;
+						setFilesInfo(prev => {
+							if (prev[0]) return { ...prev, 0: [...prev[0], ...files] };
+							return { ...prev, 0: [...files] };
+						});
 						setFilesChanged(true);
 					}}
 				/>
@@ -51,7 +55,7 @@ const Paso4 = props => {
 				{filesInfo[0] && (
 					<div className='success-message'>
 						<BsCheckCircle size={20} />
-						<span>Subido - {filesInfo[0].name}</span>
+						<span>Subido(s) {filesInfo[0].length} archivos</span>
 					</div>
 				)}
 				{errors.linkDiagnostico && <span className='error-message'>{errors.linkDiagnostico.message}</span>}
@@ -62,10 +66,14 @@ const Paso4 = props => {
 					type='file'
 					name='dniPasaporte'
 					id='dniPasaporte'
+					multiple
 					ref={register({ required: 'Por favor adjunte su DNI o pasaporte.' })}
 					onChange={e => {
-						const file = e.target.files[0];
-						setFilesInfo(prev => ({ ...prev, 1: file }));
+						const files = e.target.files;
+						setFilesInfo(prev => {
+							if (prev[1]) return { ...prev, 1: [...prev[1], ...files] };
+							return { ...prev, 1: [...files] };
+						});
 						setFilesChanged(true);
 					}}
 				/>
@@ -79,7 +87,7 @@ const Paso4 = props => {
 				{filesInfo[1] && (
 					<div className='success-message'>
 						<BsCheckCircle size={20} />
-						<span>Subido - {filesInfo[1].name}</span>
+						<span>Subido(s) {filesInfo[1].length} archivos</span>
 					</div>
 				)}
 				{errors.dniPasaporte && <span className='error-message'>{errors.dniPasaporte.message}</span>}
