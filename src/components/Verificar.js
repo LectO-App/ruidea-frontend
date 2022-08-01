@@ -9,12 +9,14 @@ import logoDisfamPNG from '../img/png/logo-disfam.png';
 
 import logoRuidea from '../img/svg/logo-ruidea.svg';
 import logoRuideaPNG from '../img/png/logo-ruidea.png';
+import { capitalizedDiagnostic } from '../util/capitalize';
 
 const Verificar = props => {
 	const { nroPasaporte, nroDocumento } = props.match.params;
 	const [usuario, setUsuario] = useState({});
 	const [loading, setLoading] = useState(true);
 	const [fecha, setFecha] = useState('');
+	const [diagnostico, setDiagnostico] = useState('');
 	const [error, setError] = useState(false);
 	const [nuevoPasaporte, setNuevoPasaporte] = useState('');
 
@@ -30,6 +32,12 @@ const Verificar = props => {
 			const string = new Date(Date.parse(res.data.usuario.fechaNacimiento)).toISOString().split('-');
 
 			setFecha(`${string[2].split('T')[0]}/${string[1]}/${string[0]}`);
+			const diagnostico = Object.entries(res.data.usuario.diagnostico)
+				.filter(([k, v]) => v)
+				.map(([k, v]) => capitalizedDiagnostic(k))
+				.join(', ');
+
+			setDiagnostico(diagnostico);
 		}
 		const numeroPasaporte = res.data.usuario.numeroPasaporte.toString();
 		let txt = '0000000'.split('');
@@ -88,6 +96,7 @@ const Verificar = props => {
 							</h1>
 							<h3>{fecha}</h3>
 							<h2>{usuario.numeroDocumento}</h2>
+							<h4>{diagnostico}</h4>
 						</div>
 					</div>
 				</div>

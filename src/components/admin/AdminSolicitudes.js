@@ -216,7 +216,10 @@ const AdminSolicitudes = props => {
 							{data.map(item => (
 								<div className='card' key={item._id}>
 									<h4 className='info-usuario'>
-										{item.nombre} {item.apellidos} <span className='numero-documento'>{item.numeroDocumento}</span>
+										{item.nombre} {item.apellidos}
+										<span className='numero-documento'>
+											{item.estado === 'aceptado' ? item.numeroPasaporte : item.numeroDocumento}
+										</span>
 									</h4>
 									{renderBtnEstado(item)}
 								</div>

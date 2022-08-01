@@ -1,179 +1,188 @@
 .dashboard-div-main {
-  position: relative;
+	position: relative;
 }
 
 .dashboard-main {
-  h1 {
-    font-size: calc(40px + (60 - 40) * ((100vw - 300px) / (1600 - 300)));
-    text-align: center;
-    overflow-y: hidden;
-  }
-  .container-verificar-mail {
-    padding: 2em 4em;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    flex-direction: column;
-    background: #eeeeee;
-    max-width: 90vw;
-    width: fit-content;
-    min-height: 400px;
-    margin: 2rem auto;
-    border-radius: 16px;
+	h1 {
+		font-size: calc(40px + (60 - 40) * ((100vw - 300px) / (1600 - 300)));
+		text-align: center;
+		overflow-y: hidden;
+	}
+	.container-verificar-mail {
+		padding: 2em 4em;
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
+		flex-direction: column;
+		background: #eeeeee;
+		max-width: 90vw;
+		width: fit-content;
+		min-height: 400px;
+		margin: 2rem auto;
+		border-radius: 16px;
 
-    .titulo-verificar-mail {
-      text-align: center;
-      font-size: $fsSubHeader;
-      color: #121212;
-    }
-    .texto-verificar-mail {
-      padding: 0 calc(var(--padding-sides));
-      text-align: center;
-      font-size: $fsMedium;
-      font-weight: 400;
-      color: #121212;
-    }
-    .btn-no-recibi-mail {
-      width: fit-content;
-      display: block;
-      margin: 0 auto;
-      font-size: $fsSmall;
-    }
-  }
-  .card-estado {
-    padding: 2em 4em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    background: #eeeeee;
-    max-width: 90vw;
-    width: fit-content;
-    min-height: 400px;
-    margin: 2rem auto;
-    border-radius: 16px;
-    h5 {
-      font-size: $fsSubHeader;
-      color: #2f2e2e;
-      text-align: center;
-      font-weight: normal;
-    }
-    div {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex: 1;
-    }
-  }
-  a,
-  button {
-    border: none;
-    background-color: #4a71d8;
-    color: #fff;
-    font-size: 14px;
-    padding: 1em 2em;
-    font-weight: bold;
-    line-height: 18px;
-    margin: 0 2em;
-    cursor: pointer;
-    user-select: none;
-    text-decoration: none;
-    text-align: center;
-    border-radius: 6px;
-  }
+		.titulo-verificar-mail {
+			text-align: center;
+			font-size: $fsSubHeader;
+			color: #121212;
+		}
+		.texto-verificar-mail {
+			padding: 0 calc(var(--padding-sides));
+			text-align: center;
+			font-size: $fsMedium;
+			font-weight: 400;
+			color: #121212;
+		}
+		.btn-no-recibi-mail {
+			width: fit-content;
+			display: block;
+			margin: 0 auto;
+			font-size: $fsSmall;
+		}
+	}
+	.card-estado {
+		padding: 2em 4em;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		background: #eeeeee;
+		max-width: 90vw;
+		width: fit-content;
+		min-height: 400px;
+		margin: 2rem auto;
+		border-radius: 16px;
+		h5 {
+			font-size: $fsSubHeader;
+			color: #2f2e2e;
+			text-align: center;
+			font-weight: normal;
+		}
+		div {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex: 1;
+		}
+	}
+	a,
+	button {
+		border: none;
+		background-color: #4a71d8;
+		color: #fff;
+		font-size: 14px;
+		padding: 1em 2em;
+		font-weight: bold;
+		line-height: 18px;
+		margin: 0 2em;
+		cursor: pointer;
+		user-select: none;
+		text-decoration: none;
+		text-align: center;
+		border-radius: 6px;
+	}
+}
+
+.solicitud-aceptada {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	gap: 2vh;
 }
 
 .estado-solicitud {
-  font-size: calc(40px + (60 - 40) * ((100vw - 300px) / (1600 - 300)));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  span {
-    font-weight: bold;
-  }
-  picture {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  img {
-    height: 1.3em;
-    margin-right: 1rem;
-    user-select: none;
-  }
-  .txt-aprobada {
-    color: #60b952;
-  }
-  .txt-pendiente {
-    color: #f5b613;
-  }
-  .txt-rechazado {
-    color: #d31f1f;
-  }
+	font-size: calc(40px + (60 - 40) * ((100vw - 300px) / (1600 - 300)));
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	span {
+		font-weight: bold;
+	}
+	picture {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	img {
+		height: 1.3em;
+		margin-right: 1rem;
+		user-select: none;
+	}
+	.txt-aprobada {
+		color: #60b952;
+	}
+	.txt-pendiente {
+		color: #f5b613;
+	}
+	.txt-rechazado {
+		color: #d31f1f;
+	}
 }
 .creado-por-lecto {
-  margin: auto;
-  overflow-y: hidden;
-  p {
-    font-size: 1.6em;
-    color: rgb(44, 44, 44);
-  }
-  .imagenes {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    .imagen-disfam {
-      height: 10rem;
-    }
-    .imagen-lecto {
-      height: 6rem;
-    }
-  }
+	margin: auto;
+	overflow-y: hidden;
+	p {
+		font-size: 1.6em;
+		color: rgb(44, 44, 44);
+	}
+	.imagenes {
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
+		.imagen-disfam {
+			height: 10rem;
+		}
+		.imagen-lecto {
+			height: 6rem;
+		}
+	}
 }
 
 .texto-aprobado,
 .texto-pendiente,
 .texto-rechazado {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  .mensaje-especialista-label {
-    margin: 2vh 0 0 0;
-    font-size: $fsSmall !important;
-    text-decoration: underline;
-  }
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	.mensaje-especialista-label {
+		margin: 2vh 0 0 0;
+		font-size: $fsSmall !important;
+		text-decoration: underline;
+	}
 
-  .mensaje-especialista {
-    font-size: $fsSmall;
-    text-align: center;
-  }
+	.mensaje-especialista {
+		font-size: $fsSmall;
+		text-align: center;
+	}
 }
 
 @media screen and (max-width: 1000px) {
-  .card-estado {
-    h5 {
-      margin-bottom: 2vh;
-    }
-    .botones-descargar {
-      flex-direction: column;
-      padding: 2rem 0;
-      a,
-      button {
-        width: 100%;
-        margin: 1vh 0;
-      }
-    }
-  }
-  .creado-por-lecto {
-    text-align: center;
-    .imagenes {
-      .imagen-disfam {
-        height: 8rem !important;
-      }
-      .imagen-lecto {
-        height: 4rem !important;
-      }
-    }
-  }
+	.card-estado {
+		h5 {
+			margin-bottom: 2vh;
+		}
+
+		.botones-descargar {
+			flex-direction: column;
+			padding: 2rem 0;
+			a,
+			button {
+				width: 100%;
+				margin: 1vh 0;
+			}
+		}
+	}
+	.creado-por-lecto {
+		text-align: center;
+		.imagenes {
+			.imagen-disfam {
+				height: 8rem !important;
+			}
+			.imagen-lecto {
+				height: 4rem !important;
+			}
+		}
+	}
 }

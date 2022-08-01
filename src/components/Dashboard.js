@@ -24,6 +24,7 @@ import LoadingScreen from './LoadingScreen';
 import Navbar from './Navbar';
 
 import { Link } from 'react-router-dom';
+import { getFileFromServer } from '../util/getFileFromServer';
 
 const Dashboard = props => {
 	const cookies = new Cookies();
@@ -43,27 +44,9 @@ const Dashboard = props => {
 		fetchFromAPI(idUsuario);
 	}, []);
 
-	const getFileFromServer = async type => {
+	const downloadFile = async type => {
 		setLoading(true);
-		const isPdf = type === 'pdf';
-		const res = await axiosInstance.get(
-			`/usuario/descargar/${type}/${data._id}`,
-			{
-				responseType: 'arraybuffer',
-				headers: {
-					Accept: isPdf ? 'application/pdf' : 'image/jpeg',
-				},
-			}
-		);
-		const blob = new Blob([res.data], {
-			type: isPdf ? 'application/pdf' : 'image/jpeg',
-		});
-		const link = document.createElement('a');
-		link.href = window.URL.createObjectURL(blob);
-		link.download = isPdf
-			? `Certificado Ruidea.pdf`
-			: 'Certificado Ruidea.jpeg';
-		link.click();
+		await getFileFromServer(type, data.id);
 		setLoading(false);
 	};
 
@@ -80,26 +63,13 @@ const Dashboard = props => {
 							<span className='txt-aprobada'>Aprobada!</span>
 						</div>
 						<div className='botones-descargar'>
-							<button
-								role='button'
-								onClick={e => {
-									getFileFromServer('pdf');
-								}}
-							>
+							<button role='button' onClick={() => downloadFile('pdf')}>
 								Descargar como PDF
 							</button>
-							<button
-								role='button'
-								onClick={() => {
-									getFileFromServer('img');
-								}}
-							>
+							<button role='button' onClick={() => downloadFile('img')}>
 								Descargar como JPG
 							</button>
-							<Link
-								to={`/verificar/${data.numeroDocumento}/${data.numeroPasaporte}`}
-								role='button'
-							>
+							<Link to={`/verificar/${data.numeroDocumento}/${data.numeroPasaporte}`} role='button'>
 								Obtener link de pasaporte
 							</Link>
 						</div>
@@ -127,9 +97,7 @@ const Dashboard = props => {
 							</picture>
 							<span className='txt-pendiente'>Revisión</span>
 						</div>
-						<p className='mensaje-especialista-label'>
-							Mensaje del especialista:
-						</p>
+						<p className='mensaje-especialista-label'>Mensaje del especialista:</p>
 						<p className='mensaje-especialista'>{data.mensajeMedico}</p>
 						<div className='botones-descargar'>
 							<Link to='/inscribirse' role='button'>
@@ -163,8 +131,7 @@ const Dashboard = props => {
 			<Helmet>
 				<meta charSet='utf-8' />
 				<title>
-					Dashboard | RUIDEA - Registro Único Iberoamericano de Personas con
-					Dificultades Específicas del Aprendizaje
+					Dashboard | RUIDEA - Registro Único Iberoamericano de Personas con Dificultades Específicas del Aprendizaje
 				</title>
 			</Helmet>
 			{loading && <LoadingScreen />}
@@ -179,21 +146,16 @@ const Dashboard = props => {
 						</div>
 					) : (
 						<div className='container-verificar-mail'>
-							<h2 className='titulo-verificar-mail'>
-								Correo electrónico no verificado
-							</h2>
+							<h2 className='titulo-verificar-mail'>Correo electrónico no verificado</h2>
 							<h3 className='texto-verificar-mail'>
-								Por favor, entre al enlace que enviamos a su correo electrónico
-								para verificar su identidad. Si no lo encuentra, revise la
-								casilla de spam.
+								Por favor, entre al enlace que enviamos a su correo electrónico para verificar su identidad. Si no lo
+								encuentra, revise la casilla de spam.
 							</h3>
 							<button
 								className='btn-no-recibi-mail'
 								onClick={() => {
 									const resendEmail = async () => {
-										await axiosInstance.post(
-											`/emailVerification/resend/${idUsuario}`
-										);
+										await axiosInstance.post(`/emailVerification/resend/${idUsuario}`);
 									};
 									resendEmail();
 								}}
@@ -207,19 +169,11 @@ const Dashboard = props => {
 						<div className='imagenes' id='card-estado'>
 							<picture>
 								<source srcSet={logoLecto} type='image/webp' />
-								<img
-									src={logoLectoPNG}
-									alt='Logo LectO'
-									className='imagen-lecto'
-								/>
+								<img src={logoLectoPNG} alt='Logo LectO' className='imagen-lecto' />
 							</picture>
 							<picture>
 								<source srcSet={logoDisfam} type='image/webp' />
-								<img
-									src={logoDisfamPNG}
-									alt='Logo Disfam'
-									className='imagen-disfam'
-								/>
+								<img src={logoDisfamPNG} alt='Logo Disfam' className='imagen-disfam' />
 							</picture>
 						</div>
 					</div>

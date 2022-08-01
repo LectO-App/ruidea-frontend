@@ -9,9 +9,11 @@ import iconFail from '../../img/svg/failure-icon.svg';
 import iconFailPNG from '../../img/png/failure-icon.png';
 
 import LoadingScreen from '../LoadingScreen';
+import { getFileFromServer } from '../../util/getFileFromServer';
 
 const AdminSolicitud = props => {
 	const [user, setUser] = useState({});
+	const [loading, setLoading] = useState(false);
 
 	const postResultToAPI = async (estado, mensajeMedico = '', mostrarPopup = true) => {
 		try {
@@ -49,9 +51,15 @@ const AdminSolicitud = props => {
 		getUserFromAPI();
 	}, [getUserFromAPI]);
 
+	const downloadFile = async type => {
+		setLoading(true);
+		await getFileFromServer(type, user._id);
+		setLoading(false);
+	};
+
 	return (
 		<>
-			{Object.keys(user).length === 0 ? (
+			{Object.keys(user).length === 0 || loading ? (
 				<LoadingScreen />
 			) : (
 				<main className='main-solicitud'>
@@ -138,7 +146,7 @@ const AdminSolicitud = props => {
 									Aceptar solicitud
 								</button>
 								<Link
-									to={`/admin/solicitudes/${props.match.params.id}/modify`}
+									to={`/admin/solicitudes/${props.match.params.id}/modificar`}
 									className='btn-revision-solicitud'
 									name='aceptado'
 								>
@@ -182,12 +190,34 @@ const AdminSolicitud = props => {
 						</form>
 					)}
 					{user.estado === 'aceptado' && (
-						<div className='estado-solicitud'>
-							<picture>
-								<source srcSet={iconSuccess} type='image/svg+xml' />
-								<img src={iconSuccessPNG} alt='Ícono Solicitud Aprobada' />
-							</picture>
-							<span className='txt-aprobada'>Aprobada!</span>
+						<div className='solicitud-aceptada'>
+							<div className='estado-solicitud'>
+								<picture>
+									<source srcSet={iconSuccess} type='image/svg+xml' />
+									<img src={iconSuccessPNG} alt='Ícono Solicitud Aprobada' />
+								</picture>
+								<span className='txt-aprobada'>Aprobada!</span>
+								<div className='download-buttons'></div>
+							</div>
+
+							<div className='botones-solicitud'>
+								<Link
+									to={`/admin/solicitudes/${props.match.params.id}/modificar`}
+									className='btn-download btn-revision-solicitud'
+									name='modificar'
+								>
+									Modificar datos del usuario
+								</Link>
+							</div>
+
+							<div className='botones-solicitud'>
+								<button className='btn-download' onClick={() => downloadFile('pdf')}>
+									Descargar certificado como PDF
+								</button>
+								<button className='btn-download' onClick={() => downloadFile('img')}>
+									Descargar certificado como JPG
+								</button>
+							</div>
 						</div>
 					)}
 

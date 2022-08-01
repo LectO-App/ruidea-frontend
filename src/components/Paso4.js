@@ -33,8 +33,9 @@ const Paso4 = props => {
 					name='linkDiagnostico'
 					id='linkDiagnostico'
 					multiple
+					accept='application/pdf'
 					ref={register({
-						required: 'Por favor adjunte su diagnóstico médico.',
+						required: 'Por favor adjunte su diagnóstico médico en formato PDF',
 					})}
 					onChange={e => {
 						const files = e.target.files;
@@ -50,7 +51,7 @@ const Paso4 = props => {
 						<source srcSet={upload} type='image/svg+xml' />
 						<img src={uploadPNG} alt='Ícono Subir Archivos' />
 					</picture>
-					<span> Adjuntar diagnostico</span>
+					<span> Adjuntar diagnostico (PDF)</span>
 				</label>
 				{filesInfo[0] && (
 					<div className='success-message'>
@@ -67,6 +68,7 @@ const Paso4 = props => {
 					name='dniPasaporte'
 					id='dniPasaporte'
 					multiple
+					accept='application/pdf'
 					ref={register({ required: 'Por favor adjunte su DNI o pasaporte.' })}
 					onChange={e => {
 						const files = e.target.files;
@@ -82,7 +84,7 @@ const Paso4 = props => {
 						<source srcSet={upload} type='image/svg+xml' />
 						<img src={uploadPNG} alt='Ícono Subir Archivos' />
 					</picture>
-					<span> Adjuntar DNI o Pasaporte</span>
+					<span> Adjuntar DNI o Pasaporte (PDF)</span>
 				</label>
 				{filesInfo[1] && (
 					<div className='success-message'>

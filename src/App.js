@@ -56,7 +56,7 @@ function App() {
 							<Route exact path='/admin/login' component={AdminLogin} />
 							<Route exact path='/admin/solicitudes' component={AdminSolicitudes} />
 							<Route exact path='/cambiarContraseña/:token' component={ChangePassword} />
-							<Route exact path='/admin/solicitudes/:id/modify' component={AdminModify} />
+							<Route exact path='/admin/solicitudes/:id/modificar' component={AdminModify} />
 							<Route exact path='/admin/solicitudes/:id' component={AdminSolicitud} />
 							<Route exact path='/verificarEmail/:token' component={VerificarEmail} />
 							<Route exact path='/politica-privacidad' component={PrivacyPolicy} />

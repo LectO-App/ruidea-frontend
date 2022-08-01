@@ -151,33 +151,37 @@
 				font-size: $fsSmall;
 			}
 		}
-		.botones-solicitud {
-			display: flex;
-			align-items: center;
-			button,
-			a {
-				padding: 1em 1.3em;
-				margin: 2rem 1rem 0 0;
-				border: none;
-				cursor: pointer;
-				border-radius: 6px;
-				font-weight: bold;
-				display: block;
-				font-size: 14px;
-				text-decoration: none;
-			}
-			.btn-aceptar-solicitud {
-				background: #47c034;
-				color: rgb(31, 31, 31);
-			}
-			.btn-revision-solicitud {
-				background: #e4c435;
-				color: rgb(31, 31, 31);
-			}
-			.btn-rechazar-solicitud {
-				background: #c74533;
-				color: rgb(255, 244, 244);
-			}
+	}
+	.botones-solicitud {
+		display: flex;
+		align-items: center;
+		button,
+		a {
+			padding: 1em 1.3em;
+			margin: 2rem 1rem 0 0;
+			border: none;
+			cursor: pointer;
+			border-radius: 6px;
+			font-weight: bold;
+			display: block;
+			font-size: 14px;
+			text-decoration: none;
+		}
+		.btn-aceptar-solicitud {
+			background: #47c034;
+			color: rgb(31, 31, 31);
+		}
+		.btn-revision-solicitud {
+			background: #e4c435;
+			color: rgb(31, 31, 31);
+		}
+		.btn-rechazar-solicitud {
+			background: #c74533;
+			color: rgb(255, 244, 244);
+		}
+		.btn-download {
+			background: #e5e5e5;
+			font-size: $fsSmall;
 		}
 	}
 }
