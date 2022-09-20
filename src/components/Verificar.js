@@ -38,14 +38,15 @@ const Verificar = props => {
 				.join(', ');
 
 			setDiagnostico(diagnostico);
+
+			const numeroPasaporte = res.data.usuario.numeroPasaporte.toString();
+			let txt = '0000000'.split('');
+			txt.splice(-txt.length - numeroPasaporte.length, numeroPasaporte.length);
+			numeroPasaporte.length === 1
+				? txt.push(numeroPasaporte)
+				: numeroPasaporte.split('').forEach(item => txt.push(item));
+			setNuevoPasaporte(txt.join(''));
 		}
-		const numeroPasaporte = res.data.usuario.numeroPasaporte.toString();
-		let txt = '0000000'.split('');
-		txt.splice(-txt.length - numeroPasaporte.length, numeroPasaporte.length);
-		numeroPasaporte.length === 1
-			? txt.push(numeroPasaporte)
-			: numeroPasaporte.split('').forEach(item => txt.push(item));
-		setNuevoPasaporte(txt.join(''));
 
 		setLoading(false);
 	}, [nroDocumento, nroPasaporte]);

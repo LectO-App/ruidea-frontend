@@ -7,6 +7,7 @@ import { AnimatePresence } from 'framer-motion';
 
 import LoadingScreen from './components/LoadingScreen';
 import ReactGA from 'react-ga';
+import CheckPassport from './components/CheckPassport';
 
 const LandingPage = lazy(() => import('./components/LandingPage'));
 const Dashboard = lazy(() => import('./components/Dashboard'));
@@ -52,6 +53,7 @@ function App() {
 							<Route path='/login' component={Login} />
 							<Route exact path='/admin' component={() => <Redirect to='/admin/login' />} />
 							<Route exact path='/verificar/ejemplo' component={VerificarEjemplo} />
+							<Route exact path='/verificar/numero' component={CheckPassport} />
 							<Route path='/verificar/:nroDocumento/:nroPasaporte' component={Verificar} />
 							<Route exact path='/admin/login' component={AdminLogin} />
 							<Route exact path='/admin/solicitudes' component={AdminSolicitudes} />
