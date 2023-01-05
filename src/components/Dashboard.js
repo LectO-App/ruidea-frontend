@@ -46,7 +46,7 @@ const Dashboard = props => {
 
 	const downloadFile = async type => {
 		setLoading(true);
-		await getFileFromServer(type, data.id);
+		await getFileFromServer(type, data._id);
 		setLoading(false);
 	};
 

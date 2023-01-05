@@ -13,6 +13,7 @@ const AdminSolicitudes = props => {
 		{ value: 'pendiente', label: 'Pendientes' },
 		{ value: 'aceptado', label: 'Aceptados' },
 		{ value: 'rechazado', label: 'Rechazados' },
+		{ value: 'revision', label: 'En revisión' },
 		{ value: '', label: 'Todos' },
 	];
 	const defaultOption = optionsDropdown[0];
@@ -138,6 +139,12 @@ const AdminSolicitudes = props => {
 						Ver solicitud rechazada
 					</p>
 				);
+			case 'revision':
+				return (
+					<p className='text-info-solicitud' onClick={() => props.history.push(`/admin/solicitudes/${item._id}`)}>
+						Ver solicitud en revisión
+					</p>
+				);
 		}
 	};
 
@@ -220,6 +227,7 @@ const AdminSolicitudes = props => {
 										<span className='numero-documento'>
 											{item.estado === 'aceptado' ? item.numeroPasaporte : item.numeroDocumento}
 										</span>
+										<p className='fecha-creacion'>Creación: {new Date(item.fechaCreacion).toLocaleDateString()}</p>
 									</h4>
 									{renderBtnEstado(item)}
 								</div>
