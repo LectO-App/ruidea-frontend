@@ -7,6 +7,7 @@ import 'react-dropdown/style.css';
 import AdminAuth from './adminAuth';
 
 import AdminNavbar from './AdminNavbar';
+import Swal from 'sweetalert2';
 
 const AdminSolicitudes = props => {
 	const optionsDropdown = [
@@ -112,7 +113,26 @@ const AdminSolicitudes = props => {
 
 	const renderBtnEstado = item => {
 		if (item.emailVerificado === false) {
-			return <p className='text-info-solicitud'>Email no verificado</p>;
+			return (
+				<>
+					<p className='text-info-solicitud'>Email no verificado</p>
+					<button
+						className='btn-reenviar-mail'
+						onClick={() => {
+							const resendEmail = async () => {
+								await axiosInstance.post(`/emailVerification/resend/${item._id}`);
+								Swal.fire({
+									title: 'Mail de verificacion reenviado',
+									icon: 'success',
+								});
+							};
+							resendEmail();
+						}}
+					>
+						Reenviar mail de verificacion
+					</button>
+				</>
+			);
 		}
 		//eslint-disable-next-line
 		switch (item.estado) {
