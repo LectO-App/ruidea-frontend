@@ -1,0 +1,17 @@
+.section-que-es-ruidea {
+  .logos {
+    padding: 2rem 0;
+    display: flex;
+    align-items: center;
+    @media screen and (max-width: 1000px) {
+      justify-content: center;
+    }
+    max-width: 100%;
+    flex-wrap: wrap;
+    gap: 3rem;
+  }
+
+  .logo {
+    height: 60px;
+  }
+}

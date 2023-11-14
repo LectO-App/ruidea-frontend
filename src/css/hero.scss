@@ -49,6 +49,9 @@ main {
     }
   }
   .waves {
+    * {
+      width: 100%;
+    }
     position: relative;
     height: auto;
     margin-bottom: -3px;
@@ -58,7 +61,6 @@ main {
     }
   }
 }
-
 
 @media screen and (max-width: 1000px) {
   section {
