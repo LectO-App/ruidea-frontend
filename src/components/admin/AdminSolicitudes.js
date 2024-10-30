@@ -168,6 +168,17 @@ const AdminSolicitudes = props => {
 		}
 	};
 
+	const calculateAge = date => {
+		const today = new Date();
+		const birthDate = new Date(date);
+		let age = today.getFullYear() - birthDate.getFullYear();
+		const monthDiff = today.getMonth() - birthDate.getMonth();
+		if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+			age--;
+		}
+		return age;
+	};
+
 	return (
 		<>
 			<AdminNavbar cerrarSesion={cerrarSesion} />
@@ -248,6 +259,9 @@ const AdminSolicitudes = props => {
 											{item.estado === 'aceptado' ? item.numeroPasaporte : item.numeroDocumento}
 										</span>
 										<p className='fecha-creacion'>Creación: {new Date(item.fechaCreacion).toLocaleDateString()}</p>
+										<p className='fecha-creacion'>
+											Fecha de nacimiento: {new Date(item.fechaNacimiento).toLocaleDateString()} (edad: {calculateAge(item.fechaNacimiento)})
+										</p>
 									</h4>
 									{renderBtnEstado(item)}
 								</div>
