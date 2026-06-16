@@ -193,6 +193,9 @@
 
 @media screen and (max-width: 900px) {
 	.main-verificar {
+		// children (Pasaporte N° / logo+data / "desarrollado por") become static below,
+		// so the container must stack them vertically instead of in the default row.
+		flex-direction: column;
 		.pasaporte,
 		.desarrollado-por-lecto {
 			position: static;
