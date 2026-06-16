@@ -246,7 +246,8 @@
   background: $reg-surface;
   border: 1px solid $reg-border;
   border-radius: 14px;
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; // momentum scroll on iOS
 }
 .adm-table {
   width: 100%;

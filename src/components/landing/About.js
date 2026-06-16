@@ -10,14 +10,15 @@ const About = () => (
         Un documento verificado que hace valer tus derechos
       </h2>
       <p className="lp-section__lead">
-        RUIDEA es el Registro Único Iberoamericano con el que las personas con Dificultades
-        Específicas del Aprendizaje obtienen un pasaporte digital verificado. Con él, las
-        administraciones y autoridades pueden tener en consideración la legislación vigente y
-        las circunstancias que concurren en la persona portadora.
+        RUIDEA es el Registro Único Iberoamericano con el que las personas con
+        Dificultades Específicas del Aprendizaje obtienen un pasaporte digital
+        verificado. Con él, las administraciones y autoridades pueden tener en
+        consideración la legislación vigente y las circunstancias que concurren
+        en la persona portadora.
       </p>
       <p className="lp-section__muted">
-        Emitido por la Organización Iberoamericana DISFAM, único representante del colectivo en
-        la gran mayoría de países iberoamericanos.
+        Emitido por la Organización Internacional DISFAM, primera entidad sin
+        ánimo de lucro presente en los Estados Iberoamericanos
       </p>
     </div>
   </section>
