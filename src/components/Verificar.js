@@ -9,6 +9,17 @@ import logoDisfamPNG from '../img/png/logo-disfam.png';
 import logoRuidea from '../img/svg/logo-ruidea.svg';
 import logoRuideaPNG from '../img/png/logo-ruidea.png';
 import { capitalizedDiagnostic } from '../util/capitalize';
+import 'flag-icon-css/css/flag-icon.min.css';
+
+// Country name -> ISO-3166 alpha-2, for the flag shown beside the country (matches the
+// list of countries offered in registration / the downloaded passport).
+const PAIS_ISO = {
+	España: 'es', Andorra: 'ad', Argentina: 'ar', Bolivia: 'bo', Brasil: 'br',
+	Chile: 'cl', Colombia: 'co', 'Costa Rica': 'cr', Cuba: 'cu', Ecuador: 'ec',
+	'El Salvador': 'sv', Guatemala: 'gt', México: 'mx', Nicaragua: 'ni', Panamá: 'pa',
+	Paraguay: 'py', Perú: 'pe', Portugal: 'pt', 'República Dominicana': 'do',
+	Uruguay: 'uy', Venezuela: 've',
+};
 
 const Verificar = props => {
 	const { nroPasaporte, nroDocumento } = props.match.params;
@@ -77,7 +88,12 @@ const Verificar = props => {
 	return (
 		<div>
 			<header className='header-verificar'>
-				<p className='pais'>{usuario.paisResidencia}</p>
+				<p className='pais'>
+					{PAIS_ISO[usuario.paisResidencia] && (
+						<span className={`flag-icon flag-icon-${PAIS_ISO[usuario.paisResidencia]}`} aria-hidden='true' />
+					)}
+					<span>{usuario.paisResidencia}</span>
+				</p>
 				<h1>PASAPORTE DEA</h1>
 				<a href='https://disfam.org' target='_blank' rel='noopener noreferrer'>
 					<picture>

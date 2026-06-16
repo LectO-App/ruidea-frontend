@@ -13,9 +13,17 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		gap: 0.5em;
 		position: absolute;
 		left: 4vw;
 		font-size: $fsMedium;
+		.flag-icon {
+			width: 1.7em;
+			height: 1.15em;
+			border-radius: 3px;
+			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+			flex-shrink: 0;
+		}
 	}
 	a {
 		display: flex;
@@ -106,10 +114,21 @@
 
 .footer-verificar {
 	background: #41a1ac;
-	height: 15vh;
+	min-height: 15vh;
 	font-size: $fsSmall;
 	color: #fff;
-	width: 100vw;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 3vh 6vw;
+	box-sizing: border-box;
+	p {
+		max-width: 58em;
+		margin: 0;
+		text-align: center;
+		line-height: 1.5;
+	}
 }
 
 .error-screen {
