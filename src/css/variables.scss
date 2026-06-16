@@ -3,6 +3,16 @@ $clrMainDark: #297f89;
 $clrMainAccent: #cbf5fa;
 $clrFooter: #8fd5dd;
 
+// Shared app surface palette (design system used by registration, auth and dashboard).
+$reg-bg: #faf7f2;
+$reg-surface: #ffffff;
+$reg-ink: #2b2b33; // not pure black — softer for dyslexic readers
+$reg-muted: #5f6168;
+$reg-border: #e4e0d8;
+$reg-error: #c0392b;
+$reg-ok: #2e7d32;
+$reg-radius: 12px;
+
 $progressBarSpace: 18vw;
 
 $fsHeader: calc(30px + (44 - 30) * ((100vw - 300px) / (1600 - 300)));

@@ -1,277 +1,375 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { axiosInstance } from '../../axios';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { axiosInstance } from "../../axios";
 
-import Dropdown from 'react-dropdown';
-import 'react-dropdown/style.css';
+import AdminAuth from "./adminAuth";
+import AdminNavbar from "./AdminNavbar";
+import StatusBadge, { statusKey } from "./StatusBadge";
+import { toast } from "../ui/toast";
+import InlineMessage from "../ui/InlineMessage";
 
-import AdminAuth from './adminAuth';
+const FILTERS = [
+  { value: "pendiente", label: "Pendientes" },
+  { value: "revision", label: "En revisión" },
+  { value: "aceptado", label: "Aceptados" },
+  { value: "rechazado", label: "Rechazados" },
+  { value: "", label: "Todas" },
+];
 
-import AdminNavbar from './AdminNavbar';
-import Swal from 'sweetalert2';
+const fmtDate = (d) =>
+  d ? new Date(d).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" }) : "—";
 
-const AdminSolicitudes = props => {
-	const optionsDropdown = [
-		{ value: 'pendiente', label: 'Pendientes' },
-		{ value: 'aceptado', label: 'Aceptados' },
-		{ value: 'rechazado', label: 'Rechazados' },
-		{ value: 'revision', label: 'En revisión' },
-		{ value: '', label: 'Todos' },
-	];
-	const defaultOption = optionsDropdown[0];
-
-	const [condicion, setCondicion] = useState(defaultOption.value);
-
-	const [numeroOrdenarActual, setNumeroOrdenarActual] = useState(1);
-
-	const [data, setData] = useState([]);
-	const [loading, setLoading] = useState(true);
-
-	const [searchData, setSearchData] = useState([]);
-
-	const searchInData = e => {
-		if (e.target.value === '') {
-			return setSearchData([]);
-		}
-		const matches = data.filter(el => el.nombre.toLowerCase().includes(e.target.value.toLowerCase()));
-		setSearchData(matches);
-	};
-
-	const fetchFromAPI = useCallback(async condicion => {
-		setLoading(true);
-		const res = await axiosInstance.post('/admin/solicitudes', {
-			condicion,
-		});
-		setData(res.data);
-		setLoading(false);
-	}, []);
-
-	const checkLoggedIn = useCallback(() => {
-		!AdminAuth.isAuthenticated() && props.history.push('/admin/login');
-	}, [props.history]);
-
-	useEffect(() => {
-		checkLoggedIn();
-		fetchFromAPI(condicion);
-	}, [fetchFromAPI, checkLoggedIn, condicion]);
-
-	const cerrarSesion = () => {
-		AdminAuth.logout(() => {
-			props.history.push('/admin');
-		});
-	};
-
-	const onDropdownChange = e => {
-		setCondicion(e.value);
-		fetchFromAPI(e.value);
-	};
-
-	const ordenarArray = number => {
-		let sortedArray = [];
-
-		// eslint-disable-next-line default-case
-		switch (number) {
-			// 1 es el default, de mas viejo a mas nuevo
-			case 1:
-				sortedArray = [...data].sort((a, b) =>
-					a.fechaCreacion > b.fechaCreacion ? 1 : b.fechaCreacion > a.fechaCreacion ? -1 : 0
-				);
-				break;
-			// 2 es de mas nuevo a mas viejo
-			case 2:
-				sortedArray = [...data].sort((a, b) =>
-					b.fechaCreacion > a.fechaCreacion ? 1 : a.fechaCreacion > b.fechaCreacion ? -1 : 0
-				);
-				break;
-			// 3 es por orden alfabético
-			case 3:
-				sortedArray = [...data].sort((a, b) => {
-					var nameA = a.nombre.toLowerCase(),
-						nameB = b.nombre.toLowerCase();
-					if (nameA < nameB) return -1;
-					if (nameA > nameB) return 1;
-					return 0;
-				});
-				break;
-		}
-		setData(sortedArray);
-	};
-
-	const downloadExcel = async () => {
-		const res = await axiosInstance.get('/admin/excel', { responseType: 'blob' });
-
-		const url = window.URL.createObjectURL(
-			new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-		);
-
-		const link = document.createElement('a');
-		link.href = url;
-		link.setAttribute('download', 'Usuarios.xlsx');
-		document.body.appendChild(link);
-		link.click();
-		link.remove();
-	};
-
-	const renderBtnEstado = item => {
-		if (item.emailVerificado === false) {
-			return (
-				<>
-					<p className='text-info-solicitud'>Email no verificado</p>
-					<button
-						className='btn-reenviar-mail'
-						onClick={() => {
-							const resendEmail = async () => {
-								await axiosInstance.post(`/emailVerification/resend/${item._id}`);
-								Swal.fire({
-									title: 'Mail de verificacion reenviado',
-									icon: 'success',
-								});
-							};
-							resendEmail();
-						}}
-					>
-						Reenviar mail de verificacion
-					</button>
-				</>
-			);
-		}
-		//eslint-disable-next-line
-		switch (item.estado) {
-			case 'aceptado':
-				return (
-					<p className='text-info-solicitud' onClick={() => props.history.push(`/admin/solicitudes/${item._id}`)}>
-						Ver solicitud aceptada
-					</p>
-				);
-			case 'pendiente':
-				return (
-					<button
-						className='btn-verificar-solicitud'
-						onClick={() => {
-							props.history.push(`/admin/solicitudes/${item._id}`);
-						}}
-					>
-						Verificar solicitud
-					</button>
-				);
-			case 'rechazado':
-				return (
-					<p className='text-info-solicitud' onClick={() => props.history.push(`/admin/solicitudes/${item._id}`)}>
-						Ver solicitud rechazada
-					</p>
-				);
-			case 'revision':
-				return (
-					<p className='text-info-solicitud' onClick={() => props.history.push(`/admin/solicitudes/${item._id}`)}>
-						Ver solicitud en revisión
-					</p>
-				);
-		}
-	};
-
-	const calculateAge = date => {
-		const today = new Date();
-		const birthDate = new Date(date);
-		let age = today.getFullYear() - birthDate.getFullYear();
-		const monthDiff = today.getMonth() - birthDate.getMonth();
-		if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-			age--;
-		}
-		return age;
-	};
-
-	return (
-		<>
-			<AdminNavbar cerrarSesion={cerrarSesion} />
-			<main className='main-admin'>
-				<div className='header-solicitudes pendientes'>
-					<h1>Verificar Solicitudes</h1>
-					<div className='form-group form-group-dropdown'>
-						<label htmlFor='dropdown'>Filtrar por:</label>
-						<Dropdown
-							options={optionsDropdown}
-							onChange={onDropdownChange}
-							value={condicion}
-							className='dropdown'
-							placeholder='Filtrar por...'
-							id='dropdown'
-						/>
-					</div>
-					<input className='searchbar' type='text' onChange={searchInData} placeholder='Busca un nombre o documento' />
-					<div className='container-resultados-busqueda'>
-						{searchData.map(item => (
-							<div
-								className='resultado-busqueda'
-								onClick={() => props.history.push(`/admin/solicitudes/${item._id}`)}
-								key={item._id}
-							>
-								<p>
-									{item.nombre} {item.apellidos}
-								</p>
-								<p class='correo'>{item.correoElectronico}</p>
-							</div>
-						))}
-					</div>
-					<p className='label-ordenar'>Ordenar por: </p>
-					<span
-						className={`opcion-ordenar ${numeroOrdenarActual === 1 && 'opcion-ordenar-active'} `}
-						onClick={() => {
-							ordenarArray(1);
-							setNumeroOrdenarActual(1);
-						}}
-					>
-						Más viejo
-					</span>
-					<span
-						className={`opcion-ordenar ${numeroOrdenarActual === 2 && 'opcion-ordenar-active'} `}
-						onClick={() => {
-							ordenarArray(2);
-							setNumeroOrdenarActual(2);
-						}}
-					>
-						Más nuevo
-					</span>
-					<span
-						className={`opcion-ordenar ${numeroOrdenarActual === 3 && 'opcion-ordenar-active'} `}
-						onClick={() => {
-							ordenarArray(3);
-							setNumeroOrdenarActual(3);
-						}}
-					>
-						Alfabético (A-Z)
-					</span>
-				</div>
-				<div className='container-cards-admin'>
-					{loading ? (
-						<h3 className='txt-cargando'>Cargando...</h3>
-					) : data.length === 0 ? (
-						<h1>No se encontraron usuarios en este estado</h1>
-					) : (
-						<>
-							<h3>Cantidad: {data.length}</h3>
-							<div className='btn-download-excel' onClick={downloadExcel}>
-								Descargar planilla de Excel
-							</div>
-							{data.map(item => (
-								<div className='card' key={item._id}>
-									<h4 className='info-usuario'>
-										{item.nombre} {item.apellidos}
-										<span className='numero-documento'>
-											{item.estado === 'aceptado' ? item.numeroPasaporte : item.numeroDocumento}
-										</span>
-										<p className='fecha-creacion'>Creación: {new Date(item.fechaCreacion).toLocaleDateString()}</p>
-										<p className='fecha-creacion'>
-											Fecha de nacimiento: {new Date(item.fechaNacimiento).toLocaleDateString()} (edad: {calculateAge(item.fechaNacimiento)})
-										</p>
-									</h4>
-									{renderBtnEstado(item)}
-								</div>
-							))}
-						</>
-					)}
-				</div>
-			</main>
-		</>
-	);
+const calculateAge = (date) => {
+  const today = new Date();
+  const birth = new Date(date);
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  return age;
 };
+
+const AdminSolicitudes = (props) => {
+  const [condicion, setCondicion] = useState("pendiente");
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [query, setQuery] = useState("");
+  const [exporting, setExporting] = useState(false);
+  // Default to most-recent-first — the useful order for triage.
+  const [sort, setSort] = useState({ key: "fecha", dir: "desc" });
+
+  const fetchFromAPI = useCallback(async (cond) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axiosInstance.post("/admin/solicitudes", { condicion: cond });
+      setData(res.data);
+    } catch (err) {
+      setError("No se pudieron cargar las solicitudes.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // The route is server-protected (ProtectedRoute -> /admin/me); no client-side gate.
+  useEffect(() => {
+    fetchFromAPI(condicion);
+  }, [fetchFromAPI, condicion]);
+
+  const cerrarSesion = () =>
+    AdminAuth.logout(() => props.history.push("/admin"));
+
+  const toggleSort = (key) =>
+    setSort((s) =>
+      s.key === key ? { key, dir: s.dir === "asc" ? "desc" : "asc" } : { key, dir: key === "nombre" ? "asc" : "desc" }
+    );
+
+  // Inline search (name, surname, document or email) + sort, all derived from `data`.
+  const rows = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    let list = data;
+    if (q) {
+      list = data.filter((el) =>
+        [el.nombre, el.apellidos, el.numeroDocumento, el.numeroPasaporte, el.correoElectronico]
+          .filter(Boolean)
+          .some((v) => String(v).toLowerCase().includes(q))
+      );
+    }
+    const dir = sort.dir === "asc" ? 1 : -1;
+    return [...list].sort((a, b) => {
+      if (sort.key === "nombre") {
+        return `${a.nombre} ${a.apellidos}`.localeCompare(`${b.nombre} ${b.apellidos}`, "es") * dir;
+      }
+      return (new Date(a.fechaCreacion) - new Date(b.fechaCreacion)) * dir;
+    });
+  }, [data, query, sort]);
+
+  const downloadExcel = async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const res = await axiosInstance.get("/admin/excel", { responseType: "blob" });
+      const url = window.URL.createObjectURL(
+        new Blob([res.data], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "Usuarios.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error("No se pudo descargar la planilla.");
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const resendEmail = async (id) => {
+    try {
+      await axiosInstance.post(`/admin/resend/${id}`);
+      toast.success("Mail de verificación reenviado");
+    } catch (err) {
+      toast.error("No se pudo reenviar el mail.");
+    }
+  };
+
+  const openSolicitud = (id) => props.history.push(`/admin/solicitudes/${id}`);
+
+  // Always render an arrow so the header doesn't shift when a column becomes active:
+  // a faint up-down glyph reserves the slot, the active column shows the real direction.
+  const SortArrow = ({ col }) => {
+    const active = sort.key === col;
+    return (
+      <span className={`adm-th-arrow${active ? " is-active" : ""}`} aria-hidden="true">
+        {active ? (sort.dir === "asc" ? "↑" : "↓") : "↕"}
+      </span>
+    );
+  };
+
+  const renderAction = (item) => {
+    if (item.emailVerificado === false) {
+      return (
+        <button className="adm-btn adm-btn--ghost" onClick={() => resendEmail(item._id)}>
+          Reenviar verificación
+        </button>
+      );
+    }
+    const primary = item.estado === "pendiente";
+    return (
+      <button
+        className={`adm-btn ${primary ? "adm-btn--primary" : "adm-btn--ghost"}`}
+        onClick={() => openSolicitud(item._id)}
+      >
+        {primary ? "Revisar" : "Ver"}
+      </button>
+    );
+  };
+
+  return (
+    <div className="adm">
+      <AdminNavbar cerrarSesion={cerrarSesion} />
+      <main className="adm-main">
+        <header className="adm-head">
+          <div>
+            <h1 className="adm-title">Solicitudes</h1>
+            <p className="adm-subtitle">Revisa y gestiona las solicitudes de pasaporte DEA.</p>
+          </div>
+          <button
+            className="adm-btn adm-btn--ghost adm-btn--lead"
+            onClick={downloadExcel}
+            disabled={exporting}
+          >
+            <DownloadIcon /> {exporting ? "Descargando…" : "Descargar Excel"}
+          </button>
+        </header>
+
+        <div className="adm-toolbar">
+          <div className="adm-tabs" role="tablist" aria-label="Filtrar por estado">
+            {FILTERS.map((f) => (
+              <button
+                key={f.value}
+                role="tab"
+                aria-selected={condicion === f.value}
+                className={`adm-tab${condicion === f.value ? " is-active" : ""}`}
+                onClick={() => setCondicion(f.value)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          <div className="adm-search">
+            <SearchIcon />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar por nombre, documento o correo"
+              aria-label="Buscar solicitudes"
+            />
+          </div>
+        </div>
+
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={condicion || "todas"}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {loading ? (
+              <SkeletonTable />
+            ) : error ? (
+              <InlineMessage type="error">
+                {error}{" "}
+                <button className="adm-link" onClick={() => fetchFromAPI(condicion)}>
+                  Reintentar
+                </button>
+              </InlineMessage>
+            ) : rows.length === 0 ? (
+              <EmptyState query={query} />
+            ) : (
+              <>
+            <p className="adm-count">
+              {rows.length} {rows.length === 1 ? "solicitud" : "solicitudes"}
+              {query && " encontradas"}
+            </p>
+            <div className="adm-table-wrap">
+              <table className="adm-table">
+                <thead>
+                  <tr>
+                    <th>
+                      <button
+                        className="adm-th-sort"
+                        onClick={() => toggleSort("nombre")}
+                        aria-label={`Ordenar por solicitante${
+                          sort.key === "nombre" ? (sort.dir === "asc" ? ", ascendente" : ", descendente") : ""
+                        }`}
+                      >
+                        Solicitante <SortArrow col="nombre" />
+                      </button>
+                    </th>
+                    <th>Documento</th>
+                    <th>
+                      <button
+                        className="adm-th-sort"
+                        onClick={() => toggleSort("fecha")}
+                        aria-label={`Ordenar por fecha de creación${
+                          sort.key === "fecha" ? (sort.dir === "asc" ? ", ascendente" : ", descendente") : ""
+                        }`}
+                      >
+                        Creación <SortArrow col="fecha" />
+                      </button>
+                    </th>
+                    <th>Nacimiento</th>
+                    <th>Estado</th>
+                    <th className="adm-th-action">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((item) => (
+                    <tr
+                      key={item._id}
+                      className="adm-row"
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Ver solicitud de ${item.nombre} ${item.apellidos}`}
+                      onClick={() => openSolicitud(item._id)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          openSolicitud(item._id);
+                        }
+                      }}
+                    >
+                      <td data-label="Solicitante">
+                        <span className="adm-person">
+                          <span className="adm-person__name">
+                            {item.nombre} {item.apellidos}
+                          </span>
+                          <span className="adm-person__mail">{item.correoElectronico}</span>
+                        </span>
+                      </td>
+                      <td data-label="Documento" className="adm-mono">
+                        {statusKey(item) === "aceptado" && item.numeroPasaporte
+                          ? `Nº ${item.numeroPasaporte}`
+                          : item.numeroDocumento}
+                      </td>
+                      <td data-label="Creación">{fmtDate(item.fechaCreacion)}</td>
+                      <td data-label="Nacimiento">
+                        {fmtDate(item.fechaNacimiento)}
+                        {item.fechaNacimiento && (
+                          <span className="adm-age"> · {calculateAge(item.fechaNacimiento)} años</span>
+                        )}
+                      </td>
+                      <td data-label="Estado">
+                        <StatusBadge item={item} />
+                      </td>
+                      <td className="adm-td-action" onClick={(e) => e.stopPropagation()}>
+                        {renderAction(item)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+              </>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </main>
+    </div>
+  );
+};
+
+const SkeletonTable = () => (
+  <div aria-hidden="true">
+    {/* Mirror the loaded view's count line + header row so the table doesn't jump. */}
+    <p className="adm-count">
+      <span className="adm-skel adm-skel--count" />
+    </p>
+    <div className="adm-table-wrap">
+      <table className="adm-table adm-table--skeleton">
+        <thead>
+          <tr>
+            <th>Solicitante</th>
+            <th>Documento</th>
+            <th>Creación</th>
+            <th>Nacimiento</th>
+            <th>Estado</th>
+            <th className="adm-th-action">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <tr key={i}>
+              {Array.from({ length: 6 }).map((__, j) => (
+                <td key={j}>
+                  <span className="adm-skel" />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
+const EmptyState = ({ query }) => (
+  <div className="adm-empty">
+    <div className="adm-empty__icon" aria-hidden="true">
+      <InboxIcon />
+    </div>
+    <h2>{query ? "Sin coincidencias" : "No hay solicitudes en este estado"}</h2>
+    <p>
+      {query
+        ? "Prueba con otro nombre, documento o correo."
+        : "Cuando lleguen nuevas solicitudes aparecerán aquí."}
+    </p>
+  </div>
+);
+
+/* ---- inline icons ---- */
+const DownloadIcon = () => (
+  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" />
+  </svg>
+);
+const SearchIcon = () => (
+  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="7" />
+    <path d="m20 20-3.2-3.2" />
+  </svg>
+);
+const InboxIcon = () => (
+  <svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 13h4l2 3h6l2-3h4M5 5h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
+  </svg>
+);
 
 export default AdminSolicitudes;

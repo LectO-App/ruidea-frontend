@@ -1,5 +1,235 @@
 .dashboard-div-main {
 	position: relative;
+	min-height: 100vh;
+	background: $reg-bg;
+}
+
+/* ---------- Dashboard (redesigned, matches the registration/auth system) ---------- */
+.dash {
+	background: $reg-bg;
+	color: $reg-ink;
+	padding: clamp(24px, 4vw, 56px) clamp(16px, 4vw, 48px) 64px;
+	// Explicit direction/alignment: a global `main {}` rule (hero.scss) forces
+	// flex-direction:column, which would otherwise pin the shell to the left edge.
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	-webkit-font-smoothing: antialiased;
+}
+.dash-shell {
+	width: 100%;
+	max-width: 560px;
+	display: flex;
+	flex-direction: column;
+}
+.dash-greeting {
+	font-size: clamp(1.5rem, 3.5vw, 2rem);
+	font-weight: 700;
+	line-height: 1.3;
+	margin: 0 0 clamp(16px, 3vw, 24px);
+	text-align: center;
+	text-wrap: balance;
+}
+.status-card {
+	--tone: #{$clrMainDark};
+	--tone-bg: #{rgba($clrMain, 0.12)};
+	background: $reg-surface;
+	border-radius: 18px;
+	padding: clamp(28px, 5vw, 44px);
+	box-shadow: 0 1px 2px rgba(43, 43, 51, 0.05), 0 16px 44px rgba(43, 43, 51, 0.1);
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	&.tone-ok {
+		--tone: #{$reg-ok};
+		--tone-bg: #{rgba($reg-ok, 0.12)};
+	}
+	&.tone-wait {
+		--tone: #{$clrMainDark};
+		--tone-bg: #{rgba($clrMain, 0.12)};
+	}
+	&.tone-warn {
+		--tone: #b07c00;
+		--tone-bg: rgba(214, 158, 46, 0.18);
+	}
+	&.tone-danger {
+		--tone: #{$reg-error};
+		--tone-bg: #{rgba($reg-error, 0.1)};
+	}
+}
+.status-badge {
+	width: 84px;
+	height: 84px;
+	border-radius: 50%;
+	display: grid;
+	place-items: center;
+	background: var(--tone-bg);
+	color: var(--tone);
+	margin-bottom: 6px;
+}
+.status-title {
+	font-size: clamp(1.4rem, 3.5vw, 1.9rem);
+	margin: 0;
+	text-wrap: balance;
+}
+.status-desc {
+	margin: 0;
+	color: $reg-muted;
+	font-size: 1.05rem;
+	max-width: 44ch;
+	line-height: 1.6;
+	text-wrap: pretty;
+}
+.status-note {
+	width: 100%;
+	text-align: left;
+	margin-top: 12px;
+	padding: 16px 18px;
+	border-radius: 12px;
+	background: #fbfaf7;
+	border: 1px solid $reg-border;
+	p {
+		margin: 6px 0 0;
+		line-height: 1.6;
+	}
+}
+.status-note-label {
+	font-size: 0.8rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: $reg-muted;
+}
+.status-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	justify-content: center;
+	margin-top: 18px;
+	width: 100%;
+	.btn-primary,
+	.btn-secondary {
+		margin-left: 0;
+	}
+	svg {
+		margin-right: 4px;
+		vertical-align: -3px;
+	}
+	// Equal-width, aligned rows for the multi-action (approved) state.
+	&.grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+.btn-spinner {
+	width: 18px;
+	height: 18px;
+	border: 2px solid currentColor;
+	border-right-color: transparent;
+	border-radius: 50%;
+	display: inline-block;
+	vertical-align: -3px;
+	margin-right: 6px;
+	animation: btn-spin 0.6s linear infinite;
+}
+@keyframes btn-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* ---------- Entrance & celebration ---------- */
+// The page should feel like it arrives, not blink: the card fades/rises in once on mount
+// instead of popping in after the skeleton. The approved state — the rarest, most meaningful
+// moment of the whole journey — earns a little extra: the badge settles in and the action
+// buttons stagger. fill-mode is `backwards` (not `forwards`/`both`) on purpose so the held
+// end-state transform never overrides the buttons' :active scale-on-press. The .dash tree is
+// NOT covered by registration.scss's reduced-motion reset, so it's handled explicitly below.
+.status-card--enter {
+	animation: dash-rise 280ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+@keyframes dash-rise {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+}
+
+.status-card--celebrate .status-badge {
+	animation: dash-badge-pop 440ms cubic-bezier(0.16, 1, 0.3, 1) 140ms backwards;
+}
+@keyframes dash-badge-pop {
+	from {
+		opacity: 0;
+		transform: scale(0.8);
+	}
+	60% {
+		transform: scale(1.06);
+	}
+	to {
+		transform: scale(1);
+	}
+}
+
+.status-actions--stagger {
+	.btn-primary,
+	.btn-secondary {
+		animation: dash-rise 300ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+	}
+	> :nth-child(1) {
+		animation-delay: 220ms;
+	}
+	> :nth-child(2) {
+		animation-delay: 300ms;
+	}
+	> :nth-child(3) {
+		animation-delay: 380ms;
+	}
+	> :nth-child(4) {
+		animation-delay: 460ms;
+	}
+}
+
+@media screen and (max-width: 560px) {
+	.status-actions.grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.btn-spinner {
+		animation-duration: 1.4s;
+	}
+	.status-card--enter,
+	.status-card--celebrate .status-badge,
+	.status-actions--stagger .btn-primary,
+	.status-actions--stagger .btn-secondary {
+		animation: none;
+	}
+}
+.dash-credit {
+	margin-top: clamp(28px, 5vw, 44px);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
+	color: $reg-muted;
+	span {
+		font-size: 0.95rem;
+	}
+	.dash-logos {
+		display: flex;
+		align-items: center;
+		gap: 28px;
+		img {
+			height: 44px;
+			width: auto;
+			opacity: 0.8;
+		}
+	}
 }
 
 .dashboard-main {
@@ -158,7 +388,80 @@
 	}
 }
 
+/* ---------- Loading skeleton ---------- */
+// Mirrors the redesigned status card (badge + title + copy + actions) so nothing reflows
+// when data lands. Base `.sk` shimmer lives in skeleton.scss.
+.dsk-greeting {
+	// Mirror .dash-greeting exactly so the card doesn't jump when real data loads:
+	// same font metrics (so the line box is the same height) and the same margin.
+	font-size: clamp(1.5rem, 3.5vw, 2rem);
+	line-height: 1.3;
+	margin: 0 0 clamp(16px, 3vw, 24px);
+	display: flex;
+	justify-content: center;
+	.sk {
+		display: block;
+		width: min(240px, 60vw);
+		height: 1.3em;
+		border-radius: 8px;
+	}
+}
+.dsk-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	padding: clamp(28px, 5vw, 44px);
+	background: $reg-surface;
+	border-radius: 18px;
+	box-shadow: 0 1px 2px rgba(43, 43, 51, 0.05), 0 16px 44px rgba(43, 43, 51, 0.1);
+
+	.sk {
+		display: block;
+	}
+	.dsk-badge {
+		width: 84px;
+		height: 84px;
+		border-radius: 50%;
+		margin-bottom: 6px;
+	}
+	.dsk-card-title {
+		width: 280px;
+		max-width: 80%;
+		height: 1.7rem;
+		border-radius: 8px;
+	}
+	.dsk-line {
+		width: 360px;
+		max-width: 90%;
+		height: 1rem;
+		border-radius: 6px;
+	}
+	.dsk-line.short {
+		width: 260px;
+	}
+	.dsk-actions {
+		display: flex;
+		gap: 12px;
+		flex-wrap: wrap;
+		justify-content: center;
+		margin-top: 12px;
+		.sk {
+			width: 150px;
+			height: 52px;
+			border-radius: 10px;
+		}
+	}
+}
+
 @media screen and (max-width: 1000px) {
+	.dsk-card .dsk-actions {
+		flex-direction: column;
+		width: 100%;
+		.sk {
+			width: 100%;
+		}
+	}
 	.card-estado {
 		h5 {
 			margin-bottom: 2vh;

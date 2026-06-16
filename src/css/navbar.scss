@@ -1,65 +1,94 @@
-nav {
-  padding: 3vh var(--padding-sides);
-  height: 14vh;
-  display: flex;
-  align-items: center;
+// Public / dashboard top nav — rebuilt on the $reg-* system to match the rest of the app.
+
+.lp-nav {
   position: sticky;
   top: 0;
-  background: #fff;
   z-index: 1000;
-  transition: 0.2s;
-  .logo-navbar {
-    font-size: 2.5em;
-    text-transform: uppercase;
-    font-weight: 800;
-    text-decoration: none;
-    color: #000;
-  }
-  .links {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-    p,
-    a {
-      margin: 0 0 0 3vmin;
-      font-size: 1.3em;
-      cursor: pointer;
-      color: #000;
-      text-decoration: none;
-    }
-    .btn-iniciar-sesion {
-      color: $clrMainDark;
-      font-weight: 700;
-    }
-    .btn-cerrar-sesion {
-      font-weight: 700;
-      color: rgb(231, 41, 41);
-    }
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 68px;
+  padding: 0 clamp(20px, 5vw, 64px);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: saturate(180%) blur(8px);
+  border-bottom: 1px solid $reg-border;
+  transition: height 0.2s ease, box-shadow 0.2s ease;
+}
+.lp-nav.nav-scroll {
+  height: 60px;
+  box-shadow: 0 1px 12px rgba(43, 43, 51, 0.08);
+}
+
+.lp-nav__logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: $clrMainDark;
+  text-decoration: none;
+}
+
+.lp-nav__right {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2vw, 26px);
+}
+
+.lp-nav__link {
+  color: $reg-ink;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: color 0.15s ease;
+  &:hover {
+    color: $clrMainDark;
   }
 }
 
-.nav-scroll {
-  height: 10vh;
-  box-shadow: 1px 2px 10px rgba(128, 128, 128, 0.6);
+.lp-nav__logout {
+  background: none;
+  border: 1px solid $reg-border;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font: inherit;
+  font-weight: 600;
+  color: $reg-ink;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+  &:hover {
+    border-color: $reg-error;
+    color: $reg-error;
+  }
 }
 
-@media screen and (max-width: 1000px) {
-  nav {
-    .logo-navbar {
-      display: none;
-    }
-    .links {
-      justify-content: space-between !important;
+// Compact CTA so it sits comfortably in the 68px bar. Scoped under .lp-nav to outrank
+// .lp-btn, which is imported after navbar.scss and would otherwise win at equal specificity.
+.lp-nav .lp-nav__cta {
+  min-height: 38px;
+  padding: 0 16px;
+  font-size: 0.92rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(41, 127, 137, 0.25);
+}
 
-      a {
-        font-size: 1.3em !important;
-        margin: 0 !important;
-        flex: 1;
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-    }
+@media screen and (max-width: 560px) {
+  .lp-nav {
+    padding: 0 16px;
+    gap: 10px;
+  }
+  .lp-nav__logo {
+    font-size: 1.3rem;
+  }
+  .lp-nav__right {
+    gap: 12px;
+  }
+  .lp-nav__link {
+    font-size: 0.92rem;
+  }
+  .lp-nav .lp-nav__cta {
+    min-height: 36px;
+    padding: 0 13px;
+    font-size: 0.88rem;
   }
 }

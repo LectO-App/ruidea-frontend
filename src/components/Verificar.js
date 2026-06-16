@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { axiosInstance } from '../axios';
 import LoadingScreen from './LoadingScreen';
-import { motion } from 'framer-motion';
 
 import logoDisfam from '../img/webp/logo-disfam.webp';
 import logoDisfamPNG from '../img/png/logo-disfam.png';
@@ -55,21 +54,28 @@ const Verificar = props => {
 		requestToAPI();
 	}, [requestToAPI]);
 
-	return (
-		<motion.div
-			exit={{ transform: 'translateX(100vw)' }}
-			animate={{ transform: 'translateX(0vw)' }}
-			initial={{ transform: 'translateX(100vw)' }}
-		>
-			{error && (
-				<div className='error-screen'>
-					<h1>
-						No se encontró un usuario con ese documento. Por favor revise que haya ingresado los datos correctamente.
-					</h1>
-					<Link to='/'>Ir al inicio</Link>
+	if (loading) return <LoadingScreen />;
+
+	if (error) {
+		return (
+			<div className='error-screen'>
+				<h1>No encontramos ese Pasaporte DEA</h1>
+				<p className='error-sub'>
+					Revisa que el número de pasaporte y el documento sean correctos. Si el problema continúa, vuelve a
+					verificarlo desde el inicio.
+				</p>
+				<div className='error-actions'>
+					<Link to='/verificar/numero'>Verificar otro pasaporte</Link>
+					<Link to='/' className='error-ghost'>
+						Ir al inicio
+					</Link>
 				</div>
-			)}
-			{loading && <LoadingScreen />}
+			</div>
+		);
+	}
+
+	return (
+		<div>
 			<header className='header-verificar'>
 				<p className='pais'>{usuario.paisResidencia}</p>
 				<h1>PASAPORTE DEA</h1>
@@ -114,7 +120,7 @@ const Verificar = props => {
 					asi cómo los derechos recogidos en la legislación vigente
 				</p>
 			</footer>
-		</motion.div>
+		</div>
 	);
 };
 
