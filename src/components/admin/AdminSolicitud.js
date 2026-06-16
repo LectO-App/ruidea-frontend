@@ -73,7 +73,9 @@ const AdminSolicitud = (props) => {
     try {
       const res = await axiosInstance.get(`/inscripcion/link-archivos/${user._id}`);
       const link = document.createElement("a");
-      link.href = res.data;
+      link.href = res.data.url;
+      link.target = "_blank";
+      link.rel = "noopener";
       link.click();
     } catch (err) {
       toast.error("No se encontraron documentos para este usuario.");
