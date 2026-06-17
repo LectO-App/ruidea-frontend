@@ -1,9 +1,10 @@
 @import 'variables';
+@import 'skeleton';
+@import 'ui';
 @import 'navbar';
 @import 'Login';
 @import 'hero';
-@import 'info';
-@import 'acknowledgements';
+@import 'landing';
 @import 'footer';
 @import 'dashboard';
 @import 'form';
@@ -36,6 +37,13 @@ hr {
 }
 body {
 	overflow-x: hidden;
+	// `body` is the viewport scroll container here (overflow-x: hidden makes it the
+	// scrollbox instead of html), so the gutter must live here. Reserving it always
+	// keeps the layout from shifting between pages that do/don't overflow (e.g. / ↔
+	// /inscribirse). `overflow-y: scroll` is the fallback for browsers without
+	// scrollbar-gutter (Safari < 18.2) — it forces the track to always be present.
+	overflow-y: scroll;
+	scrollbar-gutter: stable;
 }
 
 @media screen and (max-width: 1400px) {

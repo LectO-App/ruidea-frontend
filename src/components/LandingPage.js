@@ -1,26 +1,32 @@
-import React, { lazy, Suspense } from "react";
+import React from "react";
 
-import LoadingScreen from "./LoadingScreen";
+// The whole landing is already a lazy() chunk in App.js, so its sections are imported
+// directly (no nested Suspense / full-page bouncing-ball fallback). Navbar + Hero paint
+// first as a cohesive above-the-fold unit.
+import Navbar from "./Navbar";
+import Hero from "./landing/Hero";
+import About from "./landing/About";
+import Steps from "./landing/Steps";
+import Audience from "./landing/Audience";
+import VerifySection from "./landing/VerifySection";
+import Acknowledgements from "./landing/Acknowledgements";
+import Faq from "./landing/Faq";
+import CtaBand from "./landing/CtaBand";
+import Footer from "./Footer";
 
-const Navbar = lazy(() => import("./Navbar"));
-const Hero = lazy(() => import("./landing/Hero"));
-const Info = lazy(() => import("./landing/Info"));
-const Footer = lazy(() => import("./Footer"));
-const Acknowledgements = lazy(() => import("./landing/Acknowledgements"));
-
-const LandingPage = () => {
-  return (
-    <>
-      <Suspense fallback={<LoadingScreen />}>
-        <Navbar />
-        <Hero />
-        <hr />
-        <Info />
-        <Acknowledgements />
-        <Footer />
-      </Suspense>
-    </>
-  );
-};
+const LandingPage = () => (
+  <>
+    <Navbar />
+    <Hero />
+    <About />
+    <Steps />
+    <Audience />
+    <VerifySection />
+    <Acknowledgements />
+    <Faq />
+    <CtaBand />
+    <Footer />
+  </>
+);
 
 export default LandingPage;

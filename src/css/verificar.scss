@@ -13,9 +13,17 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		gap: 0.5em;
 		position: absolute;
 		left: 4vw;
 		font-size: $fsMedium;
+		.flag-icon {
+			width: 1.7em;
+			height: 1.15em;
+			border-radius: 3px;
+			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+			flex-shrink: 0;
+		}
 	}
 	a {
 		display: flex;
@@ -106,39 +114,69 @@
 
 .footer-verificar {
 	background: #41a1ac;
-	height: 15vh;
+	min-height: 15vh;
 	font-size: $fsSmall;
 	color: #fff;
-	width: 100vw;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 3vh 6vw;
+	box-sizing: border-box;
+	p {
+		max-width: 58em;
+		margin: 0;
+		text-align: center;
+		line-height: 1.5;
+	}
 }
 
 .error-screen {
-	width: 100vw;
-	height: 100vh;
+	width: 100%;
+	min-height: 100vh;
+	box-sizing: border-box;
 	font-size: 1em;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
+	gap: 0.4em;
 	padding: var(--padding-sides);
-	position: fixed;
-	top: 0;
 	background: #fff;
-	z-index: 1000;
 	h1 {
 		text-align: center;
+		max-width: 18em;
+	}
+	.error-sub {
+		text-align: center;
+		max-width: 24em;
+		color: #5f6168;
+		font-size: $fsSmall;
+		line-height: 1.6;
+		margin: 0;
+	}
+	.error-actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 1em;
+		margin-top: 2vh;
 	}
 	a {
 		background: $clrMain;
 		color: #fff;
 		padding: 0.6em 1.5em;
-		margin: 3vh 0;
 		font-size: $fsSmall;
 		border-radius: 12px;
 		text-decoration: none;
 		transition: 0.2s;
 		&:hover {
 			filter: brightness(1.1);
+		}
+		&.error-ghost {
+			background: transparent;
+			color: $clrMainDark;
+			border: 1px solid $clrMain;
 		}
 	}
 }
@@ -155,6 +193,9 @@
 
 @media screen and (max-width: 900px) {
 	.main-verificar {
+		// children (Pasaporte N° / logo+data / "desarrollado por") become static below,
+		// so the container must stack them vertically instead of in the default row.
+		flex-direction: column;
 		.pasaporte,
 		.desarrollado-por-lecto {
 			position: static;

@@ -1,2 +1,5 @@
+# Same-origin API proxy (Netlify). Makes the session cookie first-party so login works in
+# Safari/iOS. On Cloudflare Pages this line is ignored and functions/api/[[path]].js does it.
+/api/* https://ruidea.azurewebsites.net/:splat 200
 /* /index.html 200
 admin.pasaporte.dea.ong /admin 200

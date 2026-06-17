@@ -1,17 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { axiosInstance } from '../axios';
-import Cookies from 'universal-cookie';
 
 import LoadingScreen from './LoadingScreen';
 
 import logoRuideaPNG from '../img/png/logo-ruidea.png';
 
 const VerifyEmail = props => {
-	const cookies = new Cookies();
 	const [loading, setLoading] = useState(true);
 	const [verificado, setVerificado] = useState(false);
-	const idUsuario = cookies.get('id');
 
 	const fetchFromAPI = useCallback(async () => {
 		setLoading(true);
@@ -46,25 +43,8 @@ const VerifyEmail = props => {
 				) : (
 					<>
 						<h1>El link que ingresó es incorrecto o ya venció.</h1>
-						{idUsuario ? (
-							<button
-								onClick={() => {
-									/* const resendEmail = async () => {
-                  await axiosInstance.post(
-                    `/emailVerification/resend/${idUsuario}`
-                  );
-                };
-                resendEmail(); */
-								}}
-							>
-								Volver a enviar correo electrónico
-							</button>
-						) : (
-							<>
-								<h1>Por favor, inicie sesión y solicite que se le envíe el correo electrónico nuevamente.</h1>
-								<Link to='/login'>Iniciar sesión</Link>
-							</>
-						)}
+						<h1>Por favor, inicie sesión y solicite que se le envíe el correo electrónico nuevamente.</h1>
+						<Link to='/login'>Iniciar sesión</Link>
 					</>
 				)}
 			</main>

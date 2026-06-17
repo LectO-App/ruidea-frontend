@@ -1,35 +1,27 @@
-import Cookies from "universal-cookie";
+import { axiosInstance } from "./axios";
+import { clearCsrf } from "./csrf";
 
+// Auth state lives on the server (httpOnly session cookie). The client can no longer
+// "log itself in" by setting a cookie (SECURITY_ASSESSMENT.md §1.4); it can only ask
+// the server whether the current session is valid.
 class Auth {
-  constructor() {
-    this.authenticated = false;
+  async isAuthenticated() {
+    try {
+      await axiosInstance.get("/usuario/me");
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
-  login(success) {
-    /* const res = await axios
-      .post("https://lecto-api.herokuapp.com/api/users", {
-        key,
-      })
-      .catch((error) => {
-        if (error) return failure();
-      });
-
-    if (res) {
-      this.authenticated = true;
-      success();
-    } */
-    this.authenticated = true;
-    success();
-  }
-  logout(cb) {
-    const cookies = new Cookies();
-    cookies.remove("logged-in");
-    cookies.remove("id");
-    this.authenticated = false;
-    cb && cb();
-  }
-  isAuthenticated() {
-    const cookies = new Cookies();
-    return cookies.get("logged-in");
+  async logout() {
+    try {
+      await axiosInstance.post("/usuario/logout");
+    } catch (err) {
+      /* ignore */
+    }
+    clearCsrf();
   }
 }
-export default new Auth();
+
+const auth = new Auth();
+export default auth;

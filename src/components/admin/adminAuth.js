@@ -1,36 +1,36 @@
-import Cookies from "universal-cookie";
 import { axiosInstance } from "../../axios";
+import { clearCsrf } from "../../csrf";
 
+// Admin auth is a real server session now (SECURITY_ASSESSMENT.md §1.3). No client-set
+// `admin=true` cookie; the server decides via /admin/me.
 class AdminAuth {
-  constructor() {
-    this.authenticated = false;
-  }
   async login(data, successFunction, errorFunction) {
     try {
       const { user, password } = data;
-
-      await axiosInstance.post(`/admin/login`, {
-        user,
-        password,
-      });
-
-      const cookies = new Cookies();
-      cookies.set("admin", true, { expires: 0 });
-      this.authenticated = true;
+      await axiosInstance.post(`/admin/login`, { user, password });
       successFunction && successFunction();
     } catch (err) {
       errorFunction ? errorFunction() : console.log(err);
     }
   }
-  logout(cb) {
-    const cookies = new Cookies();
-    cookies.remove("admin");
-    this.authenticated = false;
+  async logout(cb) {
+    try {
+      await axiosInstance.post("/admin/logout");
+    } catch (err) {
+      /* ignore */
+    }
+    clearCsrf();
     cb && cb();
   }
-  isAuthenticated() {
-    const cookies = new Cookies();
-    return cookies.get("admin");
+  async isAuthenticated() {
+    try {
+      await axiosInstance.get("/admin/me");
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
 }
-export default new AdminAuth();
+
+const adminAuth = new AdminAuth();
+export default adminAuth;

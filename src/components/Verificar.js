@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { axiosInstance } from '../axios';
 import LoadingScreen from './LoadingScreen';
-import { motion } from 'framer-motion';
 
 import logoDisfam from '../img/webp/logo-disfam.webp';
 import logoDisfamPNG from '../img/png/logo-disfam.png';
@@ -10,6 +9,17 @@ import logoDisfamPNG from '../img/png/logo-disfam.png';
 import logoRuidea from '../img/svg/logo-ruidea.svg';
 import logoRuideaPNG from '../img/png/logo-ruidea.png';
 import { capitalizedDiagnostic } from '../util/capitalize';
+import 'flag-icon-css/css/flag-icon.min.css';
+
+// Country name -> ISO-3166 alpha-2, for the flag shown beside the country (matches the
+// list of countries offered in registration / the downloaded passport).
+const PAIS_ISO = {
+	España: 'es', Andorra: 'ad', Argentina: 'ar', Bolivia: 'bo', Brasil: 'br',
+	Chile: 'cl', Colombia: 'co', 'Costa Rica': 'cr', Cuba: 'cu', Ecuador: 'ec',
+	'El Salvador': 'sv', Guatemala: 'gt', México: 'mx', Nicaragua: 'ni', Panamá: 'pa',
+	Paraguay: 'py', Perú: 'pe', Portugal: 'pt', 'República Dominicana': 'do',
+	Uruguay: 'uy', Venezuela: 've',
+};
 
 const Verificar = props => {
 	const { nroPasaporte, nroDocumento } = props.match.params;
@@ -55,23 +65,35 @@ const Verificar = props => {
 		requestToAPI();
 	}, [requestToAPI]);
 
-	return (
-		<motion.div
-			exit={{ transform: 'translateX(100vw)' }}
-			animate={{ transform: 'translateX(0vw)' }}
-			initial={{ transform: 'translateX(100vw)' }}
-		>
-			{error && (
-				<div className='error-screen'>
-					<h1>
-						No se encontró un usuario con ese documento. Por favor revise que haya ingresado los datos correctamente.
-					</h1>
-					<Link to='/'>Ir al inicio</Link>
+	if (loading) return <LoadingScreen />;
+
+	if (error) {
+		return (
+			<div className='error-screen'>
+				<h1>No encontramos ese Pasaporte DEA</h1>
+				<p className='error-sub'>
+					Revisa que el número de pasaporte y el documento sean correctos. Si el problema continúa, vuelve a
+					verificarlo desde el inicio.
+				</p>
+				<div className='error-actions'>
+					<Link to='/verificar/numero'>Verificar otro pasaporte</Link>
+					<Link to='/' className='error-ghost'>
+						Ir al inicio
+					</Link>
 				</div>
-			)}
-			{loading && <LoadingScreen />}
+			</div>
+		);
+	}
+
+	return (
+		<div>
 			<header className='header-verificar'>
-				<p className='pais'>{usuario.paisResidencia}</p>
+				<p className='pais'>
+					{PAIS_ISO[usuario.paisResidencia] && (
+						<span className={`flag-icon flag-icon-${PAIS_ISO[usuario.paisResidencia]}`} aria-hidden='true' />
+					)}
+					<span>{usuario.paisResidencia}</span>
+				</p>
 				<h1>PASAPORTE DEA</h1>
 				<a href='https://disfam.org' target='_blank' rel='noopener noreferrer'>
 					<picture>
@@ -114,7 +136,7 @@ const Verificar = props => {
 					asi cómo los derechos recogidos en la legislación vigente
 				</p>
 			</footer>
-		</motion.div>
+		</div>
 	);
 };
 

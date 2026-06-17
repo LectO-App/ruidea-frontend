@@ -2,18 +2,19 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { axiosInstance } from '../axios';
 import { Link } from 'react-router-dom';
-import Cookies from 'universal-cookie';
-import { Helmet } from 'react-helmet';
-import Swal from 'sweetalert2';
-import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 
-import auth from '../auth';
 import ForgotPasswordModal from './ForgotPasswordModal';
+import InlineMessage from './ui/InlineMessage';
+
+import '../css/registration.scss';
 
 const Login = props => {
-	const cookies = new Cookies();
-	const { register, handleSubmit, errors } = useForm();
+	const { register, handleSubmit, errors } = useForm({ mode: 'onBlur' });
 	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(null);
+	const [reveal, setReveal] = useState(false);
 
 	const [email, setEmail] = useState('');
 
@@ -24,76 +25,105 @@ const Login = props => {
 
 	const loginSuccess = async data => {
 		setLoading(true);
+		setError(null);
 		try {
-			const res = await axiosInstance.post(`/usuario/login`, data);
-			auth.login(() => {
-				cookies.set('logged-in', true, { path: '/', expires: 0 });
-				cookies.set('id', res.data.usuario._id, { path: '/', expires: 0 });
-				props.history.push('/dashboard');
-			});
+			// Session + CSRF cookies are set by the server; nothing to store client-side.
+			await axiosInstance.post(`/usuario/login`, data);
+			props.history.push('/dashboard');
 		} catch (err) {
-			Swal.fire({
-				icon: 'error',
-				title: 'Email y/o contraseña incorrecta',
-				text: 'Revise que haya ingresado correctamente los datos y pruebe nuevamente.',
-			});
+			setError('Email y/o contraseña incorrecta. Revisa los datos e inténtalo de nuevo.');
 		}
 		setLoading(false);
 	};
 
 	return (
-		<motion.div
-			exit={{ transform: 'translateX(100vw)' }}
-			animate={{ transform: 'translateX(0vw)' }}
-			initial={{ transform: 'translateX(100vw)' }}
-		>
+		<div className='reg auth'>
 			<Helmet>
-				<Helmet>
-					<meta charSet='utf-8' />
-					<title>
-						Iniciar Sesión | RUIDEA - Registro Único Iberoamericano de Personas con Dificultades Específicas del
-						Aprendizaje
-					</title>
-					{/* <link rel="canonical" href="http://mysite.com/example" /> */}
-				</Helmet>
+				<meta charSet='utf-8' />
+				<title>Iniciar sesión | RUIDEA</title>
 			</Helmet>
-			<Link className='cross' to='/'></Link>
-			<form className='login-form' onSubmit={handleSubmit(loginSuccess)}>
-				<h1 className='titulo-iniciar-sesion'>Iniciar sesión</h1>
-				<div className='form-group'>
-					<label htmlFor='email'>Correo electrónico</label>
-					<input
-						type='text'
-						name='user'
-						id='user'
-						onChange={e => setEmail(e.target.value)}
-						ref={register({
-							required: 'Por favor, ingrese un correo electrónico',
-							pattern: {
-								message: 'Por favor, ingrese un correo electrónico o número de pasaporte válido',
-								value: emailRegex,
-							},
-						})}
-					/>
-					{errors.email && <span className='error-message'>{errors.email.message}</span>}
-				</div>
-				<div className='form-group'>
-					<label htmlFor='password'>Contraseña</label>
-					<input
-						type='password'
-						name='password'
-						id='password'
-						ref={register({ required: 'Por favor, ingrese una contraseña' })}
-					/>
-					{errors.password && <span className='error-message'>{errors.password.message}</span>}
-					<p className='olvide-contraseña' onClick={setForgotPassword}>
-						Olvidé mi contraseña
+
+			<Link className='reg-close' to='/' aria-label='Volver al inicio' role='button' />
+
+			<div className='auth-shell'>
+				<div className='reg-step auth-card'>
+					<header className='auth-head'>
+						<h1 className='auth-title'>Iniciar sesión</h1>
+						<p className='auth-sub'>Accede a tu cuenta de RUIDEA.</p>
+					</header>
+
+					<form className='step-form' onSubmit={handleSubmit(loginSuccess)} noValidate>
+						<div className={`field${errors.user ? ' has-error' : ''}`}>
+							<label htmlFor='user'>Correo electrónico</label>
+							<input
+								type='email'
+								name='user'
+								id='user'
+								inputMode='email'
+								autoComplete='email'
+								aria-invalid={errors.user ? 'true' : 'false'}
+								onChange={e => setEmail(e.target.value)}
+								ref={register({
+									required: 'Ingresa tu correo electrónico',
+									pattern: { value: emailRegex, message: 'Revisa el correo, parece incompleto' },
+								})}
+							/>
+							{errors.user && (
+								<span className='error-message' role='alert'>
+									{errors.user.message}
+								</span>
+							)}
+						</div>
+
+						{/* Grid layout (field--with-link) lets the "Olvidé mi contraseña" button sit visually
+						    top-right of the label while living AFTER the password input in the DOM, so Tab
+						    flows email → password → reveal → forgot instead of stopping on the link mid-form. */}
+						<div className={`field field--with-link${errors.password ? ' has-error' : ''}`}>
+							<label htmlFor='password'>Contraseña</label>
+							<div className='password-wrapper'>
+								<input
+									type={reveal ? 'text' : 'password'}
+									name='password'
+									id='password'
+									autoComplete='current-password'
+									aria-invalid={errors.password ? 'true' : 'false'}
+									ref={register({ required: 'Ingresa tu contraseña' })}
+								/>
+								<button
+									type='button'
+									className='reveal-btn'
+									aria-label={reveal ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+									aria-pressed={reveal}
+									onClick={() => setReveal(r => !r)}
+								>
+									{reveal ? <AiOutlineEyeInvisible size={22} /> : <AiOutlineEye size={22} />}
+								</button>
+							</div>
+							<button type='button' className='auth-link field-reset-link' onClick={() => setForgotPassword(true)}>
+								Olvidé mi contraseña
+							</button>
+							{errors.password && (
+								<span className='error-message' role='alert'>
+									{errors.password.message}
+								</span>
+							)}
+						</div>
+
+						<InlineMessage type='error'>{error}</InlineMessage>
+
+						<button type='submit' className='btn-primary auth-submit' disabled={loading}>
+							{loading ? 'Entrando…' : 'Iniciar sesión'}
+						</button>
+					</form>
+
+					<p className='auth-footer'>
+						¿No tienes cuenta? <Link to='/inscribirse'>Crea una</Link>
 					</p>
 				</div>
-				<button className='btn-iniciar-sesión'>{loading ? 'Cargando...' : 'Iniciar sesión'}</button>
-			</form>
+			</div>
+
 			<ForgotPasswordModal email={email} visible={forgotPassword} setForgotPassword={setForgotPassword} />
-		</motion.div>
+		</div>
 	);
 };
 
