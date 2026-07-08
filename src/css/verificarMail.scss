@@ -33,4 +33,28 @@
     margin: 3vh 0;
     border-radius: 4px;
   }
+  button {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    &:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+  }
+  // When a resend button is present, keep the login link as the secondary action.
+  .btn-reenviar + a,
+  .error-reenviar + a {
+    background: transparent;
+    color: $clrMain;
+    border: 1px solid $clrMain;
+    margin-top: 1vh;
+  }
+  .error-reenviar {
+    text-align: center;
+    color: #b00020;
+    font-size: $fsSmall;
+    margin: 1vh 0 0 0;
+    padding: 0 var(--padding-sides);
+  }
 }
