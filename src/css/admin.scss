@@ -285,6 +285,14 @@
       box-shadow: inset 3px 0 0 0 $clrMain;
     }
   }
+  // Unfinished sign-ups (drafts) have no complete solicitud to open — the row is not a
+  // navigation target, only its "Reenviar correo" action is.
+  tbody tr.adm-row--static {
+    cursor: default;
+    &:hover {
+      background: transparent;
+    }
+  }
 }
 .adm-th-sort {
   display: inline-flex;

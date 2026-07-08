@@ -8,6 +8,7 @@ const STATUS = {
   rechazado: { label: "Rechazado", cls: "is-rejected" },
   revision: { label: "En revisión", cls: "is-review" },
   sin_email: { label: "Email sin verificar", cls: "is-muted" },
+  borrador: { label: "Sin terminar", cls: "is-muted" },
 };
 
 export const statusKey = (item) =>

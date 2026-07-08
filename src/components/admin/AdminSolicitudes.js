@@ -13,6 +13,7 @@ const FILTERS = [
   { value: "revision", label: "En revisión" },
   { value: "aceptado", label: "Aceptados" },
   { value: "rechazado", label: "Rechazados" },
+  { value: "borrador", label: "Sin terminar" },
   { value: "", label: "Todas" },
 ];
 
@@ -131,6 +132,16 @@ const AdminSolicitudes = (props) => {
   };
 
   const renderAction = (item) => {
+    // Unfinished sign-ups (draft): there's no complete solicitud to open, so the useful
+    // action is to nudge the person by resending the confirmation email. Many of these
+    // users have dyslexia and get stuck on the email step — one clear button helps.
+    if (item.estado === "borrador") {
+      return (
+        <button className="adm-btn adm-btn--primary" onClick={() => resendEmail(item._id)}>
+          Reenviar correo
+        </button>
+      );
+    }
     if (item.emailVerificado === false) {
       return (
         <button className="adm-btn adm-btn--ghost" onClick={() => resendEmail(item._id)}>
@@ -251,25 +262,35 @@ const AdminSolicitudes = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((item) => (
+                  {rows.map((item) => {
+                    // Drafts have no complete solicitud to open, so the row isn't a nav
+                    // target — only its "Reenviar correo" action is interactive.
+                    const draft = item.estado === "borrador";
+                    const nombreCompleto = `${item.nombre || ""} ${item.apellidos || ""}`.trim();
+                    const navProps = draft
+                      ? {}
+                      : {
+                          role: "button",
+                          tabIndex: 0,
+                          "aria-label": `Ver solicitud de ${nombreCompleto}`,
+                          onClick: () => openSolicitud(item._id),
+                          onKeyDown: (e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              openSolicitud(item._id);
+                            }
+                          },
+                        };
+                    return (
                     <tr
                       key={item._id}
-                      className="adm-row"
-                      role="button"
-                      tabIndex={0}
-                      aria-label={`Ver solicitud de ${item.nombre} ${item.apellidos}`}
-                      onClick={() => openSolicitud(item._id)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          openSolicitud(item._id);
-                        }
-                      }}
+                      className={`adm-row${draft ? " adm-row--static" : ""}`}
+                      {...navProps}
                     >
                       <td data-label="Solicitante">
                         <span className="adm-person">
                           <span className="adm-person__name">
-                            {item.nombre} {item.apellidos}
+                            {nombreCompleto || "Sin nombre todavía"}
                           </span>
                           <span className="adm-person__mail">{item.correoElectronico}</span>
                         </span>
@@ -277,7 +298,7 @@ const AdminSolicitudes = (props) => {
                       <td data-label="Documento" className="adm-mono">
                         {statusKey(item) === "aceptado" && item.numeroPasaporte
                           ? `Nº ${item.numeroPasaporte}`
-                          : item.numeroDocumento}
+                          : item.numeroDocumento || "—"}
                       </td>
                       <td data-label="Creación">{fmtDate(item.fechaCreacion)}</td>
                       <td data-label="Nacimiento">
@@ -293,7 +314,8 @@ const AdminSolicitudes = (props) => {
                         {renderAction(item)}
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
