@@ -14,7 +14,7 @@ const FILTERS = [
   { value: "aceptado", label: "Aceptados" },
   { value: "rechazado", label: "Rechazados" },
   { value: "borrador", label: "Sin terminar" },
-  { value: "", label: "Todas" },
+  { value: "todas", label: "Todas" },
 ];
 
 const fmtDate = (d) =>
