@@ -1,0 +1,82 @@
+# Rendered at container start by the nginx image's entrypoint (envsubst, only for variables
+# that are set: PORT, API_UPSTREAM, NGINX_LOCAL_RESOLVERS). nginx's own $variables are untouched.
+# Equivalent of public/_redirects (Netlify) and functions/api/[[path]].js (Cloudflare Pages):
+#   /api/*  -> API_UPSTREAM/*   same-origin API proxy, so the session cookie stays first-party
+#   /*      -> /index.html      SPA fallback
+
+# /api/<rest> -> <rest>, taken from the raw request line so encoded characters are not altered.
+map $request_uri $ruidea_api_path {
+    ~^/api(?<ruidea_api_rest>/.*)$   $ruidea_api_rest;
+    default                          /;
+}
+
+# Request paths that carry document/passport numbers or one-time tokens are logged without them
+# (the backend keeps them out of its own logs too). Query strings and Referer are never logged.
+# (Mapped from the original request line: after the SPA fallback $uri is /index.html.)
+map $request_uri $ruidea_log_path {
+    ~^/verificar/                    /verificar/[redacted];
+    ~^/verificarEmail/               /verificarEmail/[redacted];
+    ~^/cambiarContrase               /cambiarContrasena/[redacted];
+    ~^/api/usuario/verificar/        /api/usuario/verificar/[redacted];
+    ~^/api/emailVerification/(\w+)/  /api/emailVerification/$1/[redacted];
+    ~^(?<ruidea_path>[^?]*)          $ruidea_path;
+    default                          -;
+}
+log_format ruidea '$remote_addr "$http_x_forwarded_for" [$time_iso8601] "$request_method $ruidea_log_path" '
+                  '$status $body_bytes_sent $request_time "$http_user_agent"';
+
+server {
+    listen ${PORT};
+    server_name _;
+    root /usr/share/nginx/html;
+    server_tokens off;
+    access_log /dev/stdout ruidea;
+
+    resolver ${NGINX_LOCAL_RESOLVERS} valid=30s ipv6=off;
+    resolver_timeout 5s;
+    set $api_upstream "${API_UPSTREAM}";
+
+    gzip on;
+    gzip_comp_level 5;
+    gzip_min_length 1024;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_types text/css application/javascript application/json application/manifest+json image/svg+xml text/plain;
+
+    # Container probe; answered by nginx, never proxied.
+    location = /health {
+        access_log off;
+        default_type application/json;
+        add_header Cache-Control "no-store" always;
+        return 200 '{"status":"ok"}';
+    }
+
+    location /api/ {
+        include /etc/nginx/snippets/api-proxy.conf;
+
+        # Keep document numbers and tokens out of nginx's error log as well (it would print the
+        # request line on an upstream error).
+        location /api/usuario/verificar/ {
+            error_log /dev/stderr crit;
+            include /etc/nginx/snippets/api-proxy.conf;
+        }
+        location /api/emailVerification/ {
+            error_log /dev/stderr crit;
+            include /etc/nginx/snippets/api-proxy.conf;
+        }
+    }
+
+    # Hashed build output (CRA puts a content hash in every file name under /static/).
+    location /static/ {
+        include /etc/nginx/snippets/security-headers.conf;
+        add_header Cache-Control "public, max-age=31536000, immutable" always;
+        try_files $uri =404;
+    }
+
+    # Everything else: a file from public/ if it exists, otherwise the SPA's index.html.
+    location / {
+        include /etc/nginx/snippets/security-headers.conf;
+        add_header Cache-Control "public, max-age=0, must-revalidate" always;
+        try_files $uri /index.html;
+    }
+}
