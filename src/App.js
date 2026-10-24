@@ -35,10 +35,14 @@ const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
 // Analytics (SECURITY_ASSESSMENT.md §10.3). Report a generic label instead and never
 // include the query string.
 const SENSITIVE = ['/verificar/', '/cambiarContrase', '/verificarEmail/'];
-const safePageview = () => {
+export const safePageview = () => {
 	const path = window.location.pathname;
 	const isSensitive = SENSITIVE.some(p => path.startsWith(p));
-	ReactGA.pageview(isSensitive ? '/[redacted]' : path);
+	const page = isSensitive ? '/[redacted]' : path;
+	// analytics.js also sends the full address bar (document.location, incl. tokens and
+	// document numbers) as the `location` field on every hit; overwrite it with the redacted path.
+	ReactGA.set({ location: window.location.origin + page, page });
+	ReactGA.pageview(page);
 };
 
 // Shared top-level page transition: a short fade + small upward rise. This smooths
