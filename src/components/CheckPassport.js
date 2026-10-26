@@ -18,14 +18,20 @@ const CheckPassport = props => {
 	const handleSuccess = async data => {
 		setLoading(true);
 		setError(null);
+		const pasaporte = data.pasaporte.trim();
+		const documento = data.documento.trim();
 		try {
-			const res = await axiosInstance.post(`/usuario/verificarCheckPassword`, data);
-			props.history.push('/verificar/' + res.data.documento + '/' + data.pasaporte);
+			// The server only answers whether this passport number and document number belong
+			// together; it no longer hands out the document number. (A backend from before that
+			// change still sends `documento`; use it so the order of the two deploys doesn't matter.)
+			const res = await axiosInstance.post(`/usuario/verificarCheckPassword`, { ...data, pasaporte, documento });
+			const doc = res.data.documento || documento;
+			props.history.push('/verificar/' + encodeURIComponent(doc) + '/' + encodeURIComponent(pasaporte));
 		} catch (err) {
-			// The server returns an identical response for wrong-password and not-found so
-			// neither can be probed (§10.4); show a single combined message.
+			// The server returns an identical response for wrong password, wrong document and
+			// not-found so none can be probed (§10.4); show a single combined message.
 			setError(
-				'No se pudo verificar. Revisa el número de Pasaporte DEA y la clave de verificación, e inténtalo de nuevo.'
+				'No se pudo verificar. Revisa el número de Pasaporte DEA, el número de documento y la clave de verificación, e inténtalo de nuevo.'
 			);
 		}
 
@@ -46,8 +52,8 @@ const CheckPassport = props => {
 					<header className='auth-head'>
 						<h1 className='auth-title'>Verificar Pasaporte DEA</h1>
 						<p className='auth-sub'>
-							Para administraciones y autoridades. Confirma la autenticidad de un Pasaporte DEA con su número y la
-							clave de verificación que te facilitamos.
+							Para administraciones y autoridades. Confirma la autenticidad de un Pasaporte DEA con su número, el
+							número de documento de su titular y la clave de verificación que te facilitamos.
 						</p>
 					</header>
 
@@ -65,6 +71,30 @@ const CheckPassport = props => {
 							{errors.pasaporte && (
 								<span className='error-message' role='alert'>
 									{errors.pasaporte.message}
+								</span>
+							)}
+						</div>
+
+						<div className={`field${errors.documento ? ' has-error' : ''}`}>
+							<label htmlFor='documento'>Número de documento del titular</label>
+							<p className='field-hint' id='documento-hint'>
+								El que figura en el Pasaporte DEA y en su documento de identidad.
+							</p>
+							<input
+								type='text'
+								name='documento'
+								id='documento'
+								autoComplete='off'
+								aria-describedby='documento-hint'
+								aria-invalid={errors.documento ? 'true' : 'false'}
+								ref={register({
+									required: 'Ingresa el número de documento del titular',
+									validate: v => v.trim() !== '' || 'Ingresa el número de documento del titular',
+								})}
+							/>
+							{errors.documento && (
+								<span className='error-message' role='alert'>
+									{errors.documento.message}
 								</span>
 							)}
 						</div>
