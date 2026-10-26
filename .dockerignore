@@ -1,0 +1,15 @@
+# Only package*.json, .npmrc, public/, src/ and docker/ are needed. Keep local secrets and the
+# rest of the repo out of the build context (`az acr build .` uploads this directory).
+.git
+.github
+node_modules
+build
+coverage
+functions
+app.json
+*.md
+.env*
+*.pem
+npm-debug.log*
+Dockerfile
+.dockerignore
