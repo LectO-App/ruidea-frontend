@@ -40,6 +40,14 @@ test('sends the passport number and the document number, and opens the page for 
 	expect(history.push).toHaveBeenCalledWith('/verificar/40.111.222/1001');
 });
 
+test('opens the share-token page when the backend sends a token', async () => {
+	const token = 'T'.repeat(42) + '0'; // synthetic
+	axiosInstance.post.mockResolvedValue({ data: { correcto: true, existe: true, token } });
+	const history = await fillAndSubmit();
+	await waitFor(() => expect(history.push).toHaveBeenCalledWith('/verificar/' + token));
+	expect(history.push).toHaveBeenCalledTimes(1);
+});
+
 test('still works against a backend that answers with the stored document number', async () => {
 	axiosInstance.post.mockResolvedValue({ data: { correcto: true, documento: '40.111.222', existe: true } });
 	const history = await fillAndSubmit('40111222');

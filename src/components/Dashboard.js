@@ -129,7 +129,12 @@ const Dashboard = () => {
 		}
 	};
 
-	const passportUrl = () => `${window.location.origin}/verificar/${data.numeroDocumento}/${data.numeroPasaporte}`;
+	// The random share token (never the sequential passport number). A backend from before share
+	// tokens doesn't send one; fall back to the number-based link so the deploy order doesn't matter.
+	const passportUrl = () =>
+		data.shareToken
+			? `${window.location.origin}/verificar/${encodeURIComponent(data.shareToken)}`
+			: `${window.location.origin}/verificar/${data.numeroDocumento}/${data.numeroPasaporte}`;
 
 	const copyPassportLink = async () => {
 		const url = passportUrl();

@@ -25,6 +25,12 @@ const CheckPassport = props => {
 			// together; it no longer hands out the document number. (A backend from before that
 			// change still sends `documento`; use it so the order of the two deploys doesn't matter.)
 			const res = await axiosInstance.post(`/usuario/verificarCheckPassword`, { ...data, pasaporte, documento });
+			// Open the passport by its share token when the backend sends one (it works with the
+			// legacy number links turned off); otherwise the number-based page as before.
+			if (res.data.token) {
+				props.history.push('/verificar/' + encodeURIComponent(res.data.token));
+				return;
+			}
 			const doc = res.data.documento || documento;
 			props.history.push('/verificar/' + encodeURIComponent(doc) + '/' + encodeURIComponent(pasaporte));
 		} catch (err) {

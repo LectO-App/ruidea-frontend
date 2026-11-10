@@ -22,7 +22,8 @@ const PAIS_ISO = {
 };
 
 const Verificar = props => {
-	const { nroPasaporte, nroDocumento } = props.match.params;
+	// /verificar/:token (share token) or the legacy /verificar/:nroDocumento/:nroPasaporte.
+	const { token, nroPasaporte, nroDocumento } = props.match.params;
 	const [usuario, setUsuario] = useState({});
 	const [loading, setLoading] = useState(true);
 	const [fecha, setFecha] = useState('');
@@ -32,7 +33,11 @@ const Verificar = props => {
 
 	const requestToAPI = useCallback(async () => {
 		setLoading(true);
-		const res = await axiosInstance.post(`/usuario/verificar/${nroDocumento}/${nroPasaporte}`);
+		const res = await axiosInstance.post(
+			token
+				? `/usuario/verificar/${encodeURIComponent(token)}`
+				: `/usuario/verificar/${nroDocumento}/${nroPasaporte}`
+		);
 		if (res.data.existe) {
 			setUsuario(res.data.usuario);
 		} else {
@@ -59,7 +64,7 @@ const Verificar = props => {
 		}
 
 		setLoading(false);
-	}, [nroDocumento, nroPasaporte]);
+	}, [token, nroDocumento, nroPasaporte]);
 
 	useEffect(() => {
 		requestToAPI();
