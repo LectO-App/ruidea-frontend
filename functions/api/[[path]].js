@@ -2,7 +2,8 @@
  * Cloudflare Pages Function — same-origin API proxy.
  *
  * The browser calls https://pasaporte.dea.ong/api/*  and this forwards it to the backend at
- * https://ruidea.azurewebsites.net/* . Because the browser only ever sees pasaporte.dea.ong,
+ * the RUIDEA backend on Azure Container Apps (since 2026-11-10; before, the App Service
+ * https://ruidea.azurewebsites.net). Because the browser only ever sees pasaporte.dea.ong,
  * the httpOnly session cookie is FIRST-PARTY — which is what makes login work in Safari/iOS,
  * where third-party cookies are blocked outright regardless of SameSite=None.
  *
@@ -10,7 +11,7 @@
  * pasaporte.dea.ong automatically. No backend change required.
  */
 
-const BACKEND = "https://ruidea.azurewebsites.net";
+const BACKEND = "https://ruidea.lemonmushroom-83b52dc7.westeurope.azurecontainerapps.io";
 
 export async function onRequest(context) {
   const { request } = context;
