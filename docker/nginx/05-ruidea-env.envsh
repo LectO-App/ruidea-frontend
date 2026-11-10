@@ -1,0 +1,20 @@
+#!/bin/sh
+# Sourced by the nginx image's entrypoint before it renders /etc/nginx/templates/*.template.
+# Sets defaults and checks API_UPSTREAM, so a bad value stops the container at start instead of
+# failing every /api request.
+
+: "${PORT:=8080}"
+export PORT
+
+API_UPSTREAM="${API_UPSTREAM%/}"
+case "$API_UPSTREAM" in
+  "") echo "$0: API_UPSTREAM is not set: /api/* will answer 502 (fine only if the build uses an absolute REACT_APP_SERVER_URL)" >&2 ;;
+  http://*/* | https://*/*)
+    echo "$0: API_UPSTREAM must be scheme://host[:port] with no path, got: $API_UPSTREAM" >&2
+    exit 1 ;;
+  http://?* | https://?*) ;;
+  *)
+    echo "$0: API_UPSTREAM must start with http:// or https://, got: $API_UPSTREAM" >&2
+    exit 1 ;;
+esac
+export API_UPSTREAM

@@ -17,6 +17,7 @@ test.each([
   ["/cambiarContraseña/secret-reset-token", "secret-reset-token"],
   ["/verificarEmail/secret-email-token", "secret-email-token"],
   ["/verificar/12345678Z/0001234", "12345678Z"],
+  ["/verificar/TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT0", "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT0"],
 ])("sensitive path %s never reaches GA", (path, secret) => {
   const { set, page } = visit(path);
   expect(page).toBe("/[redacted]");
