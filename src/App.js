@@ -122,6 +122,9 @@ function App() {
 									<Route exact path='/admin' component={() => <Redirect to='/admin/login' />} />
 									<Route exact path='/verificar/ejemplo' component={VerificarEjemplo} />
 									<Route exact path='/verificar/numero' component={CheckPassport} />
+									{/* Public passport page by its random share token (QR codes and "Copiar enlace"). */}
+									<Route exact path='/verificar/:token' component={Verificar} />
+									{/* Legacy number-based link, printed on passports downloaded before share tokens. */}
 									<Route path='/verificar/:nroDocumento/:nroPasaporte' component={Verificar} />
 									<Route exact path='/admin/login' component={AdminLogin} />
 									<ProtectedRoute
