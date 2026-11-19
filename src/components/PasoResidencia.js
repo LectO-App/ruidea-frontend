@@ -21,7 +21,7 @@ const PAISES = [
 // against its real checksum (DNI/NIE) as you go, so an error is caught here and not at
 // review (§3). Phone formatting is forgiving; the server canonicalises it (§2).
 const PasoResidencia = (props) => {
-  const { formData, onNext, onBack, serverErrors } = props;
+  const { formData, onNext, onBack, serverErrors, singleStep, busy } = props;
   const { register, handleSubmit, errors, watch, getValues, setError, clearErrors } = useForm({
     mode: "onBlur",
   });
@@ -169,10 +169,10 @@ const PasoResidencia = (props) => {
 
       <div className="step-actions">
         <button type="button" className="btn-secondary" onClick={back}>
-          <BsArrowLeft aria-hidden="true" /> Atrás
+          <BsArrowLeft aria-hidden="true" /> {singleStep ? "Volver al panel" : "Atrás"}
         </button>
-        <button type="submit" className="btn-primary">
-          Continuar <BsArrowRight aria-hidden="true" />
+        <button type="submit" className="btn-primary" disabled={busy}>
+          {singleStep ? "Guardar y volver" : "Continuar"} <BsArrowRight aria-hidden="true" />
         </button>
       </div>
     </form>

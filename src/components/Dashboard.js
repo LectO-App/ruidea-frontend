@@ -19,6 +19,7 @@ import { toast } from './ui/toast';
 import Modal from './ui/Modal';
 import InlineMessage from './ui/InlineMessage';
 import StatusSteps from './StatusSteps';
+import RevisionChecklist from './RevisionChecklist';
 
 import logoLecto from '../img/webp/logo-lecto.webp';
 import logoLectoPNG from '../img/png/logo-lecto.png';
@@ -88,6 +89,8 @@ const STATUS = {
 	},
 };
 
+const GUIDED_REVISION_DESC = 'Un especialista revisó tu solicitud. Cambia solo lo que te pedimos y envíala de nuevo.';
+
 const Dashboard = () => {
 	const [data, setData] = useState({});
 	const [loaded, setLoaded] = useState(false); // first /usuario/me fetch has resolved
@@ -96,6 +99,8 @@ const Dashboard = () => {
 	const [resending, setResending] = useState(false); // resend-verification request in flight
 	const [resendError, setResendError] = useState(null); // inline failure shown under the resend button
 	const [shareUrl, setShareUrl] = useState(null); // shown when the clipboard API is unavailable
+	const [resubmitting, setResubmitting] = useState(false);
+	const [resubmitError, setResubmitError] = useState(null);
 
 	const fetchFromAPI = async () => {
 		// Always resolve the loading state (finally) so a failed request can never leave the
@@ -163,6 +168,20 @@ const Dashboard = () => {
 		}
 	};
 
+	const resubmit = async () => {
+		setResubmitting(true);
+		setResubmitError(null);
+		try {
+			const res = await axiosInstance.post('/inscripcion/reenviar');
+			setData(prev => ({ ...prev, ...res.data.usuario }));
+			toast.success('Enviamos tu solicitud de nuevo.');
+		} catch (err) {
+			setResubmitError('No pudimos enviar tu solicitud. Tus cambios están guardados; inténtalo otra vez en un momento.');
+		} finally {
+			setResubmitting(false);
+		}
+	};
+
 	// Initial load: show the skeleton (same chrome + layout as the loaded view). The overlay
 	// spinner below is reserved for blocking actions (file downloads) once data is present.
 	if (!loaded) return <DashboardSkeleton />;
@@ -199,7 +218,10 @@ const Dashboard = () => {
 		);
 	}
 
-	const meta = STATUS[data.estado];
+	// A revision with reasons from the catalog gets the guided checklist; one with only a
+	// free-text note keeps the full edit form.
+	const guided = data.estado === 'revision' && Array.isArray(data.motivosRevision) && data.motivosRevision.length > 0;
+	const meta = guided ? { ...STATUS.revision, desc: GUIDED_REVISION_DESC } : STATUS[data.estado];
 
 	return (
 		<div className='dashboard-div-main'>
@@ -226,7 +248,18 @@ const Dashboard = () => {
 
 							{data.estado === 'pendiente' && <StatusSteps steps={PENDING_STEPS} activeKey='revision' />}
 
-							{data.estado === 'revision' && data.mensajeMedico && (
+							{guided && (
+								<RevisionChecklist
+									motivosRevision={data.motivosRevision}
+									cambiosDesdeRevision={data.cambiosDesdeRevision}
+									mensajeMedico={data.mensajeMedico}
+									onReenviar={resubmit}
+									sending={resubmitting}
+									error={resubmitError}
+								/>
+							)}
+
+							{data.estado === 'revision' && !guided && data.mensajeMedico && (
 								<div className='status-note'>
 									<span className='status-note-label'>Mensaje del especialista</span>
 									<p>{data.mensajeMedico}</p>
@@ -260,7 +293,7 @@ const Dashboard = () => {
 								</div>
 							)}
 
-							{data.estado === 'revision' && (
+							{data.estado === 'revision' && !guided && (
 								<div className='status-actions'>
 									<Link
 										className='btn-primary'

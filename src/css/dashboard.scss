@@ -97,11 +97,108 @@
 	}
 }
 .status-note-label {
-	font-size: 0.8rem;
+	font-size: 0.95rem;
 	font-weight: 700;
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
 	color: $reg-muted;
+}
+
+/* ---------- Guided revision checklist ---------- */
+.revision {
+	width: 100%;
+	text-align: left;
+	margin-top: 8px;
+	.status-actions {
+		justify-content: flex-start;
+	}
+	.btn-primary:focus-visible {
+		outline: 3px solid $clrMainDark;
+		outline-offset: 3px;
+	}
+}
+.revision-title {
+	font-size: 1.25rem;
+	line-height: 1.4;
+	margin: 0;
+	color: $reg-ink;
+}
+.revision-progress {
+	margin: 4px 0 0;
+	color: $reg-muted;
+	font-size: 1rem;
+}
+.revision-list {
+	list-style: none;
+	margin: 16px 0 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+.revision-item {
+	padding: 16px 18px;
+	border-radius: $reg-radius;
+	background: $reg-bg;
+	border: 1px solid $reg-border;
+	border-left: 4px solid #d69e2e;
+	&.is-done {
+		border-left-color: $reg-ok;
+	}
+}
+.revision-item-title {
+	margin: 0;
+	font-weight: 700;
+	font-size: 1.05rem;
+	line-height: 1.5;
+	color: $reg-ink;
+}
+.revision-item-tip {
+	margin: 4px 0 0;
+	line-height: 1.6;
+	color: $reg-muted;
+}
+.revision-item-foot {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 16px;
+	margin-top: 10px;
+}
+.revision-done {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-weight: 700;
+	color: $reg-ok;
+}
+.revision-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 44px;
+	padding: 8px 16px;
+	border-radius: 10px;
+	border: 2px solid $clrMain;
+	background: $reg-surface;
+	color: $clrMainDark;
+	font-weight: 700;
+	text-decoration: none;
+	transition: background 0.15s ease, border-color 0.15s ease;
+	&:hover {
+		background: rgba($clrMain, 0.08);
+	}
+	&:focus-visible {
+		outline: 3px solid $clrMainDark;
+		outline-offset: 3px;
+	}
+	&--again {
+		border-color: $reg-border;
+		font-weight: 600;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.revision-link {
+		transition: none;
+	}
 }
 .status-actions {
 	display: flex;

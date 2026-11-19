@@ -9,7 +9,7 @@ import DocumentUploader from "./form/DocumentUploader";
 // framed and reassured, accepts a photo or a PDF, and consents are unbundled: marketing is
 // separate and optional; the data-processing consent is explicit and required.
 const PasoDocumentos = (props) => {
-  const { formData, files, setFiles, onNext, onBack, editing } = props;
+  const { formData, files, setFiles, onNext, onBack, editing, singleStep, busy } = props;
   const { register, handleSubmit, errors, getValues } = useForm();
   const [filesError, setFilesError] = useState(null);
 
@@ -21,6 +21,11 @@ const PasoDocumentos = (props) => {
     // applications (when editing, the documents were already uploaded previously).
     if (!editing && files.diagnostico.length === 0) {
       setFilesError("Adjunta tu informe de diagnóstico para que el equipo médico pueda revisarlo.");
+      return;
+    }
+    // Opened on its own to replace a document: there must be something new to upload.
+    if (singleStep && files.diagnostico.length === 0 && files.documento.length === 0) {
+      setFilesError("Adjunta al menos un archivo nuevo.");
       return;
     }
     setFilesError(null);
@@ -102,10 +107,10 @@ const PasoDocumentos = (props) => {
 
       <div className="step-actions">
         <button type="button" className="btn-secondary" onClick={back}>
-          <BsArrowLeft aria-hidden="true" /> Atrás
+          <BsArrowLeft aria-hidden="true" /> {singleStep ? "Volver al panel" : "Atrás"}
         </button>
-        <button type="submit" className="btn-primary">
-          Revisar <BsArrowRight aria-hidden="true" />
+        <button type="submit" className="btn-primary" disabled={busy}>
+          {singleStep ? "Guardar y volver" : "Revisar"} <BsArrowRight aria-hidden="true" />
         </button>
       </div>
     </form>

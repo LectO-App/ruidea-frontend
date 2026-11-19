@@ -12,6 +12,8 @@ import PasoDocumentos from "./PasoDocumentos";
 import PasoRevision from "./PasoRevision";
 import Completion from "./Completion";
 import RegistrationSkeleton from "./RegistrationSkeleton";
+import { toast } from "./ui/toast";
+import InlineMessage from "./ui/InlineMessage";
 
 import {
   getOwn,
@@ -22,6 +24,7 @@ import {
   updateOwn,
   uploadFiles,
 } from "../util/registrationApi";
+import { motivosFor } from "../util/motivosRevision";
 
 import "../css/registration.scss";
 
@@ -55,6 +58,25 @@ const STEP_FOR_PATH = {
   numeroTelefono: "residencia",
 };
 
+// Steps a submitted application can open on their own (?paso=<key>&volver=panel): the
+// dashboard's revision checklist links here so the applicant changes only what was asked.
+const SINGLE_STEPS = ["datos", "residencia", "diagnostico", "documentos"];
+
+const fileGroupsOf = (files) => {
+  const groups = {};
+  if (files.diagnostico.length) groups["Diagnostico Medico - Archivo"] = files.diagnostico;
+  if (files.documento.length) groups["Documento Identidad - Archivo"] = files.documento;
+  return groups;
+};
+
+// The edit body for PUT /actualizar: the record minus what the server must not get back.
+const editPayload = (data) => {
+  const payload = { ...data };
+  delete payload.csrfToken;
+  if (!payload.password) delete payload.password;
+  return payload;
+};
+
 const Form = (props) => {
   const reduceMotion = useReducedMotion();
 
@@ -70,6 +92,9 @@ const Form = (props) => {
   const [completion, setCompletion] = useState(null);
   const [serverErrors, setServerErrors] = useState(null); // field errors returned by the server on submit
   const [saveState, setSaveState] = useState("idle"); // idle | saving | saved | error — autosave feedback
+  const [singleStep, setSingleStep] = useState(null); // key of the only step shown, see SINGLE_STEPS
+  const [singleSaving, setSingleSaving] = useState(false);
+  const [singleError, setSingleError] = useState(null);
 
   // When the user arrives here from a "needs revision" dashboard, carry the specialist's
   // message along so it stays in front of them while they fix the form (instead of being
@@ -91,11 +116,17 @@ const Form = (props) => {
           setDraftId(me._id); // resume an in-progress draft (account already created)
         } else {
           setEditing(true); // editing an existing submitted record (§1.5)
+          const paso = new URLSearchParams(props.location && props.location.search).get("paso");
+          if (SINGLE_STEPS.includes(paso)) {
+            setSingleStep(paso);
+            setIndex(STEPS.filter((s) => !s.accountOnly).findIndex((s) => s.key === paso));
+          }
         }
       }
       setLoaded(true);
     };
     init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const current = steps[index];
@@ -123,13 +154,46 @@ const Form = (props) => {
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
   };
 
+  // Single-step mode: save just this step (without sending the application back to review)
+  // and return to the dashboard, where the checklist shows the item as done.
+  const saveSingleStep = async (patch) => {
+    if (singleSaving) return;
+    const next = mergeData(patch);
+    setSingleSaving(true);
+    setSingleError(null);
+    try {
+      if (singleStep === "documentos") await uploadFiles(fileGroupsOf(files));
+      else await updateOwn({ ...editPayload(next), enviar: false });
+      toast.success("Guardado. Ya puedes seguir con lo que falta.");
+      props.history.push("/dashboard");
+    } catch (err) {
+      setSingleSaving(false);
+      const fieldErrors = err && err.response && err.response.data && err.response.data.errors;
+      if (Array.isArray(fieldErrors) && fieldErrors.length) {
+        setServerErrors(fieldErrors);
+        const elsewhere = fieldErrors.filter((e) => STEP_FOR_PATH[e.path] !== singleStep);
+        if (elsewhere.length) setSingleError(elsewhere.map((e) => e.message).join(" "));
+        return;
+      }
+      setSingleError("No pudimos guardar el cambio. Inténtalo otra vez en un momento.");
+    }
+  };
+
   const onNext = (patch = {}, opts = {}) => {
+    if (singleStep) {
+      saveSingleStep(patch);
+      return;
+    }
     mergeData(patch);
     if (!opts.skipAutosave) autosave(patch);
     if (index < steps.length - 1) goTo(index + 1);
   };
 
   const onBack = (patch = {}) => {
+    if (singleStep) {
+      props.history.push("/dashboard");
+      return;
+    }
     mergeData(patch);
     if (index > 0) goTo(index - 1);
   };
@@ -154,18 +218,13 @@ const Form = (props) => {
   // Final submission. Editing -> PUT actualizar; new/draft -> POST enviar. Documents are
   // uploaded to the authenticated endpoint (a session exists since the account step).
   const onSubmit = async () => {
-    const fileGroups = {};
-    if (files.diagnostico.length) fileGroups["Diagnostico Medico - Archivo"] = files.diagnostico;
-    if (files.documento.length) fileGroups["Documento Identidad - Archivo"] = files.documento;
+    const fileGroups = fileGroupsOf(files);
     const hasFiles = Object.keys(fileGroups).length > 0;
 
     try {
       if (editing) {
         if (hasFiles) await uploadFiles(fileGroups);
-        const payload = { ...formData };
-        delete payload.csrfToken;
-        if (!payload.password) delete payload.password;
-        await updateOwn(payload);
+        await updateOwn(editPayload(formData));
         setCompletion({
           editing: true,
           mensaje: "Hemos guardado tus cambios",
@@ -235,6 +294,7 @@ const Form = (props) => {
   }
 
   const StepComponent = current.Component;
+  const stepMotivos = singleStep ? motivosFor(formData.motivosRevision).filter((m) => m.grupo === singleStep) : [];
   const totalForUser = steps.length;
   const variants = reduceMotion
     ? { enter: { opacity: 1 }, center: { opacity: 1 }, exit: { opacity: 1 } }
@@ -256,59 +316,85 @@ const Form = (props) => {
         <title>Inscribirse | RUIDEA</title>
       </Helmet>
 
-      <Link className="reg-close" to="/" aria-label="Cerrar y volver al inicio" role="button" />
+      {singleStep ? (
+        <Link className="reg-close" to="/dashboard" aria-label="Cerrar y volver a tu panel" role="button" />
+      ) : (
+        <Link className="reg-close" to="/" aria-label="Cerrar y volver al inicio" role="button" />
+      )}
 
       <div className="reg-shell">
-        {revisionMessage && (
+        {stepMotivos.length > 0 && (
+          <div className="status-note reg-revision-note">
+            <span className="status-note-label">Lo que te pedimos aquí</span>
+            <ul className="reg-revision-motivos">
+              {stepMotivos.map((m) => (
+                <li key={m.id}>
+                  <strong>{m.titulo}.</strong> {m.consejo}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {!singleStep && revisionMessage && (
           <div className="status-note reg-revision-note">
             <span className="status-note-label">Mensaje del especialista</span>
             <p>{revisionMessage}</p>
           </div>
         )}
 
-        <header className="reg-progress">
-          <div className="reg-progress-meta">
-            <p className="reg-step-count">
-              Paso{" "}
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.span
-                  key={index}
-                  className="reg-step-num"
-                  initial={reduceMotion ? false : { opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -4 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  {index + 1}
-                </motion.span>
-              </AnimatePresence>{" "}
-              de {totalForUser}
-            </p>
-            {draftId && saveState !== "idle" && (
-              <span className={`reg-save reg-save-${saveState}`} role="status" aria-live="polite">
-                {saveState === "saving" && (
-                  <>
-                    <BsCloudUpload aria-hidden="true" /> Guardando…
-                  </>
-                )}
-                {saveState === "saved" && (
-                  <>
-                    <BsCheckCircle aria-hidden="true" /> Guardado
-                  </>
-                )}
-                {saveState === "error" && (
-                  <>
-                    <BsExclamationCircle aria-hidden="true" /> Lo guardaremos al enviar
-                  </>
-                )}
-              </span>
-            )}
-          </div>
-          <div className="reg-bar" role="progressbar" aria-valuemin={1} aria-valuemax={totalForUser} aria-valuenow={index + 1}>
-            <span className="reg-bar-fill" style={{ width: `${((index + 1) / totalForUser) * 100}%` }} />
-          </div>
-          <h1 className="reg-title">{current.title}</h1>
-        </header>
+        {singleStep ? (
+          <header className="reg-progress">
+            <p className="reg-step-count">Cambia solo esta parte. Al guardar, vuelves a tu panel.</p>
+            <h1 className="reg-title">{current.title}</h1>
+          </header>
+        ) : (
+          <header className="reg-progress">
+            <div className="reg-progress-meta">
+              <p className="reg-step-count">
+                Paso{" "}
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={index}
+                    className="reg-step-num"
+                    initial={reduceMotion ? false : { opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -4 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    {index + 1}
+                  </motion.span>
+                </AnimatePresence>{" "}
+                de {totalForUser}
+              </p>
+              {draftId && saveState !== "idle" && (
+                <span className={`reg-save reg-save-${saveState}`} role="status" aria-live="polite">
+                  {saveState === "saving" && (
+                    <>
+                      <BsCloudUpload aria-hidden="true" /> Guardando…
+                    </>
+                  )}
+                  {saveState === "saved" && (
+                    <>
+                      <BsCheckCircle aria-hidden="true" /> Guardado
+                    </>
+                  )}
+                  {saveState === "error" && (
+                    <>
+                      <BsExclamationCircle aria-hidden="true" /> Lo guardaremos al enviar
+                    </>
+                  )}
+                </span>
+              )}
+            </div>
+            <div className="reg-bar" role="progressbar" aria-valuemin={1} aria-valuemax={totalForUser} aria-valuenow={index + 1}>
+              <span className="reg-bar-fill" style={{ width: `${((index + 1) / totalForUser) * 100}%` }} />
+            </div>
+            <h1 className="reg-title">{current.title}</h1>
+          </header>
+        )}
+
+        <InlineMessage type="error">{singleError}</InlineMessage>
 
         <AnimatePresence mode="wait" custom={direction} initial={false}>
           <motion.div
@@ -326,7 +412,9 @@ const Form = (props) => {
               files={files}
               setFiles={setFiles}
               editing={editing}
-              isFirst={index === 0}
+              isFirst={!singleStep && index === 0}
+              singleStep={!!singleStep}
+              busy={singleSaving}
               serverErrors={serverErrors}
               onNext={onNext}
               onBack={onBack}

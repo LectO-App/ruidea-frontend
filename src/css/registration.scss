@@ -42,11 +42,18 @@
   border-left: 4px solid $clrMain;
   .status-note-label {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
     color: $clrMainDark;
+  }
+  .reg-revision-motivos {
+    margin: 6px 0 0;
+    padding-left: 20px;
+    line-height: 1.6;
+    color: $reg-ink;
+    li + li {
+      margin-top: 4px;
+    }
   }
   p {
     margin: 6px 0 0;

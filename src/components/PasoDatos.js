@@ -11,7 +11,7 @@ const TEXT_FIELDS = ["nombre", "apellidos", "tutorNombre", "tutorApellidos", "tu
 // Step — who the passport is for, plus the applicant's name and date of birth.
 // The guardian branch (§0) lets a parent apply for a child without fighting field labels.
 const PasoDatos = (props) => {
-  const { formData, onNext, onBack, isFirst, serverErrors } = props;
+  const { formData, onNext, onBack, isFirst, serverErrors, singleStep, busy } = props;
   const { register, handleSubmit, errors, watch, getValues, setError, clearErrors } = useForm({
     mode: "onBlur",
   });
@@ -140,11 +140,11 @@ const PasoDatos = (props) => {
       <div className="step-actions">
         {!isFirst && (
           <button type="button" className="btn-secondary" onClick={back}>
-            <BsArrowLeft aria-hidden="true" /> Atrás
+            <BsArrowLeft aria-hidden="true" /> {singleStep ? "Volver al panel" : "Atrás"}
           </button>
         )}
-        <button type="submit" className="btn-primary">
-          Continuar <BsArrowRight aria-hidden="true" />
+        <button type="submit" className="btn-primary" disabled={busy}>
+          {singleStep ? "Guardar y volver" : "Continuar"} <BsArrowRight aria-hidden="true" />
         </button>
       </div>
     </form>

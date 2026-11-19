@@ -12,7 +12,7 @@ const seed = (d) => ({
 });
 
 const PasoDiagnostico = (props) => {
-  const { formData, onNext, onBack } = props;
+  const { formData, onNext, onBack, singleStep, busy } = props;
   const [diag, setDiag] = useState(() => seed(formData.diagnostico));
   const [error, setError] = useState(null);
 
@@ -41,10 +41,10 @@ const PasoDiagnostico = (props) => {
 
       <div className="step-actions">
         <button type="button" className="btn-secondary" onClick={back}>
-          <BsArrowLeft aria-hidden="true" /> Atrás
+          <BsArrowLeft aria-hidden="true" /> {singleStep ? "Volver al panel" : "Atrás"}
         </button>
-        <button type="submit" className="btn-primary">
-          Continuar <BsArrowRight aria-hidden="true" />
+        <button type="submit" className="btn-primary" disabled={busy}>
+          {singleStep ? "Guardar y volver" : "Continuar"} <BsArrowRight aria-hidden="true" />
         </button>
       </div>
     </form>
