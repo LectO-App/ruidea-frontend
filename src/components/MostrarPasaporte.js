@@ -40,7 +40,9 @@ const useWakeLock = active => {
 				if (mounted) setLocked(false);
 			}
 		};
-		const onVisible = () => document.visibilityState === 'visible' && request();
+		const onVisible = () => {
+			if (document.visibilityState === 'visible' && (!sentinel || sentinel.released)) request();
+		};
 
 		request();
 		document.addEventListener('visibilitychange', onVisible);

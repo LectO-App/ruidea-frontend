@@ -124,6 +124,7 @@ test('keeps the screen on while open, re-requests it when visible again and rele
 	expect(await screen.findByText('La pantalla se queda encendida mientras lo muestras.')).toBeInTheDocument();
 	expect(request).toHaveBeenCalledWith('screen');
 
+	sentinels[0].released = true; // the browser drops the lock while the page is hidden
 	await act(async () => {
 		document.dispatchEvent(new Event('visibilitychange'));
 	});
