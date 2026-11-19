@@ -19,6 +19,7 @@ import Toaster from './components/ui/Toaster';
 import LandingPage from './components/LandingPage';
 
 const Dashboard = lazy(() => import('./components/Dashboard'));
+const MostrarPasaporte = lazy(() => import('./components/MostrarPasaporte'));
 const Form = lazy(() => import('./components/Form'));
 const Login = lazy(() => import('./components/Login'));
 const Verificar = lazy(() => import('./components/Verificar'));
@@ -118,6 +119,7 @@ function App() {
 											)}
 										/>
 									<ProtectedRoute path='/dashboard' component={Dashboard} fallback={<DashboardSkeleton />} />
+									<ProtectedRoute exact path='/mostrar' component={MostrarPasaporte} />
 									<Route path='/login' component={Login} />
 									<Route exact path='/admin' component={() => <Redirect to='/admin/login' />} />
 									<Route exact path='/verificar/ejemplo' component={VerificarEjemplo} />
