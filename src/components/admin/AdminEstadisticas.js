@@ -305,10 +305,11 @@ const StatsView = ({ s }) => {
             rows={escaneos.porDispositivo.map((r) => ({ label: DEVICE[r.dispositivo] || r.dispositivo, n: r.n }))}
           />
         </Card>
-        <Card title="Registro por mes" id="st-registro-mes">
-          <MonthlyFunnel months={registro.porMes} />
-        </Card>
       </div>
+
+      <Card title="Registro por mes" id="st-registro-mes">
+        <MonthlyFunnel months={registro.porMes} />
+      </Card>
 
       <Card title="Verificaciones fallidas por semana" id="st-fallos">
         {escaneos.fallosPorSemana.length === 0 ? (

@@ -6,6 +6,19 @@
   margin-right: auto;
   margin-left: clamp(8px, 3vw, 32px);
 }
+@media (max-width: 560px) {
+  .adm-nav {
+    height: auto;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .adm-nav__links {
+    order: 3;
+    flex-basis: 100%;
+    margin: 0;
+  }
+}
 .adm-nav__link {
   padding: 8px 12px;
   border-radius: 8px;
