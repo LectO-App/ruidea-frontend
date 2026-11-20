@@ -124,6 +124,10 @@ $ui-ink: #2b2b33;
   padding: clamp(20px, 4vw, 32px);
   width: 100%;
   max-width: 480px;
+  // A long dialog (the grouped revision checklist) scrolls inside the card, so its
+  // buttons stay reachable on a short window.
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
   box-shadow: 0 12px 48px rgba(20, 20, 28, 0.3);
 }
 .modal-title {
