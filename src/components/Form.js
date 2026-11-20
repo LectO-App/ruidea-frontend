@@ -329,7 +329,7 @@ const Form = (props) => {
             <ul className="reg-revision-motivos">
               {stepMotivos.map((m) => (
                 <li key={m.id}>
-                  <strong>{m.titulo}.</strong> {m.consejo}
+                  <strong>{m.titulo}.</strong> {m.otro ? formData.mensajeMedico || "Lee el mensaje del especialista en tu panel." : m.consejo}
                 </li>
               ))}
             </ul>

@@ -7,7 +7,7 @@ import Modal from "../ui/Modal";
 import StatusBadge from "./StatusBadge";
 import InlineMessage from "../ui/InlineMessage";
 import { getFileFromServer } from "../../util/getFileFromServer";
-import { GRUPOS, MOTIVOS, motivosFor, grupoLabel } from "../../util/motivosRevision";
+import { GRUPOS, MOTIVOS, motivosFor, grupoLabel, isOtro } from "../../util/motivosRevision";
 
 const DIAG_LABELS = { tdah: "TDA-H" };
 
@@ -55,6 +55,10 @@ const AdminSolicitud = (props) => {
   const sendRevision = () => {
     if (revisionMotivos.length === 0 && !revisionMsg.trim()) {
       setRevisionError("Elige al menos un motivo o escribe un mensaje.");
+      return;
+    }
+    if (revisionMotivos.some(isOtro) && !revisionMsg.trim()) {
+      setRevisionError("Si eliges «Otro», escribe en el mensaje qué hay que cambiar.");
       return;
     }
     setRevisionOpen(false);
@@ -339,7 +343,7 @@ const AdminSolicitud = (props) => {
             ))}
           </fieldset>
           <label className="adm-modal-label" htmlFor="revision-msg">
-            Mensaje para la persona (opcional)
+            {revisionMotivos.some(isOtro) ? "Mensaje para la persona (obligatorio con «Otro»)" : "Mensaje para la persona (opcional)"}
           </label>
           <textarea
             id="revision-msg"

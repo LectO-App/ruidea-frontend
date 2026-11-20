@@ -29,6 +29,11 @@ const PasoDocumentos = (props) => {
       return;
     }
     setFilesError(null);
+    // Opened on its own, the step only replaces files: the stored consents go back unchanged.
+    if (singleStep) {
+      onNext({ aceptoRecibirInfo: !!formData.aceptoRecibirInfo, aceptoSolicitud: !!formData.aceptoSolicitud });
+      return;
+    }
     onNext({
       aceptoRecibirInfo: !!data.aceptoRecibirInfo,
       aceptoSolicitud: !!data.aceptoSolicitud,
@@ -70,40 +75,42 @@ const PasoDocumentos = (props) => {
         </span>
       )}
 
-      <div className="consents">
-        <label className="consent-row">
-          <input
-            type="checkbox"
-            name="aceptoRecibirInfo"
-            id="aceptoRecibirInfo"
-            defaultChecked={formData.aceptoRecibirInfo || false}
-            ref={register()}
-          />
-          <span>Quiero recibir información sobre dislexia y otras DEA. (Opcional)</span>
-        </label>
+      {!singleStep && (
+        <div className="consents">
+          <label className="consent-row">
+            <input
+              type="checkbox"
+              name="aceptoRecibirInfo"
+              id="aceptoRecibirInfo"
+              defaultChecked={formData.aceptoRecibirInfo || false}
+              ref={register()}
+            />
+            <span>Quiero recibir información sobre dislexia y otras DEA. (Opcional)</span>
+          </label>
 
-        <label className="consent-row required">
-          <input
-            type="checkbox"
-            name="aceptoSolicitud"
-            id="aceptoSolicitud"
-            defaultChecked={formData.aceptoSolicitud || false}
-            ref={register({ required: "Necesitamos tu consentimiento para continuar" })}
-          />
-          <span>
-            Doy mi consentimiento para que se traten mis datos de salud con el fin de emitir el pasaporte DEA, según la{" "}
-            <Link to="/politica-privacidad" target="_blank">
-              política de protección de datos
-            </Link>
-            .
-          </span>
-        </label>
-        {errors.aceptoSolicitud && (
-          <span className="error-message" role="alert">
-            {errors.aceptoSolicitud.message}
-          </span>
-        )}
-      </div>
+          <label className="consent-row required">
+            <input
+              type="checkbox"
+              name="aceptoSolicitud"
+              id="aceptoSolicitud"
+              defaultChecked={formData.aceptoSolicitud || false}
+              ref={register({ required: "Necesitamos tu consentimiento para continuar" })}
+            />
+            <span>
+              Doy mi consentimiento para que se traten mis datos de salud con el fin de emitir el pasaporte DEA, según la{" "}
+              <Link to="/politica-privacidad" target="_blank">
+                política de protección de datos
+              </Link>
+              .
+            </span>
+          </label>
+          {errors.aceptoSolicitud && (
+            <span className="error-message" role="alert">
+              {errors.aceptoSolicitud.message}
+            </span>
+          )}
+        </div>
+      )}
 
       <div className="step-actions">
         <button type="button" className="btn-secondary" onClick={back}>

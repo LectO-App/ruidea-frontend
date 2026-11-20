@@ -115,3 +115,20 @@ test('a revision with only a note keeps the full edit form', async () => {
 	expect(screen.getByText('Gracias por tu paciencia.')).toBeInTheDocument();
 	expect(screen.queryByRole('button', { name: 'Enviar de nuevo' })).not.toBeInTheDocument();
 });
+
+test('an "Otro" item points to the note and links to its step', () => {
+	checklist({ motivosRevision: ['otro-diagnostico'], cambiosDesdeRevision: [], mensajeMedico: 'Falta la hoja dos.' });
+	const item = within(screen.getByRole('listitem'));
+	expect(item.getByText('Otro cambio en Diagnóstico')).toBeInTheDocument();
+	expect(item.getByText('Lee el mensaje del especialista, más abajo.')).toBeInTheDocument();
+	expect(item.getByRole('link', { name: /^Revisar esta parte\s*: Otro cambio en Diagnóstico$/ })).toHaveAttribute(
+		'href',
+		'/inscribirse?paso=diagnostico&volver=panel'
+	);
+	expect(screen.getByText('Falta la hoja dos.')).toBeInTheDocument();
+});
+
+test('an "Otro" item gets "Hecho" once its step changed', () => {
+	checklist({ motivosRevision: ['otro-datos'], cambiosDesdeRevision: ['datos'] });
+	expect(within(screen.getByRole('listitem')).getByText('Hecho')).toBeInTheDocument();
+});

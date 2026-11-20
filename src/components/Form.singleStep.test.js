@@ -102,3 +102,18 @@ test('an unknown paso opens the full form', async () => {
 
 	expect(await screen.findByRole('heading', { name: 'Tus datos' })).toBeInTheDocument();
 });
+
+test('for an "Otro" reason the box shows the specialist\'s message', async () => {
+	axiosInstance.get.mockResolvedValue({ data: { ...record, motivosRevision: ['otro-residencia'], mensajeMedico: 'Falta el país de nacimiento.' } });
+	visit('/inscribirse?paso=residencia&volver=panel');
+
+	expect(await screen.findByText('Otro cambio en Residencia y documento.')).toBeInTheDocument();
+	expect(screen.getByText('Falta el país de nacimiento.')).toBeInTheDocument();
+});
+
+test('the documents step on its own does not ask for the consents again', async () => {
+	visit('/inscribirse?paso=documentos&volver=panel');
+
+	expect(await screen.findByRole('heading', { name: 'Documentos' })).toBeInTheDocument();
+	expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+});

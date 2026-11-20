@@ -92,6 +92,14 @@
   }
 }
 
+// On narrow screens the close button sits over the top of the shell: a note that opens
+// the page starts below the button so the two never touch.
+@media (max-width: 820px) {
+  .reg-shell > .reg-revision-note:first-child {
+    margin-top: 60px;
+  }
+}
+
 /* ---------- Progress ---------- */
 .reg-progress {
   margin-bottom: clamp(20px, 4vw, 36px);

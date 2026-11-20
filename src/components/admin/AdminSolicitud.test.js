@@ -69,3 +69,32 @@ test('the modal asks for a reason or a note before sending', async () => {
 	expect(screen.getByRole('alert')).toHaveTextContent('Elige al menos un motivo o escribe un mensaje.');
 	expect(axiosInstance.post).not.toHaveBeenCalledWith('/admin/respuesta', expect.anything());
 });
+
+test('each "Otro" reason is last in its group and needs a note', async () => {
+	visit();
+	await userEvent.click(await screen.findByRole('button', { name: 'Pedir revisión' }));
+
+	for (const [grupo, titulo] of [
+		['Datos personales', 'Otro cambio en Datos personales'],
+		['Residencia y documento', 'Otro cambio en Residencia y documento'],
+		['Diagnóstico', 'Otro cambio en Diagnóstico'],
+		['Documentos', 'Otro cambio en Documentos'],
+	]) {
+		const boxes = within(screen.getByRole('group', { name: grupo })).getAllByRole('checkbox');
+		expect(boxes[boxes.length - 1]).toHaveAccessibleName(titulo);
+	}
+
+	await userEvent.click(screen.getByRole('checkbox', { name: 'Otro cambio en Documentos' }));
+	await userEvent.click(screen.getByRole('button', { name: 'Enviar' }));
+	expect(screen.getByRole('alert')).toHaveTextContent('Si eliges «Otro», escribe en el mensaje qué hay que cambiar.');
+	expect(axiosInstance.post).not.toHaveBeenCalledWith('/admin/respuesta', expect.anything());
+
+	await userEvent.type(screen.getByRole('textbox'), 'Sube la otra cara');
+	await userEvent.click(screen.getByRole('button', { name: 'Enviar' }));
+	expect(axiosInstance.post).toHaveBeenCalledWith('/admin/respuesta', {
+		estado: 'revision',
+		mensajeMedico: 'Sube la otra cara',
+		motivosRevision: ['otro-documentos'],
+		emailUsuario: 'prueba@example.test',
+	});
+});

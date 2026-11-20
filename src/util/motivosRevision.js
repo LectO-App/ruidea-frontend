@@ -9,6 +9,9 @@ export const GRUPOS = [
   { key: "documentos", label: "Documentos" },
 ];
 
+// The tip of an "Otro" item on the dashboard, which shows the specialist's message just below.
+export const OTRO_CONSEJO = "Lee el mensaje del especialista, más abajo.";
+
 export const MOTIVOS = [
   {
     id: "informe-ilegible",
@@ -66,12 +69,22 @@ export const MOTIVOS = [
     consejo: "Copia el número igual que en el documento, con la letra si la tiene.",
     accion: "Cambiar el número",
   },
+  // One "Otro" reason per step, listed last in its group. It has no fixed tip: the
+  // specialist's message says what to change, so an "Otro" reason needs a message.
+  ...[
+    ["otro-datos", "datos", "Otro cambio en Datos personales"],
+    ["otro-residencia", "residencia", "Otro cambio en Residencia y documento"],
+    ["otro-diagnostico", "diagnostico", "Otro cambio en Diagnóstico"],
+    ["otro-documentos", "documentos", "Otro cambio en Documentos"],
+  ].map(([id, grupo, titulo]) => ({ id, grupo, titulo, otro: true, consejo: OTRO_CONSEJO, accion: "Revisar esta parte" })),
 ];
 
 const BY_ID = new Map(MOTIVOS.map((m) => [m.id, m]));
 
 // The catalog entries for `ids`, in the order given, skipping ids this build doesn't know.
 export const motivosFor = (ids) => (ids || []).map((id) => BY_ID.get(id)).filter(Boolean);
+
+export const isOtro = (id) => Boolean(BY_ID.get(id) && BY_ID.get(id).otro);
 
 export const grupoLabel = (key) => (GRUPOS.find((g) => g.key === key) || { label: key }).label;
 
