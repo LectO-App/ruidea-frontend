@@ -11,7 +11,10 @@
 #                         as production uses today; one image then serves any environment and
 #                         API_UPSTREAM picks the backend at run time. An absolute URL makes the
 #                         browser call the API directly (cross-site; see the PR description).
-#   REACT_APP_GA_KEY      Google Analytics id; empty (default) disables analytics.
+#   REACT_APP_CF_BEACON_TOKEN  Cloudflare Web Analytics site token; empty (default) loads no
+#                         analytics. The beacon reports page paths, so it is not loaded on token
+#                         pages (/verificar/..., /verificarEmail/..., /cambiarContraseña/...);
+#                         see src/analytics.js.
 
 FROM node:22-bookworm-slim AS build
 WORKDIR /app
@@ -20,11 +23,11 @@ RUN npm ci --no-audit --no-fund
 COPY public ./public
 COPY src ./src
 ARG REACT_APP_SERVER_URL=/api
-ARG REACT_APP_GA_KEY=
+ARG REACT_APP_CF_BEACON_TOKEN=
 # CI=false: CRA would otherwise fail the build on lint warnings (the GitHub workflow does the same).
 # No source maps, as in production today.
 ENV REACT_APP_SERVER_URL=$REACT_APP_SERVER_URL \
-    REACT_APP_GA_KEY=$REACT_APP_GA_KEY \
+    REACT_APP_CF_BEACON_TOKEN=$REACT_APP_CF_BEACON_TOKEN \
     GENERATE_SOURCEMAP=false \
     CI=false
 RUN npm run build

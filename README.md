@@ -66,3 +66,9 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `yarn build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+## Analytics
+
+The site uses Cloudflare Web Analytics, which sets no cookies. Set `REACT_APP_CF_BEACON_TOKEN` at build time to the Web Analytics site token (Cloudflare dashboard → Analytics & Logs → Web Analytics); leave it unset in development, and nothing is loaded.
+
+The beacon reports each page's path (not its query string or hash) and its referrer. Token pages (`/verificar/…`, `/verificarEmail/…`, `/cambiarContraseña/…`) must never be reported, so `src/analytics.js` does not load the beacon on them or on a page they linked to, and turns an in-app move to one of them into a full page load that drops the beacon.

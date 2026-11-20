@@ -25,5 +25,11 @@ export async function onRequest(context) {
   // and Set-Cookie / status / body from the backend pass straight back to the browser.
   const proxied = new Request(target, request);
 
+  // The visitor's country from Cloudflare's geolocation, for the back end's verification
+  // statistics (country totals only). Never forward a value the client sent itself; the back
+  // end trusts this header only when CF-Worker names this Pages project.
+  proxied.headers.delete("X-Visitor-Country");
+  if (request.cf && request.cf.country) proxied.headers.set("X-Visitor-Country", request.cf.country);
+
   return fetch(proxied);
 }
