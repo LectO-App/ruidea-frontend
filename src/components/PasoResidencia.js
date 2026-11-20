@@ -39,7 +39,7 @@ const PAISES = [
 // against its real checksum (DNI/NIE) as you go, so an error is caught here and not at
 // review (§3). Phone formatting is forgiving; the server canonicalises it (§2).
 const PasoResidencia = (props) => {
-  const { formData, onNext, onBack, serverErrors, singleStep, busy, campos } = props;
+  const { formData, onNext, onBack, serverErrors, singleStep, busy, sendsToo, campos } = props;
   // A step opened for one reason shows only its fields (campos); null shows them all.
   const all = !campos;
   const showDocumento = all || campos.has("documento");
@@ -204,7 +204,7 @@ const PasoResidencia = (props) => {
       )}
 
       {singleStep ? (
-        <SingleStepActions busy={busy} />
+        <SingleStepActions busy={busy} sendsToo={sendsToo} />
       ) : (
         <div className="step-actions">
           <button type="button" className="btn-secondary" onClick={back}>

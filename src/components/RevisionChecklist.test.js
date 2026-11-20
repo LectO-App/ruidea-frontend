@@ -34,10 +34,10 @@ const checklist = (props = {}) =>
 		</MemoryRouter>
 	);
 
-const dashboard = () =>
+const dashboard = (state) =>
 	render(
 		<HelmetProvider>
-			<MemoryRouter>
+			<MemoryRouter initialEntries={[{ pathname: '/dashboard', state }]}>
 				<Dashboard />
 			</MemoryRouter>
 		</HelmetProvider>
@@ -145,4 +145,18 @@ test('an "Otro" item uses the specialist text as its title, with the step name a
 test('an "Otro" item gets "Hecho" once its step changed', () => {
 	checklist({ motivosRevision: ['otro-datos'], textosOtro: { 'otro-datos': 'Añade el segundo apellido.' }, cambiosDesdeRevision: ['datos'] });
 	expect(within(screen.getByRole('listitem')).getByText('Hecho')).toBeInTheDocument();
+});
+
+test('after a failed automatic resend the all-done list shows the error and "Enviar de nuevo" retries', async () => {
+	const done = { ...revision, cambiosDesdeRevision: ['residencia', 'documentos'] };
+	axiosInstance.get.mockResolvedValue({ data: done });
+	axiosInstance.post.mockResolvedValue({ data: { usuario: { ...done, estado: 'pendiente' } } });
+	dashboard({ reenvioFallido: true });
+
+	expect(await screen.findByRole('heading', { name: 'Todo listo. Envíala de nuevo.' })).toBeInTheDocument();
+	expect(screen.getByText(/No pudimos enviarla. Tus cambios están guardados./)).toBeInTheDocument();
+	await userEvent.click(screen.getByRole('button', { name: 'Enviar de nuevo' }));
+	expect(axiosInstance.post).toHaveBeenCalledWith('/inscripcion/reenviar');
+	expect(await screen.findByRole('heading', { name: 'Tu solicitud está en camino' })).toBeInTheDocument();
+	expect(screen.queryByText(/No pudimos enviarla/)).not.toBeInTheDocument();
 });

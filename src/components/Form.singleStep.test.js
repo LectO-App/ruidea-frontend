@@ -35,7 +35,14 @@ const visit = path =>
 			<MemoryRouter initialEntries={[path]}>
 				<Switch>
 					<Route path='/inscribirse' component={Form} />
-					<Route path='/dashboard' render={() => <p>Panel de prueba</p>} />
+					<Route
+						path='/dashboard'
+						render={({ location }) => (
+							<p>
+								Panel de prueba{location.state && location.state.reenvioFallido && <span>Reenvío fallido</span>}
+							</p>
+						)}
+					/>
 				</Switch>
 			</MemoryRouter>
 		</HelmetProvider>
@@ -76,6 +83,42 @@ test('saving the step stores it without sending the application and returns to t
 	expect(body.enviar).toBe(false);
 	expect(body.diagnostico).toEqual({ ...record.diagnostico, discalculia: true });
 	expect(body).not.toHaveProperty('csrfToken');
+	expect(axiosInstance.post).not.toHaveBeenCalledWith('/inscripcion/reenviar');
+});
+
+test('the last pending item saves and sends: "Guardar y enviar", then POST /reenviar', async () => {
+	withMotivos(['diagnostico-no-coincide', 'informe-ilegible'], { cambiosDesdeRevision: ['documentos'] });
+	visit('/inscribirse?paso=diagnostico&volver=panel');
+
+	await userEvent.click(await screen.findByRole('checkbox', { name: 'Discalculia' }));
+	expect(screen.queryByRole('button', { name: 'Guardar' })).not.toBeInTheDocument();
+	await userEvent.click(screen.getByRole('button', { name: 'Guardar y enviar' }));
+
+	expect(await screen.findByText('Panel de prueba')).toBeInTheDocument();
+	expect(axiosInstance.put.mock.calls[0][1].enviar).toBe(false);
+	expect(axiosInstance.post).toHaveBeenCalledWith('/inscripcion/reenviar');
+	expect(axiosInstance.put.mock.invocationCallOrder[0]).toBeLessThan(axiosInstance.post.mock.invocationCallOrder[0]);
+	expect(screen.queryByText('Reenvío fallido')).not.toBeInTheDocument();
+});
+
+test('if the save works but the resend fails, the dashboard gets told', async () => {
+	withMotivos(['diagnostico-no-coincide']);
+	axiosInstance.post.mockRejectedValue(new Error('network'));
+	visit('/inscribirse?paso=diagnostico&volver=panel');
+
+	await userEvent.click(await screen.findByRole('button', { name: 'Guardar y enviar' }));
+	expect(await screen.findByText('Reenvío fallido')).toBeInTheDocument();
+	expect(axiosInstance.put).toHaveBeenCalledTimes(1);
+});
+
+test('if the save fails nothing is sent and the step stays open', async () => {
+	withMotivos(['diagnostico-no-coincide']);
+	axiosInstance.put.mockRejectedValue(new Error('network'));
+	visit('/inscribirse?paso=diagnostico&volver=panel');
+
+	await userEvent.click(await screen.findByRole('button', { name: 'Guardar y enviar' }));
+	expect(await screen.findByText(/No pudimos guardar el cambio/)).toBeInTheDocument();
+	expect(axiosInstance.post).not.toHaveBeenCalled();
 });
 
 test('"Volver" is a link back to the dashboard that saves nothing', async () => {
@@ -106,7 +149,7 @@ test('the documents step needs a new file before it saves', async () => {
 
 	expect(await screen.findByText('DNI, NIE o pasaporte')).toBeInTheDocument();
 	expect(screen.queryByText('Informe de diagnóstico')).not.toBeInTheDocument();
-	await userEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+	await userEvent.click(screen.getByRole('button', { name: 'Guardar y enviar' }));
 	expect(screen.getByText('Adjunta un archivo nuevo.')).toBeInTheDocument();
 	expect(axiosInstance.post).not.toHaveBeenCalled();
 });
@@ -133,7 +176,7 @@ test('a document number reason shows only the type and the number', async () => 
 
 	await userEvent.clear(screen.getByLabelText('Número de documento'));
 	await userEvent.type(screen.getByLabelText('Número de documento'), 'SINT0002');
-	await userEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+	await userEvent.click(screen.getByRole('button', { name: 'Guardar y enviar' }));
 	expect(await screen.findByText('Panel de prueba')).toBeInTheDocument();
 	const body = axiosInstance.put.mock.calls[0][1];
 	expect(body.numeroDocumento).toBe('SINT0002');
@@ -152,7 +195,7 @@ test('a name reason shows only the name fields and keeps the rest', async () => 
 
 	await userEvent.clear(screen.getByLabelText('Apellidos'));
 	await userEvent.type(screen.getByLabelText('Apellidos'), 'Sintética Dos');
-	await userEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+	await userEvent.click(screen.getByRole('button', { name: 'Guardar y enviar' }));
 	expect(await screen.findByText('Panel de prueba')).toBeInTheDocument();
 	const body = axiosInstance.put.mock.calls[0][1];
 	expect(body.apellidos).toBe('Sintética Dos');

@@ -13,7 +13,7 @@ const seed = (d) => ({
 });
 
 const PasoDiagnostico = (props) => {
-  const { formData, onNext, onBack, singleStep, busy } = props;
+  const { formData, onNext, onBack, singleStep, busy, sendsToo } = props;
   const [diag, setDiag] = useState(() => seed(formData.diagnostico));
   const [error, setError] = useState(null);
 
@@ -42,7 +42,7 @@ const PasoDiagnostico = (props) => {
       />
 
       {singleStep ? (
-        <SingleStepActions busy={busy} />
+        <SingleStepActions busy={busy} sendsToo={sendsToo} />
       ) : (
         <div className="step-actions">
           <button type="button" className="btn-secondary" onClick={back}>

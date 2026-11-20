@@ -10,7 +10,7 @@ import SingleStepActions from "./form/SingleStepActions";
 // framed and reassured, accepts a photo or a PDF, and consents are unbundled: marketing is
 // separate and optional; the data-processing consent is explicit and required.
 const PasoDocumentos = (props) => {
-  const { formData, files, setFiles, onNext, onBack, editing, singleStep, busy, campos } = props;
+  const { formData, files, setFiles, onNext, onBack, editing, singleStep, busy, sendsToo, campos } = props;
   // A step opened for one reason shows only its uploader (campos); null shows both.
   const showInforme = !campos || campos.has("informe");
   const showIdentidad = !campos || campos.has("identidad");
@@ -127,7 +127,7 @@ const PasoDocumentos = (props) => {
       )}
 
       {singleStep ? (
-        <SingleStepActions busy={busy} />
+        <SingleStepActions busy={busy} sendsToo={sendsToo} />
       ) : (
         <div className="step-actions">
           <button type="button" className="btn-secondary" onClick={back}>

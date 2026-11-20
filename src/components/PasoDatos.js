@@ -12,7 +12,7 @@ const TEXT_FIELDS = ["nombre", "apellidos", "tutorNombre", "tutorApellidos", "tu
 // Step — who the passport is for, plus the applicant's name and date of birth.
 // The guardian branch (§0) lets a parent apply for a child without fighting field labels.
 const PasoDatos = (props) => {
-  const { formData, onNext, onBack, isFirst, serverErrors, singleStep, busy, campos } = props;
+  const { formData, onNext, onBack, isFirst, serverErrors, singleStep, busy, sendsToo, campos } = props;
   // A step opened for one reason shows only its fields (campos); null shows them all.
   const all = !campos;
   const show = (key) => all || campos.has(key);
@@ -177,7 +177,7 @@ const PasoDatos = (props) => {
       )}
 
       {singleStep ? (
-        <SingleStepActions busy={busy} />
+        <SingleStepActions busy={busy} sendsToo={sendsToo} />
       ) : (
         <div className="step-actions">
           {!isFirst && (

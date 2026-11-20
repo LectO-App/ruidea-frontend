@@ -23,6 +23,7 @@ import {
   registerOneShot,
   updateOwn,
   uploadFiles,
+  resubmit,
 } from "../util/registrationApi";
 import { motivosFor, camposFor } from "../util/motivosRevision";
 
@@ -131,6 +132,15 @@ const Form = (props) => {
 
   const current = steps[index];
 
+  // Single-step mode: true when saving this step leaves no reason of a guided revision
+  // pending, so the step's button also sends the application ("Guardar y enviar").
+  const sendsToo = useMemo(() => {
+    if (!singleStep || formData.estado !== "revision") return false;
+    const motivos = motivosFor(formData.motivosRevision, formData.textosOtro);
+    const cambiados = new Set([...(formData.cambiosDesdeRevision || []), singleStep]);
+    return motivos.length > 0 && motivos.every((m) => cambiados.has(m.grupo));
+  }, [singleStep, formData.estado, formData.motivosRevision, formData.textosOtro, formData.cambiosDesdeRevision]);
+
   const mergeData = (patch) => {
     const next = { ...formData, ...patch };
     setFormData(next);
@@ -164,8 +174,6 @@ const Form = (props) => {
     try {
       if (singleStep === "documentos") await uploadFiles(fileGroupsOf(files));
       else await updateOwn({ ...editPayload(next), enviar: false });
-      toast.success("Guardado. Ya puedes seguir con lo que falta.");
-      props.history.push("/dashboard");
     } catch (err) {
       setSingleSaving(false);
       const fieldErrors = err && err.response && err.response.data && err.response.data.errors;
@@ -176,6 +184,21 @@ const Form = (props) => {
         return;
       }
       setSingleError("No pudimos guardar el cambio. Inténtalo otra vez en un momento.");
+      return;
+    }
+    if (!sendsToo) {
+      toast.success("Guardado. Ya puedes seguir con lo que falta.");
+      props.history.push("/dashboard");
+      return;
+    }
+    // The last pending item: send the application back to review too. If only the resend
+    // fails, the dashboard shows the all-done list with the error and "Enviar de nuevo".
+    try {
+      await resubmit();
+      toast.success("Enviamos tu solicitud de nuevo.");
+      props.history.push("/dashboard");
+    } catch (err) {
+      props.history.push("/dashboard", { reenvioFallido: true });
     }
   };
 
@@ -425,6 +448,7 @@ const Form = (props) => {
               singleStep={!!singleStep}
               campos={campos}
               busy={singleSaving}
+              sendsToo={sendsToo}
               serverErrors={serverErrors}
               onNext={onNext}
               onBack={onBack}
