@@ -14,13 +14,15 @@ const CONDICIONES = [
   { name: "tdah", label: "TDA-H" },
 ];
 
-const DiagnosisCards = ({ value = {}, onChange, error }) => {
+const DIAG_HINT = "Puedes marcar más de uno. Solo lo verá el equipo médico que revisa tu solicitud.";
+
+const DiagnosisCards = ({ value = {}, onChange, error, hint = DIAG_HINT }) => {
   const toggle = (name) => onChange({ ...value, [name]: !value[name] });
 
   return (
     <fieldset className="diagnosis">
       <legend>¿Qué diagnóstico tienes?</legend>
-      <p className="field-hint">Puedes marcar más de uno. Solo lo verá el equipo médico que revisa tu solicitud.</p>
+      <p className="field-hint">{hint}</p>
 
       <div className="diag-grid">
         {CONDICIONES.map((c) => (

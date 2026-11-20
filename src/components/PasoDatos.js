@@ -4,6 +4,7 @@ import { BsArrowRight, BsArrowLeft } from "react-icons/bs";
 
 import Field from "./form/Field";
 import DateOfBirth from "./form/DateOfBirth";
+import SingleStepActions from "./form/SingleStepActions";
 import { partsToISODate } from "../util/identity";
 
 const TEXT_FIELDS = ["nombre", "apellidos", "tutorNombre", "tutorApellidos", "tutorParentesco"];
@@ -11,12 +12,16 @@ const TEXT_FIELDS = ["nombre", "apellidos", "tutorNombre", "tutorApellidos", "tu
 // Step — who the passport is for, plus the applicant's name and date of birth.
 // The guardian branch (§0) lets a parent apply for a child without fighting field labels.
 const PasoDatos = (props) => {
-  const { formData, onNext, onBack, isFirst, serverErrors, singleStep, busy } = props;
+  const { formData, onNext, onBack, isFirst, serverErrors, singleStep, busy, campos } = props;
+  // A step opened for one reason shows only its fields (campos); null shows them all.
+  const all = !campos;
+  const show = (key) => all || campos.has(key);
   const { register, handleSubmit, errors, watch, getValues, setError, clearErrors } = useForm({
     mode: "onBlur",
   });
 
-  const [esTutor, setEsTutor] = useState(!!formData.esTutor);
+  // Asked to add the guardian's details: the application is for someone else.
+  const [esTutor, setEsTutor] = useState(!!formData.esTutor || (!all && campos.has("tutor")));
 
   // Surface any errors the server flagged on submit (the date of birth maps to the "dia"
   // field, which is where DateOfBirth renders its message).
@@ -30,6 +35,29 @@ const PasoDatos = (props) => {
   }, [serverErrors]);
 
   const build = (data) => {
+    // Only the fields shown are sent; Form keeps the rest of the record as it is.
+    if (!all) {
+      const patch = {};
+      if (show("nombre")) Object.assign(patch, { nombre: data.nombre, apellidos: data.apellidos });
+      if (show("tutor")) {
+        Object.assign(patch, {
+          esTutor: true,
+          tutorNombre: data.tutorNombre,
+          tutorApellidos: data.tutorApellidos,
+          tutorParentesco: data.tutorParentesco,
+        });
+      }
+      if (show("fecha")) {
+        const fecha = partsToISODate(data.dia, data.mes, data.anio);
+        if (!fecha) {
+          setError("dia", { type: "manual", message: "Revisa la fecha de nacimiento" });
+          return null;
+        }
+        clearErrors("dia");
+        patch.fechaNacimiento = fecha;
+      }
+      return patch;
+    }
     const fechaNacimiento = partsToISODate(data.dia, data.mes, data.anio);
     if (!fechaNacimiento) {
       setError("dia", { type: "manual", message: "Revisa la fecha de nacimiento" });
@@ -59,23 +87,25 @@ const PasoDatos = (props) => {
 
   return (
     <form className="step-form" onSubmit={handleSubmit(submit)} noValidate>
-      <fieldset className="choice">
-        <legend>¿Para quién es el pasaporte?</legend>
-        <div className="choice-options">
-          <label className={`choice-card${!esTutor ? " selected" : ""}`}>
-            <input type="radio" name="paraQuien" checked={!esTutor} onChange={() => setEsTutor(false)} />
-            <span>Para mí</span>
-          </label>
-          <label className={`choice-card${esTutor ? " selected" : ""}`}>
-            <input type="radio" name="paraQuien" checked={esTutor} onChange={() => setEsTutor(true)} />
-            <span>Para alguien que cuido</span>
-          </label>
-        </div>
-      </fieldset>
+      {all && (
+        <fieldset className="choice">
+          <legend>¿Para quién es el pasaporte?</legend>
+          <div className="choice-options">
+            <label className={`choice-card${!esTutor ? " selected" : ""}`}>
+              <input type="radio" name="paraQuien" checked={!esTutor} onChange={() => setEsTutor(false)} />
+              <span>Para mí</span>
+            </label>
+            <label className={`choice-card${esTutor ? " selected" : ""}`}>
+              <input type="radio" name="paraQuien" checked={esTutor} onChange={() => setEsTutor(true)} />
+              <span>Para alguien que cuido</span>
+            </label>
+          </div>
+        </fieldset>
+      )}
 
-      {esTutor && (
+      {esTutor && show("tutor") && (
         <div className="subsection">
-          <p className="step-intro">Tus datos como tutor/a o representante:</p>
+          {all && <p className="step-intro">Tus datos como tutor/a o representante:</p>}
           <div className="field-row">
             <Field
               name="tutorNombre"
@@ -107,46 +137,59 @@ const PasoDatos = (props) => {
             errors={errors}
             watch={watch}
           />
-          <hr className="divider" />
+          {all && <hr className="divider" />}
         </div>
       )}
 
-      <p className="step-intro">{esTutor ? "Datos de la persona que cuidas:" : "Tus datos:"}</p>
-      <div className="field-row">
-        <Field
-          name="nombre"
-          label="Nombre"
-          autoComplete={esTutor ? "off" : "given-name"}
-          defaultValue={formData.nombre}
-          rules={{ required: "Por favor, escribe el nombre" }}
+      {all && <p className="step-intro">{esTutor ? "Datos de la persona que cuidas:" : "Tus datos:"}</p>}
+      {show("nombre") && (
+        <div className="field-row">
+          <Field
+            name="nombre"
+            label="Nombre"
+            autoComplete={esTutor ? "off" : "given-name"}
+            defaultValue={formData.nombre}
+            rules={{ required: "Por favor, escribe el nombre" }}
+            register={register}
+            errors={errors}
+            watch={watch}
+          />
+          <Field
+            name="apellidos"
+            label="Apellidos"
+            autoComplete={esTutor ? "off" : "family-name"}
+            defaultValue={formData.apellidos}
+            rules={{ required: "Por favor, escribe los apellidos" }}
+            register={register}
+            errors={errors}
+            watch={watch}
+          />
+        </div>
+      )}
+
+      {show("fecha") && (
+        <DateOfBirth
           register={register}
           errors={errors}
-          watch={watch}
+          defaultISO={formData.fechaNacimiento}
+          error={errors.dia && errors.dia.type === "manual" ? errors.dia.message : null}
         />
-        <Field
-          name="apellidos"
-          label="Apellidos"
-          autoComplete={esTutor ? "off" : "family-name"}
-          defaultValue={formData.apellidos}
-          rules={{ required: "Por favor, escribe los apellidos" }}
-          register={register}
-          errors={errors}
-          watch={watch}
-        />
-      </div>
+      )}
 
-      <DateOfBirth register={register} errors={errors} defaultISO={formData.fechaNacimiento} error={errors.dia && errors.dia.type === "manual" ? errors.dia.message : null} />
-
-      <div className="step-actions">
-        {!isFirst && (
-          <button type="button" className="btn-secondary" onClick={back}>
-            <BsArrowLeft aria-hidden="true" /> {singleStep ? "Volver al panel" : "Atrás"}
+      {singleStep ? (
+        <SingleStepActions busy={busy} />
+      ) : (
+        <div className="step-actions">
+          {!isFirst && (
+            <button type="button" className="btn-secondary" onClick={back}>
+              <BsArrowLeft aria-hidden="true" /> Atrás
+            </button>
+          )}
+          <button type="submit" className="btn-primary">
+            Continuar <BsArrowRight aria-hidden="true" />
           </button>
-        )}
-        <button type="submit" className="btn-primary" disabled={busy}>
-          {singleStep ? "Guardar y volver" : "Continuar"} <BsArrowRight aria-hidden="true" />
-        </button>
-      </div>
+        </div>
+      )}
     </form>
   );
 };

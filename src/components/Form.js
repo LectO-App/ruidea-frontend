@@ -24,7 +24,7 @@ import {
   updateOwn,
   uploadFiles,
 } from "../util/registrationApi";
-import { motivosFor } from "../util/motivosRevision";
+import { motivosFor, camposFor } from "../util/motivosRevision";
 
 import "../css/registration.scss";
 
@@ -294,7 +294,11 @@ const Form = (props) => {
   }
 
   const StepComponent = current.Component;
-  const stepMotivos = singleStep ? motivosFor(formData.motivosRevision).filter((m) => m.grupo === singleStep) : [];
+  // Single-step mode: the reasons for this step, and the only fields they need.
+  const stepMotivos = singleStep
+    ? motivosFor(formData.motivosRevision, formData.textosOtro).filter((m) => m.grupo === singleStep)
+    : [];
+  const campos = singleStep ? camposFor(stepMotivos) : null;
   const totalForUser = steps.length;
   const variants = reduceMotion
     ? { enter: { opacity: 1 }, center: { opacity: 1 }, exit: { opacity: 1 } }
@@ -323,19 +327,6 @@ const Form = (props) => {
       )}
 
       <div className="reg-shell">
-        {stepMotivos.length > 0 && (
-          <div className="status-note reg-revision-note">
-            <span className="status-note-label">Lo que te pedimos aquí</span>
-            <ul className="reg-revision-motivos">
-              {stepMotivos.map((m) => (
-                <li key={m.id}>
-                  <strong>{m.titulo}.</strong> {m.otro ? formData.mensajeMedico || "Lee el mensaje del especialista en tu panel." : m.consejo}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
         {!singleStep && revisionMessage && (
           <div className="status-note reg-revision-note">
             <span className="status-note-label">Mensaje del especialista</span>
@@ -344,9 +335,27 @@ const Form = (props) => {
         )}
 
         {singleStep ? (
-          <header className="reg-progress">
-            <p className="reg-step-count">Cambia solo esta parte. Al guardar, vuelves a tu panel.</p>
-            <h1 className="reg-title">{current.title}</h1>
+          <header className="reg-progress reg-progress--single">
+            {stepMotivos.length === 1 ? (
+              <>
+                <h1 className="reg-title">{stepMotivos[0].titulo}</h1>
+                {stepMotivos[0].consejo && <p className="reg-single-tip">{stepMotivos[0].consejo}</p>}
+              </>
+            ) : (
+              <>
+                <h1 className="reg-title">{current.title}</h1>
+                {stepMotivos.length > 1 && (
+                  <ul className="reg-single-list">
+                    {stepMotivos.map((m) => (
+                      <li key={m.id}>
+                        <strong>{m.titulo}</strong>
+                        {m.consejo && <span> {m.consejo}</span>}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            )}
           </header>
         ) : (
           <header className="reg-progress">
@@ -414,6 +423,7 @@ const Form = (props) => {
               editing={editing}
               isFirst={!singleStep && index === 0}
               singleStep={!!singleStep}
+              campos={campos}
               busy={singleSaving}
               serverErrors={serverErrors}
               onNext={onNext}

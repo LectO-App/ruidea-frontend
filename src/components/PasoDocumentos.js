@@ -4,17 +4,20 @@ import { Link } from "react-router-dom";
 import { BsArrowRight, BsArrowLeft, BsShieldLock } from "react-icons/bs";
 
 import DocumentUploader from "./form/DocumentUploader";
+import SingleStepActions from "./form/SingleStepActions";
 
 // Step — the documents (the whole point of the passport, §5) and consent (§6). Upload is
 // framed and reassured, accepts a photo or a PDF, and consents are unbundled: marketing is
 // separate and optional; the data-processing consent is explicit and required.
 const PasoDocumentos = (props) => {
-  const { formData, files, setFiles, onNext, onBack, editing, singleStep, busy } = props;
+  const { formData, files, setFiles, onNext, onBack, editing, singleStep, busy, campos } = props;
+  // A step opened for one reason shows only its uploader (campos); null shows both.
+  const showInforme = !campos || campos.has("informe");
+  const showIdentidad = !campos || campos.has("identidad");
   const { register, handleSubmit, errors, getValues } = useForm();
   const [filesError, setFilesError] = useState(null);
 
-  const setGroup = (group) => (newFiles) =>
-    setFiles((prev) => ({ ...prev, [group]: newFiles }));
+  const setGroup = (group) => (newFiles) => setFiles((prev) => ({ ...prev, [group]: newFiles }));
 
   const submit = (data) => {
     // The diagnosis report is what the medical reviewer assesses — require it for new
@@ -25,7 +28,7 @@ const PasoDocumentos = (props) => {
     }
     // Opened on its own to replace a document: there must be something new to upload.
     if (singleStep && files.diagnostico.length === 0 && files.documento.length === 0) {
-      setFilesError("Adjunta al menos un archivo nuevo.");
+      setFilesError("Adjunta un archivo nuevo.");
       return;
     }
     setFilesError(null);
@@ -49,25 +52,35 @@ const PasoDocumentos = (props) => {
   return (
     <form className="step-form" onSubmit={handleSubmit(submit)} noValidate>
       <p className="privacy-note">
-        <BsShieldLock aria-hidden="true" /> Tus documentos viajan cifrados y solo los ve el equipo médico que
-        revisa tu solicitud.
+        <BsShieldLock aria-hidden="true" />{" "}
+        {singleStep
+          ? "Solo lo ve el equipo médico."
+          : "Tus documentos viajan cifrados y solo los ve el equipo médico que revisa tu solicitud."}
       </p>
 
-      <DocumentUploader
-        id="diagnostico"
-        label="Informe de diagnóstico"
-        hint="Sube el informe firmado por el profesional. Puede ser un PDF o una foto del documento en papel."
-        files={files.diagnostico}
-        onFilesChange={setGroup("diagnostico")}
-      />
+      {showInforme && (
+        <DocumentUploader
+          id="diagnostico"
+          label="Informe de diagnóstico"
+          hint={
+            singleStep
+              ? "Firmado por el profesional."
+              : "Sube el informe firmado por el profesional. Puede ser un PDF o una foto del documento en papel."
+          }
+          files={files.diagnostico}
+          onFilesChange={setGroup("diagnostico")}
+        />
+      )}
 
-      <DocumentUploader
-        id="documento"
-        label="DNI, NIE o pasaporte"
-        hint="Una foto o un PDF, por ambas caras si aplica."
-        files={files.documento}
-        onFilesChange={setGroup("documento")}
-      />
+      {showIdentidad && (
+        <DocumentUploader
+          id="documento"
+          label="DNI, NIE o pasaporte"
+          hint={singleStep ? undefined : "Una foto o un PDF, por ambas caras si aplica."}
+          files={files.documento}
+          onFilesChange={setGroup("documento")}
+        />
+      )}
 
       {filesError && (
         <span className="error-message" role="alert">
@@ -97,7 +110,8 @@ const PasoDocumentos = (props) => {
               ref={register({ required: "Necesitamos tu consentimiento para continuar" })}
             />
             <span>
-              Doy mi consentimiento para que se traten mis datos de salud con el fin de emitir el pasaporte DEA, según la{" "}
+              Doy mi consentimiento para que se traten mis datos de salud con el fin de emitir el pasaporte DEA, según
+              la{" "}
               <Link to="/politica-privacidad" target="_blank">
                 política de protección de datos
               </Link>
@@ -112,14 +126,18 @@ const PasoDocumentos = (props) => {
         </div>
       )}
 
-      <div className="step-actions">
-        <button type="button" className="btn-secondary" onClick={back}>
-          <BsArrowLeft aria-hidden="true" /> {singleStep ? "Volver al panel" : "Atrás"}
-        </button>
-        <button type="submit" className="btn-primary" disabled={busy}>
-          {singleStep ? "Guardar y volver" : "Revisar"} <BsArrowRight aria-hidden="true" />
-        </button>
-      </div>
+      {singleStep ? (
+        <SingleStepActions busy={busy} />
+      ) : (
+        <div className="step-actions">
+          <button type="button" className="btn-secondary" onClick={back}>
+            <BsArrowLeft aria-hidden="true" /> Atrás
+          </button>
+          <button type="submit" className="btn-primary">
+            Revisar <BsArrowRight aria-hidden="true" />
+          </button>
+        </div>
+      )}
     </form>
   );
 };

@@ -46,15 +46,6 @@
     font-weight: 700;
     color: $clrMainDark;
   }
-  .reg-revision-motivos {
-    margin: 6px 0 0;
-    padding-left: 20px;
-    line-height: 1.6;
-    color: $reg-ink;
-    li + li {
-      margin-top: 4px;
-    }
-  }
   p {
     margin: 6px 0 0;
     line-height: 1.6;
@@ -156,6 +147,45 @@
   line-height: 1.2; // explicit (not the .reg 1.6) so the skeleton can match its height
   margin: 16px 0 0;
   text-wrap: balance;
+}
+
+// Single-step mode (?paso=…&volver=panel): the heading is what to change, the tip below it.
+.reg-progress--single .reg-title {
+  margin-top: 0;
+}
+.reg-single-tip {
+  margin: 8px 0 0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: $reg-ink;
+}
+.reg-single-list {
+  margin: 12px 0 0;
+  padding-left: 22px;
+  line-height: 1.6;
+  color: $reg-ink;
+  li + li {
+    margin-top: 6px;
+  }
+}
+// "Volver" is a plain link next to "Guardar", 44px tall like every target.
+.step-back-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 4px;
+  font-weight: 600;
+  color: $clrMainDark;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 6px;
+  &:focus-visible {
+    outline: 3px solid $clrMainDark;
+    outline-offset: 3px;
+  }
+}
+.step-actions--single {
+  align-items: center;
 }
 
 /* ---------- Step layout ---------- */

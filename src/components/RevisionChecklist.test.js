@@ -48,58 +48,69 @@ beforeEach(() => {
 	axiosInstance.post.mockReset();
 });
 
-test('the checklist counts what is left, in text', () => {
+test('one heading counts what is left and a text line counts what is done', () => {
 	checklist();
-	expect(screen.getByRole('heading', { name: 'Falta poco: 1 cosa por cambiar' })).toBeInTheDocument();
-	expect(screen.getByText('Has cambiado 1 de 2.')).toBeInTheDocument();
+	expect(screen.getByRole('heading', { name: 'Cambia 1 cosa' })).toBeInTheDocument();
+	expect(screen.getByText('1 de 2 hechas')).toBeInTheDocument();
+	expect(screen.queryByText(/Has cambiado/)).not.toBeInTheDocument();
 });
 
-test('each reason shows its title, its tip and a link that opens only its step', () => {
+test('each item is one link with its title and tip; done shows "Hecho"', () => {
 	checklist();
 	const items = screen.getAllByRole('listitem');
 	expect(items).toHaveLength(2);
 
-	const informe = within(items[0]);
-	expect(informe.getByText('El informe no se lee bien')).toBeInTheDocument();
-	expect(informe.getByText(/Haz la foto con buena luz y con la hoja entera/)).toBeInTheDocument();
-	expect(informe.queryByText('Hecho')).not.toBeInTheDocument();
-	expect(informe.getByRole('link', { name: /^Cambiar el informe\s*: El informe no se lee bien$/ })).toHaveAttribute(
-		'href',
-		'/inscribirse?paso=documentos&volver=panel'
-	);
+	const informe = within(items[0]).getByRole('link');
+	expect(informe).toHaveAccessibleName('Sube otra foto del informe Con buena luz y la hoja entera.');
+	expect(informe).toHaveAttribute('href', '/inscribirse?paso=documentos&volver=panel');
+	expect(within(informe).queryByText('Hecho')).not.toBeInTheDocument();
 
-	const numero = within(items[1]);
-	expect(numero.getByText('Hecho')).toBeInTheDocument();
-	expect(numero.getByRole('link', { name: /^Cambiar otra vez\s*: El número de documento no coincide$/ })).toHaveAttribute(
-		'href',
-		'/inscribirse?paso=residencia&volver=panel'
-	);
+	const numero = within(items[1]).getByRole('link');
+	expect(numero).toHaveAttribute('href', '/inscribirse?paso=residencia&volver=panel');
+	expect(within(numero).getByText('Revisa el número de documento')).toBeInTheDocument();
+	expect(within(numero).getByText('Hecho')).toBeInTheDocument();
+	expect(numero).toHaveClass('is-done');
 });
 
-test('the specialist note shows below the list, in sentence case', () => {
+test('the specialist message shows below the items, in sentence case', () => {
 	checklist();
-	expect(screen.getByText('Mensaje del especialista')).toBeInTheDocument();
+	const label = screen.getByText('Mensaje del especialista');
 	expect(screen.getByText('Gracias por tu paciencia.')).toBeInTheDocument();
+	const list = screen.getByRole('list');
+	expect(list.compareDocumentPosition(label) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+});
+
+test('without a message there is no message block', () => {
+	checklist({ mensajeMedico: '' });
+	expect(screen.queryByText('Mensaje del especialista')).not.toBeInTheDocument();
 });
 
 test('when every item is done the heading says so', () => {
 	checklist({ cambiosDesdeRevision: ['residencia', 'documentos'] });
-	expect(screen.getByRole('heading', { name: 'Ya está todo: envía tu solicitud de nuevo' })).toBeInTheDocument();
-	expect(screen.getByText('Has cambiado 2 de 2.')).toBeInTheDocument();
+	expect(screen.getByRole('heading', { name: 'Todo listo. Envíala de nuevo.' })).toBeInTheDocument();
+	expect(screen.getByText('2 de 2 hechas')).toBeInTheDocument();
+});
+
+test('"Enviar de nuevo" is enabled even with items left', () => {
+	checklist({ cambiosDesdeRevision: [] });
+	expect(screen.getByRole('button', { name: 'Enviar de nuevo' })).toBeEnabled();
 });
 
 test('reasons this build does not know are left out', () => {
 	checklist({ motivosRevision: ['informe-ilegible', 'motivo-nuevo'], cambiosDesdeRevision: [] });
 	expect(screen.getAllByRole('listitem')).toHaveLength(1);
-	expect(screen.getByRole('heading', { name: 'Falta poco: 1 cosa por cambiar' })).toBeInTheDocument();
+	expect(screen.getByRole('heading', { name: 'Cambia 1 cosa' })).toBeInTheDocument();
+	expect(screen.getByText('0 de 1 hecha')).toBeInTheDocument();
 });
 
-test('the dashboard shows the checklist and "Enviar de nuevo" sends the application back', async () => {
+test('the dashboard shows only the checklist and "Enviar de nuevo" sends the application back', async () => {
 	axiosInstance.get.mockResolvedValue({ data: revision });
 	axiosInstance.post.mockResolvedValue({ data: { usuario: { ...revision, estado: 'pendiente' } } });
 	dashboard();
 
-	expect(await screen.findByRole('heading', { name: 'Falta poco: 1 cosa por cambiar' })).toBeInTheDocument();
+	expect(await screen.findByRole('heading', { name: 'Cambia 1 cosa' })).toBeInTheDocument();
+	expect(screen.queryByText('Tu solicitud necesita una revisión')).not.toBeInTheDocument();
+	expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
 	expect(screen.queryByRole('link', { name: 'Editar inscripción' })).not.toBeInTheDocument();
 
 	await userEvent.click(screen.getByRole('button', { name: 'Enviar de nuevo' }));
@@ -112,23 +123,26 @@ test('a revision with only a note keeps the full edit form', async () => {
 	dashboard();
 
 	expect(await screen.findByRole('link', { name: 'Editar inscripción' })).toHaveAttribute('href', '/inscribirse');
+	expect(screen.getByRole('heading', { name: 'Tu solicitud necesita una revisión' })).toBeInTheDocument();
 	expect(screen.getByText('Gracias por tu paciencia.')).toBeInTheDocument();
 	expect(screen.queryByRole('button', { name: 'Enviar de nuevo' })).not.toBeInTheDocument();
 });
 
-test('an "Otro" item points to the note and links to its step', () => {
-	checklist({ motivosRevision: ['otro-diagnostico'], cambiosDesdeRevision: [], mensajeMedico: 'Falta la hoja dos.' });
-	const item = within(screen.getByRole('listitem'));
-	expect(item.getByText('Otro cambio en Diagnóstico')).toBeInTheDocument();
-	expect(item.getByText('Lee el mensaje del especialista, más abajo.')).toBeInTheDocument();
-	expect(item.getByRole('link', { name: /^Revisar esta parte\s*: Otro cambio en Diagnóstico$/ })).toHaveAttribute(
-		'href',
-		'/inscribirse?paso=diagnostico&volver=panel'
-	);
-	expect(screen.getByText('Falta la hoja dos.')).toBeInTheDocument();
+test('an "Otro" item uses the specialist text as its title, with the step name above', () => {
+	checklist({
+		motivosRevision: ['otro-diagnostico'],
+		textosOtro: { 'otro-diagnostico': 'Marca también la dislexia.' },
+		cambiosDesdeRevision: [],
+		mensajeMedico: '',
+	});
+	const link = within(screen.getByRole('listitem')).getByRole('link');
+	expect(link).toHaveAccessibleName('Diagnóstico Marca también la dislexia.');
+	expect(link).toHaveAttribute('href', '/inscribirse?paso=diagnostico&volver=panel');
+	expect(screen.queryByText(/Lee el mensaje del especialista/)).not.toBeInTheDocument();
+	expect(screen.queryByText(/Otro cambio/)).not.toBeInTheDocument();
 });
 
 test('an "Otro" item gets "Hecho" once its step changed', () => {
-	checklist({ motivosRevision: ['otro-datos'], cambiosDesdeRevision: ['datos'] });
+	checklist({ motivosRevision: ['otro-datos'], textosOtro: { 'otro-datos': 'Añade el segundo apellido.' }, cambiosDesdeRevision: ['datos'] });
 	expect(within(screen.getByRole('listitem')).getByText('Hecho')).toBeInTheDocument();
 });

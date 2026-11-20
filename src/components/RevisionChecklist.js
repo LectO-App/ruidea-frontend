@@ -3,65 +3,75 @@ import { Link } from "react-router-dom";
 import { BsCheckCircle, BsArrowRight } from "react-icons/bs";
 
 import InlineMessage from "./ui/InlineMessage";
-import { motivosFor, pasoUrl } from "../util/motivosRevision";
+import { motivosFor, pasoUrl, grupoLabel } from "../util/motivosRevision";
 
 const cosas = (n) => (n === 1 ? "1 cosa" : `${n} cosas`);
 
-// What a specialist asked to change, one item per reason with a plain tip and a link that
-// opens only the form step that fixes it. An item is done once its step changed since the
-// specialist's decision (cambiosDesdeRevision). Progress is written out, never colour only.
-const RevisionChecklist = ({ motivosRevision, cambiosDesdeRevision, mensajeMedico, onReenviar, sending, error }) => {
-  const motivos = motivosFor(motivosRevision);
+// What a specialist asked to change: one heading, a text progress line and one whole-card
+// link per reason, which opens only the form step that fixes it. An item is done once its
+// step changed since the decision (cambiosDesdeRevision); done shows a check and "Hecho",
+// never colour alone. The specialist's message, if any, comes after the items.
+const RevisionChecklist = ({
+  motivosRevision,
+  textosOtro,
+  cambiosDesdeRevision,
+  mensajeMedico,
+  onReenviar,
+  sending,
+  error,
+}) => {
+  const motivos = motivosFor(motivosRevision, textosOtro);
   const cambiados = new Set(cambiosDesdeRevision || []);
   const hechos = motivos.filter((m) => cambiados.has(m.grupo)).length;
   const faltan = motivos.length - hechos;
 
   return (
     <div className="revision">
-      <h2 className="revision-title">
-        {faltan > 0 ? `Falta poco: ${cosas(faltan)} por cambiar` : "Ya está todo: envía tu solicitud de nuevo"}
-      </h2>
+      <h1 className="revision-title">{faltan > 0 ? `Cambia ${cosas(faltan)}` : "Todo listo. Envíala de nuevo."}</h1>
       <p className="revision-progress">
-        Has cambiado {hechos} de {motivos.length}.
+        {hechos} de {motivos.length} {motivos.length === 1 ? "hecha" : "hechas"}
       </p>
 
-      <ol className="revision-list">
+      <ul className="revision-list">
         {motivos.map((m) => {
           const hecho = cambiados.has(m.grupo);
           return (
-            <li key={m.id} className={`revision-item${hecho ? " is-done" : ""}`}>
-              <p className="revision-item-title">{m.titulo}</p>
-              <p className="revision-item-tip">{m.consejo}</p>
-              <div className="revision-item-foot">
-                {hecho && (
+            <li key={m.id}>
+              <Link className={`revision-item${hecho ? " is-done" : ""}`} to={pasoUrl(m.grupo)}>
+                <span className="revision-item-body">
+                  {m.otro && <span className="revision-item-step">{grupoLabel(m.grupo)}</span>}
+                  <span className="revision-item-title">{m.titulo}</span>
+                  {m.consejo && <span className="revision-item-tip">{m.consejo}</span>}
+                </span>
+                {hecho ? (
                   <span className="revision-done">
                     <BsCheckCircle aria-hidden="true" /> Hecho
                   </span>
+                ) : (
+                  <BsArrowRight className="revision-arrow" aria-hidden="true" />
                 )}
-                <Link className={hecho ? "revision-link revision-link--again" : "revision-link"} to={pasoUrl(m.grupo)}>
-                  {hecho ? "Cambiar otra vez" : m.accion}
-                  <span className="sr-only">: {m.titulo}</span>
-                  <BsArrowRight aria-hidden="true" />
-                </Link>
-              </div>
+              </Link>
             </li>
           );
         })}
-      </ol>
+      </ul>
 
       {mensajeMedico && (
-        <div className="status-note">
-          <span className="status-note-label">Mensaje del especialista</span>
+        <div className="revision-note">
+          <p className="revision-note-label">Mensaje del especialista</p>
           <p>{mensajeMedico}</p>
         </div>
       )}
 
-      <div className="status-actions">
-        <button className="btn-primary" onClick={onReenviar} disabled={sending}>
-          {sending && <span className="btn-spinner" aria-hidden="true" />}
-          Enviar de nuevo
-        </button>
-      </div>
+      <button
+        type="button"
+        className="btn-primary revision-send"
+        onClick={() => !sending && onReenviar()}
+        aria-busy={sending ? "true" : undefined}
+      >
+        {sending && <span className="btn-spinner" aria-hidden="true" />}
+        Enviar de nuevo
+      </button>
       <InlineMessage type="error">{error}</InlineMessage>
     </div>
   );

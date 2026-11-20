@@ -606,6 +606,40 @@
   }
 }
 
+// The text field an "Otro" reason reveals when ticked.
+.adm-otro {
+  margin: 0 0 8px 32px;
+  label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $reg-ink;
+    margin-bottom: 4px;
+  }
+  input {
+    width: 100%;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid $reg-border;
+    border-radius: 8px;
+    font: inherit;
+    color: $reg-ink;
+    background: $reg-surface;
+    &:focus-visible {
+      outline: 3px solid rgba(41, 127, 137, 0.4);
+      outline-offset: 2px;
+      border-color: $clrMainDark;
+    }
+  }
+}
+.adm-otro__count {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: $reg-muted;
+  text-align: right;
+}
+
 /* ---------- Modal label ---------- */
 .adm-modal-label {
   display: block;

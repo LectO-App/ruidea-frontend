@@ -20,6 +20,7 @@ import Modal from './ui/Modal';
 import InlineMessage from './ui/InlineMessage';
 import StatusSteps from './StatusSteps';
 import RevisionChecklist from './RevisionChecklist';
+import { motivosFor } from '../util/motivosRevision';
 
 import logoLecto from '../img/webp/logo-lecto.webp';
 import logoLectoPNG from '../img/png/logo-lecto.png';
@@ -88,8 +89,6 @@ const STATUS = {
 		desc: 'Si crees que se trata de un error, ponte en contacto con nosotros.',
 	},
 };
-
-const GUIDED_REVISION_DESC = 'Un especialista revisó tu solicitud. Cambia solo lo que te pedimos y envíala de nuevo.';
 
 const Dashboard = () => {
 	const [data, setData] = useState({});
@@ -176,7 +175,7 @@ const Dashboard = () => {
 			setData(prev => ({ ...prev, ...res.data.usuario }));
 			toast.success('Enviamos tu solicitud de nuevo.');
 		} catch (err) {
-			setResubmitError('No pudimos enviar tu solicitud. Tus cambios están guardados; inténtalo otra vez en un momento.');
+			setResubmitError('No pudimos enviarla. Tus cambios están guardados. Inténtalo otra vez.');
 		} finally {
 			setResubmitting(false);
 		}
@@ -220,8 +219,9 @@ const Dashboard = () => {
 
 	// A revision with reasons from the catalog gets the guided checklist; one with only a
 	// free-text note keeps the full edit form.
-	const guided = data.estado === 'revision' && Array.isArray(data.motivosRevision) && data.motivosRevision.length > 0;
-	const meta = guided ? { ...STATUS.revision, desc: GUIDED_REVISION_DESC } : STATUS[data.estado];
+	// The checklist brings its own heading, so the status badge, title and text are left out.
+	const guided = data.estado === 'revision' && motivosFor(data.motivosRevision, data.textosOtro).length > 0;
+	const meta = STATUS[data.estado];
 
 	return (
 		<div className='dashboard-div-main'>
@@ -240,17 +240,22 @@ const Dashboard = () => {
 								data.estado === 'aceptado' ? ' status-card--celebrate' : ''
 							}`}
 						>
-							<span className='status-badge' aria-hidden='true'>
-								<meta.Icon size={38} />
-							</span>
-							<h1 className='status-title'>{meta.title}</h1>
-							<p className='status-desc'>{meta.desc}</p>
+							{!guided && (
+								<>
+									<span className='status-badge' aria-hidden='true'>
+										<meta.Icon size={38} />
+									</span>
+									<h1 className='status-title'>{meta.title}</h1>
+									<p className='status-desc'>{meta.desc}</p>
+								</>
+							)}
 
 							{data.estado === 'pendiente' && <StatusSteps steps={PENDING_STEPS} activeKey='revision' />}
 
 							{guided && (
 								<RevisionChecklist
 									motivosRevision={data.motivosRevision}
+									textosOtro={data.textosOtro}
 									cambiosDesdeRevision={data.cambiosDesdeRevision}
 									mensajeMedico={data.mensajeMedico}
 									onReenviar={resubmit}
