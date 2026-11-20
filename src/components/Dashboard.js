@@ -326,7 +326,6 @@ const Dashboard = () => {
 
 			<Modal open={!!shareUrl} onClose={() => setShareUrl(null)} title='Copia el enlace de tu pasaporte'>
 				<input
-					className='modal-url'
 					type='text'
 					readOnly
 					value={shareUrl || ''}

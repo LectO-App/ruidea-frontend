@@ -127,15 +127,6 @@ $ui-ink: #2b2b33;
   font: inherit;
   font-size: 1rem;
 }
-.modal-url {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #d7d2c8;
-  border-radius: 10px;
-  font: inherit;
-  font-size: 1rem; // 16px — keep at/above 16px so iOS Safari doesn't zoom on focus
-  background: #faf9f6;
-}
 .modal-actions {
   display: flex;
   justify-content: flex-end;
