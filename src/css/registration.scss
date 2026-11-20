@@ -200,26 +200,30 @@
   display: flex;
   align-items: center;
 }
-.reg input[type="text"],
-.reg input[type="email"],
-.reg input[type="tel"],
-.reg input[type="password"],
-.reg input[type="number"],
-.reg select {
-  width: 100%;
-  font-size: 1.05rem; // ≥16px — no iOS zoom
-  font-family: inherit;
-  min-height: 52px; // generous target (dyspraxia)
-  padding: 12px 14px;
-  color: $reg-ink;
-  background: #fbfaf7;
-  border: 2px solid $reg-border;
-  border-radius: 10px;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  &:focus {
-    outline: none;
-    border-color: $clrMain;
-    box-shadow: 0 0 0 3px rgba($clrMain, 0.25);
+// Modal renders through a portal into <body>, outside .reg, so its fields need the same rules.
+.reg,
+.modal-card {
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="password"],
+  input[type="number"],
+  select {
+    width: 100%;
+    font-size: 1.05rem; // ≥16px — no iOS zoom
+    font-family: inherit;
+    min-height: 52px; // generous target (dyspraxia)
+    padding: 12px 14px;
+    color: $reg-ink;
+    background: #fbfaf7;
+    border: 2px solid $reg-border;
+    border-radius: 10px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    &:focus {
+      outline: none;
+      border-color: $clrMain;
+      box-shadow: 0 0 0 3px rgba($clrMain, 0.25);
+    }
   }
 }
 .reg .input-wrap input {
@@ -235,7 +239,8 @@
   border-color: rgba($reg-ok, 0.5);
 }
 .field.has-error input,
-.reg select[aria-invalid="true"] {
+.reg select[aria-invalid="true"],
+.modal-card select[aria-invalid="true"] {
   border-color: $reg-error;
 }
 .error-message {
