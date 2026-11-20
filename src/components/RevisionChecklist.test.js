@@ -48,10 +48,10 @@ beforeEach(() => {
 	axiosInstance.post.mockReset();
 });
 
-test('one heading counts what is left and a text line counts what is done', () => {
+test('the heading says who asked and the total; a text line counts what is done', () => {
 	checklist();
-	expect(screen.getByRole('heading', { name: 'Cambia 1 cosa' })).toBeInTheDocument();
-	expect(screen.getByText('1 de 2 hechas')).toBeInTheDocument();
+	expect(screen.getByRole('heading', { name: 'El equipo médico te pide 2 cambios' })).toBeInTheDocument();
+	expect(screen.getByText('1 de 2 hechos')).toBeInTheDocument();
 	expect(screen.queryByText(/Has cambiado/)).not.toBeInTheDocument();
 });
 
@@ -85,10 +85,10 @@ test('without a message there is no message block', () => {
 	expect(screen.queryByText('Mensaje del especialista')).not.toBeInTheDocument();
 });
 
-test('when every item is done the heading says so', () => {
+test('when every item is done the heading says so and the progress line goes away', () => {
 	checklist({ cambiosDesdeRevision: ['residencia', 'documentos'] });
 	expect(screen.getByRole('heading', { name: 'Todo listo. Envíala de nuevo.' })).toBeInTheDocument();
-	expect(screen.getByText('2 de 2 hechas')).toBeInTheDocument();
+	expect(screen.queryByText(/de 2 hechos/)).not.toBeInTheDocument();
 });
 
 test('"Enviar de nuevo" is enabled even with items left', () => {
@@ -99,8 +99,8 @@ test('"Enviar de nuevo" is enabled even with items left', () => {
 test('reasons this build does not know are left out', () => {
 	checklist({ motivosRevision: ['informe-ilegible', 'motivo-nuevo'], cambiosDesdeRevision: [] });
 	expect(screen.getAllByRole('listitem')).toHaveLength(1);
-	expect(screen.getByRole('heading', { name: 'Cambia 1 cosa' })).toBeInTheDocument();
-	expect(screen.getByText('0 de 1 hecha')).toBeInTheDocument();
+	expect(screen.getByRole('heading', { name: 'El equipo médico te pide 1 cambio' })).toBeInTheDocument();
+	expect(screen.getByText('0 de 1 hecho')).toBeInTheDocument();
 });
 
 test('the dashboard shows only the checklist and "Enviar de nuevo" sends the application back', async () => {
@@ -108,7 +108,7 @@ test('the dashboard shows only the checklist and "Enviar de nuevo" sends the app
 	axiosInstance.post.mockResolvedValue({ data: { usuario: { ...revision, estado: 'pendiente' } } });
 	dashboard();
 
-	expect(await screen.findByRole('heading', { name: 'Cambia 1 cosa' })).toBeInTheDocument();
+	expect(await screen.findByRole('heading', { name: 'El equipo médico te pide 2 cambios' })).toBeInTheDocument();
 	expect(screen.queryByText('Tu solicitud necesita una revisión')).not.toBeInTheDocument();
 	expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
 	expect(screen.queryByRole('link', { name: 'Editar inscripción' })).not.toBeInTheDocument();

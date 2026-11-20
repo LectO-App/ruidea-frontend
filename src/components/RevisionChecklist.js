@@ -5,9 +5,9 @@ import { BsCheckCircle, BsArrowRight } from "react-icons/bs";
 import InlineMessage from "./ui/InlineMessage";
 import { motivosFor, pasoUrl, grupoLabel } from "../util/motivosRevision";
 
-const cosas = (n) => (n === 1 ? "1 cosa" : `${n} cosas`);
+const cambios = (n) => (n === 1 ? "1 cambio" : `${n} cambios`);
 
-// What a specialist asked to change: one heading, a text progress line and one whole-card
+// What a specialist asked to change: one heading with the stable total, a text progress line and one whole-card
 // link per reason, which opens only the form step that fixes it. An item is done once its
 // step changed since the decision (cambiosDesdeRevision); done shows a check and "Hecho",
 // never colour alone. The specialist's message, if any, comes after the items.
@@ -27,10 +27,14 @@ const RevisionChecklist = ({
 
   return (
     <div className="revision">
-      <h1 className="revision-title">{faltan > 0 ? `Cambia ${cosas(faltan)}` : "Todo listo. Envíala de nuevo."}</h1>
-      <p className="revision-progress">
-        {hechos} de {motivos.length} {motivos.length === 1 ? "hecha" : "hechas"}
-      </p>
+      <h1 className="revision-title">
+        {faltan > 0 ? `El equipo médico te pide ${cambios(motivos.length)}` : "Todo listo. Envíala de nuevo."}
+      </h1>
+      {faltan > 0 && (
+        <p className="revision-progress">
+          {hechos} de {motivos.length} {motivos.length === 1 ? "hecho" : "hechos"}
+        </p>
+      )}
 
       <ul className="revision-list">
         {motivos.map((m) => {
