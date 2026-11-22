@@ -25,6 +25,7 @@ const STEP_META = {
 const Completion = ({ data, reduceMotion, historyPush }) => {
   const pasos = (data && data.pasos) || ["verifica-email", "revision-medica", "pasaporte-emitido"];
   const siguiente = (data && data.siguientePaso) || pasos[0];
+  const editing = Boolean(data && data.editing);
   const mensaje = (data && data.mensaje) || "¡Listo! Tu solicitud está en camino.";
 
   useEffect(() => {
@@ -61,6 +62,11 @@ const Completion = ({ data, reduceMotion, historyPush }) => {
         </motion.span>
 
         <h1 className="completion-title">{mensaje}</h1>
+        <p className="completion-sub">
+          {editing
+            ? "Tus cambios están guardados."
+            : "Tu solicitud está enviada. Ya no tienes que hacer nada más en el formulario."}
+        </p>
 
         <motion.ol className="timeline" variants={container} initial="initial" animate="animate">
           {pasos.map((key, i) => {
