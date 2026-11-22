@@ -7,6 +7,7 @@ import AdminNavbar from "./AdminNavbar";
 import StatusBadge, { statusKey } from "./StatusBadge";
 import { toast } from "../ui/toast";
 import InlineMessage from "../ui/InlineMessage";
+import CancelDraftDialog from "./CancelDraftDialog";
 
 const FILTERS = [
   { value: "pendiente", label: "Pendientes" },
@@ -38,6 +39,8 @@ const AdminSolicitudes = (props) => {
   const [exporting, setExporting] = useState(false);
   // Default to most-recent-first — the useful order for triage.
   const [sort, setSort] = useState({ key: "fecha", dir: "desc" });
+  const [reminding, setReminding] = useState(null); // id of the draft whose reminder is being sent
+  const [cancelling, setCancelling] = useState(null); // draft shown in the cancel dialog
 
   const fetchFromAPI = useCallback(async (cond) => {
     setLoading(true);
@@ -118,6 +121,23 @@ const AdminSolicitudes = (props) => {
     }
   };
 
+  const sendReminder = async (id) => {
+    setReminding(id);
+    try {
+      const res = await axiosInstance.post(`/admin/borradores/${id}/recordatorio`);
+      setData((list) =>
+        list.map((u) => (u._id === id ? { ...u, ultimoRecordatorio: res.data.ultimoRecordatorio } : u))
+      );
+      toast.success("Recordatorio enviado");
+    } catch (err) {
+      toast.error("No se pudo enviar el recordatorio.");
+    } finally {
+      setReminding(null);
+    }
+  };
+
+  const onDraftCancelled = (id) => setData((list) => list.filter((u) => u._id !== id));
+
   const openSolicitud = (id) => props.history.push(`/admin/solicitudes/${id}`);
 
   // Always render an arrow so the header doesn't shift when a column becomes active:
@@ -132,14 +152,22 @@ const AdminSolicitudes = (props) => {
   };
 
   const renderAction = (item) => {
-    // Unfinished sign-ups (draft): there's no complete solicitud to open, so the useful
-    // action is to nudge the person by resending the confirmation email. Many of these
-    // users have dyslexia and get stuck on the email step — one clear button helps.
+    // Unfinished application (draft): nothing was sent, so there is no solicitud to open.
+    // The admin can remind the person that it is not finished, or cancel it.
     if (item.estado === "borrador") {
       return (
-        <button className="adm-btn adm-btn--primary" onClick={() => resendEmail(item._id)}>
-          Reenviar correo
-        </button>
+        <span className="adm-draft-actions">
+          <button
+            className="adm-btn adm-btn--primary"
+            onClick={() => sendReminder(item._id)}
+            disabled={reminding === item._id}
+          >
+            {reminding === item._id ? "Enviando…" : "Enviar recordatorio"}
+          </button>
+          <button className="adm-btn adm-btn--reject" onClick={() => setCancelling(item)}>
+            Cancelar solicitud
+          </button>
+        </span>
       );
     }
     if (item.emailVerificado === false) {
@@ -264,7 +292,7 @@ const AdminSolicitudes = (props) => {
                 <tbody>
                   {rows.map((item) => {
                     // Drafts have no complete solicitud to open, so the row isn't a nav
-                    // target — only its "Reenviar correo" action is interactive.
+                    // target; only its actions are interactive.
                     const draft = item.estado === "borrador";
                     const nombreCompleto = `${item.nombre || ""} ${item.apellidos || ""}`.trim();
                     const navProps = draft
@@ -309,6 +337,7 @@ const AdminSolicitudes = (props) => {
                       </td>
                       <td data-label="Estado">
                         <StatusBadge item={item} />
+                        {draft && <DraftProgress item={item} />}
                       </td>
                       <td className="adm-td-action" onClick={(e) => e.stopPropagation()}>
                         {renderAction(item)}
@@ -324,7 +353,30 @@ const AdminSolicitudes = (props) => {
           </motion.div>
         </AnimatePresence>
       </main>
+      <CancelDraftDialog draft={cancelling} onClose={() => setCancelling(null)} onCancelled={onDraftCancelled} />
     </div>
+  );
+};
+
+// How far an unfinished application got (progreso from POST /admin/solicitudes) and when the
+// person was last reminded.
+const DraftProgress = ({ item }) => {
+  const pasos = (item.progreso && item.progreso.pasos) || [];
+  const faltan = pasos.filter((p) => !p.completo).map((p) => p.titulo);
+  return (
+    <span className="adm-draft">
+      {pasos.length > 0 && (
+        <>
+          <span className="adm-draft__count">
+            {pasos.length - faltan.length} de {pasos.length} pasos
+          </span>
+          {faltan.length > 0 && <span className="adm-draft__missing">Falta: {faltan.join(", ")}</span>}
+        </>
+      )}
+      {item.ultimoRecordatorio && (
+        <span className="adm-draft__reminder">Recordatorio enviado el {fmtDate(item.ultimoRecordatorio)}</span>
+      )}
+    </span>
   );
 };
 

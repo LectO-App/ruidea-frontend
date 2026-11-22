@@ -724,6 +724,11 @@ fieldset.diagnosis {
     color: #962d22;
     border: 1px solid rgba($reg-error, 0.3);
   }
+  &.info {
+    background: rgba($clrMain, 0.1);
+    color: $reg-ink;
+    border: 1px solid rgba($clrMain, 0.35);
+  }
 }
 
 /* ---------- Review ---------- */

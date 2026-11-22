@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BsArrowLeft, BsPencil, BsCheckCircle, BsExclamationCircle } from "react-icons/bs";
+import { BsArrowLeft, BsPencil, BsCheckCircle, BsExclamationCircle, BsInfoCircle } from "react-icons/bs";
 import { isPdfDocuments } from "../util/documents";
 
 const DIAG_LABELS = {
@@ -55,7 +55,11 @@ const PasoRevision = (props) => {
 
   return (
     <div className="review">
-      <p className="step-intro">Revisa que todo esté bien antes de enviar tu solicitud.</p>
+      <p className="step-intro">
+        {editing
+          ? "Revisa que todo esté bien antes de guardar los cambios."
+          : "Revisa que todo esté bien. Después pulsa «Enviar solicitud»."}
+      </p>
 
       <section className="review-card">
         <div className="review-card-head">
@@ -134,12 +138,22 @@ const PasoRevision = (props) => {
         </div>
       )}
 
+      {!editing && (
+        <div className="form-banner info" role="note">
+          <BsInfoCircle aria-hidden="true" />
+          <span>
+            <strong>Tu solicitud aún no está enviada.</strong> Solo la recibimos cuando pulsas «Enviar solicitud».
+            Si sales ahora, se queda guardada sin enviar.
+          </span>
+        </div>
+      )}
+
       <div className="step-actions">
         <button type="button" className="btn-secondary" onClick={() => onBack()}>
           <BsArrowLeft aria-hidden="true" /> Atrás
         </button>
         <button type="button" className="btn-primary btn-submit" onClick={handleSubmit} disabled={loading}>
-          {loading ? "Enviando…" : "Enviar solicitud"} <BsCheckCircle aria-hidden="true" />
+          {loading ? "Enviando…" : editing ? "Guardar cambios" : "Enviar solicitud"} <BsCheckCircle aria-hidden="true" />
         </button>
       </div>
     </div>

@@ -1,7 +1,8 @@
 import React from "react";
 
 // Status with colour + label (never colour alone). `emailVerificado === false` takes
-// precedence over the stored estado, matching the list/detail action logic.
+// precedence over the stored estado, matching the list/detail action logic, except on a
+// draft: its email is never verified, and "Sin terminar" is what matters.
 const STATUS = {
   pendiente: { label: "Pendiente", cls: "is-pending" },
   aceptado: { label: "Aceptado", cls: "is-ok" },
@@ -12,7 +13,7 @@ const STATUS = {
 };
 
 export const statusKey = (item) =>
-  item && item.emailVerificado === false ? "sin_email" : item?.estado || "pendiente";
+  item && item.emailVerificado === false && item.estado !== "borrador" ? "sin_email" : item?.estado || "pendiente";
 
 const StatusBadge = ({ item, status }) => {
   const key = status || statusKey(item);
