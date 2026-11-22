@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet-async';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
 import LoadingScreen from './components/LoadingScreen';
-import ReactGA from 'react-ga';
+import { BeaconRouteGuard } from './analytics';
 import CheckPassport from './components/CheckPassport';
 import RegistrationSkeleton from './components/RegistrationSkeleton';
 import DashboardSkeleton from './components/DashboardSkeleton';
@@ -19,6 +19,7 @@ import Toaster from './components/ui/Toaster';
 import LandingPage from './components/LandingPage';
 
 const Dashboard = lazy(() => import('./components/Dashboard'));
+const MostrarPasaporte = lazy(() => import('./components/MostrarPasaporte'));
 const Form = lazy(() => import('./components/Form'));
 const Login = lazy(() => import('./components/Login'));
 const Verificar = lazy(() => import('./components/Verificar'));
@@ -28,22 +29,9 @@ const ChangePassword = lazy(() => import('./components/ChangePassword'));
 const AdminLogin = lazy(() => import('./components/admin/AdminLogin'));
 const AdminSolicitudes = lazy(() => import('./components/admin/AdminSolicitudes'));
 const AdminSolicitud = lazy(() => import('./components/admin/AdminSolicitud'));
+const AdminEstadisticas = lazy(() => import('./components/admin/AdminEstadisticas'));
 const AdminModify = lazy(() => import('./components/admin/AdminModify'));
 const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
-
-// Routes whose path/query carry PII or live tokens must never be sent to Google
-// Analytics (SECURITY_ASSESSMENT.md §10.3). Report a generic label instead and never
-// include the query string.
-const SENSITIVE = ['/verificar/', '/cambiarContrase', '/verificarEmail/'];
-export const safePageview = () => {
-	const path = window.location.pathname;
-	const isSensitive = SENSITIVE.some(p => path.startsWith(p));
-	const page = isSensitive ? '/[redacted]' : path;
-	// analytics.js also sends the full address bar (document.location, incl. tokens and
-	// document numbers) as the `location` field on every hit; overwrite it with the redacted path.
-	ReactGA.set({ location: window.location.origin + page, page });
-	ReactGA.pageview(page);
-};
 
 // Shared top-level page transition: a short fade + small upward rise. This smooths
 // the lazy/Suspense pop-in without implying a spatial relationship between unrelated
@@ -71,11 +59,6 @@ function PageTransition({ children }) {
 }
 
 function App() {
-	if (process.env.REACT_APP_GA_KEY) {
-		ReactGA.initialize(process.env.REACT_APP_GA_KEY);
-		safePageview();
-	}
-
 	return (
 		<div className='App'>
 			<Toaster />
@@ -94,6 +77,7 @@ function App() {
 				/>
 			</Helmet>
 			<Router>
+				<BeaconRouteGuard />
 				<Suspense fallback={<LoadingScreen />}>
 					{/* Suspense must wrap Switch (not the reverse): a Suspense as Switch's only
 					    child has no `path`, so the Switch matches it for every location and never
@@ -118,6 +102,7 @@ function App() {
 											)}
 										/>
 									<ProtectedRoute path='/dashboard' component={Dashboard} fallback={<DashboardSkeleton />} />
+									<ProtectedRoute exact path='/mostrar' component={MostrarPasaporte} />
 									<Route path='/login' component={Login} />
 									<Route exact path='/admin' component={() => <Redirect to='/admin/login' />} />
 									<Route exact path='/verificar/ejemplo' component={VerificarEjemplo} />
@@ -127,6 +112,13 @@ function App() {
 									{/* Legacy number-based link, printed on passports downloaded before share tokens. */}
 									<Route path='/verificar/:nroDocumento/:nroPasaporte' component={Verificar} />
 									<Route exact path='/admin/login' component={AdminLogin} />
+									<ProtectedRoute
+										exact
+										path='/admin/estadisticas'
+										component={AdminEstadisticas}
+										checkUrl='/admin/me'
+										redirectTo='/admin/login'
+									/>
 									<ProtectedRoute
 										exact
 										path='/admin/solicitudes'

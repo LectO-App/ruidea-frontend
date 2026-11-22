@@ -26,6 +26,7 @@ import {
   resubmit,
 } from "../util/registrationApi";
 import { motivosFor, camposFor } from "../util/motivosRevision";
+import { isPdfDocuments } from "../util/documents";
 
 import "../css/registration.scss";
 
@@ -87,6 +88,7 @@ const Form = (props) => {
   const [skipAccount, setSkipAccount] = useState(false); // account already exists
   const [formData, setFormData] = useState({});
   const [files, setFiles] = useState({ diagnostico: [], documento: [] });
+  const [docMode, setDocMode] = useState("agregar"); // editing: add the new files to the current PDF, or replace it
 
   const [index, setIndex] = useState(0); // index into `steps`
   const [direction, setDirection] = useState(1);
@@ -164,6 +166,17 @@ const Form = (props) => {
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
   };
 
+  // The server joins every file into one PDF; an older ZIP can only be replaced.
+  const docModeFor = (data) => (isPdfDocuments(data.archivoBlob) ? docMode : "reemplazar");
+
+  // Upload documents while editing. Once stored, a retry after a failed save must not add
+  // the same pages again.
+  const uploadDocuments = async (groups, modo) => {
+    const uploaded = await uploadFiles(groups, modo);
+    setFiles({ diagnostico: [], documento: [] });
+    mergeData({ archivoBlob: uploaded.archivoBlob });
+  };
+
   // Single-step mode: save just this step (without sending the application back to review)
   // and return to the dashboard, where the checklist shows the item as done.
   const saveSingleStep = async (patch) => {
@@ -172,10 +185,17 @@ const Form = (props) => {
     setSingleSaving(true);
     setSingleError(null);
     try {
-      if (singleStep === "documentos") await uploadFiles(fileGroupsOf(files));
+      if (singleStep === "documentos") await uploadDocuments(fileGroupsOf(files), docModeFor(formData));
       else await updateOwn({ ...editPayload(next), enviar: false });
     } catch (err) {
       setSingleSaving(false);
+      // A file the server could not add to the PDF: its message names the file to change.
+      const status = err && err.response && err.response.status;
+      const serverMessage = err && err.response && err.response.data && err.response.data.message;
+      if ((status === 409 || status === 422) && serverMessage) {
+        setSingleError(serverMessage);
+        return;
+      }
       const fieldErrors = err && err.response && err.response.data && err.response.data.errors;
       if (Array.isArray(fieldErrors) && fieldErrors.length) {
         setServerErrors(fieldErrors);
@@ -243,10 +263,11 @@ const Form = (props) => {
   const onSubmit = async () => {
     const fileGroups = fileGroupsOf(files);
     const hasFiles = Object.keys(fileGroups).length > 0;
+    const modo = editing ? docModeFor(formData) : "reemplazar";
 
     try {
       if (editing) {
-        if (hasFiles) await uploadFiles(fileGroups);
+        if (hasFiles) await uploadDocuments(fileGroups, modo);
         await updateOwn(editPayload(formData));
         setCompletion({
           editing: true,
@@ -290,6 +311,10 @@ const Form = (props) => {
       }
       setCompletion(result);
     } catch (err) {
+      // A file the server could not add to the PDF: its message names the file to change.
+      const status = err && err.response && err.response.status;
+      const serverMessage = err && err.response && err.response.data && err.response.data.message;
+      if ((status === 409 || status === 422) && serverMessage) throw new Error(serverMessage);
       // Field-level validation from the server (e.g. an invalid phone the lenient client
       // check let through): show each message on its own field and take the user to the
       // step that owns the first error — never a dead-end generic banner.
@@ -443,6 +468,8 @@ const Form = (props) => {
               formData={formData}
               files={files}
               setFiles={setFiles}
+              docMode={docMode}
+              setDocMode={setDocMode}
               editing={editing}
               isFirst={!singleStep && index === 0}
               singleStep={!!singleStep}

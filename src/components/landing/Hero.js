@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
-import ReactGA from "react-ga";
 
 import { useAuthStatus } from "../../useAuthStatus";
 
@@ -137,14 +136,6 @@ const Hero = () => {
               role="button"
               to={loggedIn ? "/dashboard" : "/inscribirse"}
               className="lp-btn lp-btn--primary"
-              onClick={() => {
-                ReactGA.event({
-                  category: "NuevoUsuario",
-                  action: "IniciarRegistro",
-                  label: "hero_cta",
-                  nonInteraction: false,
-                });
-              }}
             >
               {loggedIn ? "Ver mi solicitud" : "Inscribirme gratis"}
             </Link>

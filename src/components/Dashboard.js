@@ -13,6 +13,7 @@ import {
 	BsBoxArrowUpRight,
 	BsArrowRepeat,
 	BsCheckCircle,
+	BsPhone,
 } from 'react-icons/bs';
 
 import { toast } from './ui/toast';
@@ -31,6 +32,7 @@ import DashboardSkeleton from './DashboardSkeleton';
 
 import Navbar from './Navbar';
 import { getFileFromServer } from '../util/getFileFromServer';
+import { passportUrl } from '../util/passport';
 
 import '../css/registration.scss';
 
@@ -68,7 +70,7 @@ const STATUS = {
 		tone: 'ok',
 		Icon: BsAward,
 		title: 'Tu solicitud fue aprobada',
-		desc: 'Ya puedes descargar y compartir tu Pasaporte DEA.',
+		desc: 'Ya puedes mostrar, descargar y compartir tu Pasaporte DEA.',
 	},
 	pendiente: {
 		tone: 'wait',
@@ -143,15 +145,8 @@ const Dashboard = () => {
 		}
 	};
 
-	// The random share token (never the sequential passport number). A backend from before share
-	// tokens doesn't send one; fall back to the number-based link so the deploy order doesn't matter.
-	const passportUrl = () =>
-		data.shareToken
-			? `${window.location.origin}/verificar/${encodeURIComponent(data.shareToken)}`
-			: `${window.location.origin}/verificar/${data.numeroDocumento}/${data.numeroPasaporte}`;
-
 	const copyPassportLink = async () => {
-		const url = passportUrl();
+		const url = passportUrl(data);
 		try {
 			await navigator.clipboard.writeText(url);
 			toast.success('Enlace copiado');
@@ -282,8 +277,17 @@ const Dashboard = () => {
 							)}
 
 							{data.estado === 'aceptado' && (
+								<div className='status-show'>
+									<Link className='btn-primary' to='/mostrar'>
+										<BsPhone aria-hidden='true' /> Mostrar mi pasaporte
+									</Link>
+									<p className='status-hint'>Para enseñarlo en un examen, en el aeropuerto o en la consulta.</p>
+								</div>
+							)}
+
+							{data.estado === 'aceptado' && (
 								<div className='status-actions grid status-actions--stagger'>
-									<button className='btn-primary' onClick={() => downloadFile('pdf')} disabled={!!downloading}>
+									<button className='btn-secondary' onClick={() => downloadFile('pdf')} disabled={!!downloading}>
 										{downloading === 'pdf' ? (
 											<span className='btn-spinner' aria-hidden='true' />
 										) : (
@@ -302,7 +306,7 @@ const Dashboard = () => {
 									<button className='btn-secondary' onClick={copyPassportLink}>
 										<BsLink45Deg aria-hidden='true' /> Copiar enlace
 									</button>
-									<a className='btn-secondary' href={passportUrl()} target='_blank' rel='noopener noreferrer'>
+									<a className='btn-secondary' href={passportUrl(data)} target='_blank' rel='noopener noreferrer'>
 										<BsBoxArrowUpRight aria-hidden='true' /> Abrir pasaporte
 									</a>
 								</div>
@@ -370,7 +374,6 @@ const Dashboard = () => {
 
 			<Modal open={!!shareUrl} onClose={() => setShareUrl(null)} title='Copia el enlace de tu pasaporte'>
 				<input
-					className='modal-url'
 					type='text'
 					readOnly
 					value={shareUrl || ''}
