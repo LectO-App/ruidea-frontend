@@ -42,3 +42,37 @@ test('a pending application has no Mostrar mi pasaporte button', async () => {
 	await screen.findByText('Tu solicitud está en camino');
 	expect(screen.queryByRole('link', { name: 'Mostrar mi pasaporte' })).not.toBeInTheDocument();
 });
+
+const draft = {
+	_id: 'd1',
+	estado: 'borrador',
+	emailVerificado: false,
+	correoElectronico: 'd1@example.test',
+	progreso: {
+		pasos: [
+			{ clave: 'datos', titulo: 'Tus datos', completo: true },
+			{ clave: 'residencia', titulo: 'Residencia y documento', completo: false },
+			{ clave: 'diagnostico', titulo: 'Diagnóstico', completo: false },
+			{ clave: 'documentos', titulo: 'Documentos', completo: false },
+			{ clave: 'revision', titulo: 'Revisar y enviar', completo: false },
+		],
+	},
+};
+
+test('a draft says the application is not sent yet, lists what is left and links to the form', async () => {
+	renderDashboard(draft);
+
+	expect(await screen.findByRole('heading', { name: 'Tu solicitud aún no está enviada' })).toBeInTheDocument();
+	const steps = screen.getByRole('list', { name: 'Pasos de tu solicitud' });
+	expect(steps).toHaveTextContent('Tus datosHecho');
+	expect(steps).toHaveTextContent('DiagnósticoFalta');
+	expect(screen.getByRole('link', { name: 'Continuar mi solicitud' })).toHaveAttribute('href', '/inscribirse');
+	expect(screen.getByText('Hola')).toBeInTheDocument();
+});
+
+test('a draft never sees wording that says it was sent or is waiting for review', async () => {
+	renderDashboard({ ...draft, emailVerificado: true, nombre: 'Ana' });
+	await screen.findByRole('heading', { name: 'Tu solicitud aún no está enviada' });
+	expect(screen.queryByText(/en camino|recibida|revisar tu solicitud|Confirma tu correo/)).not.toBeInTheDocument();
+	expect(screen.queryByRole('button', { name: /Reenviar el correo/ })).not.toBeInTheDocument();
+});

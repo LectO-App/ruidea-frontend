@@ -14,6 +14,9 @@ import {
 	BsArrowRepeat,
 	BsCheckCircle,
 	BsPhone,
+	BsPencilSquare,
+	BsCheck,
+	BsCircle,
 } from 'react-icons/bs';
 
 import { toast } from './ui/toast';
@@ -88,6 +91,44 @@ const STATUS = {
 		title: 'Tu solicitud fue rechazada',
 		desc: 'Si crees que se trata de un error, ponte en contacto con nosotros.',
 	},
+};
+
+// An unfinished application (estado 'borrador'): nothing was sent yet. `progreso` comes
+// from GET /usuario/me and lists the form steps, done or still missing.
+const DraftCard = ({ progreso }) => {
+	const pasos = (progreso && progreso.pasos) || [];
+	return (
+		<section className='status-card status-card--enter tone-warn'>
+			<span className='status-badge' aria-hidden='true'>
+				<BsPencilSquare size={36} />
+			</span>
+			<h1 className='status-title'>Tu solicitud aún no está enviada</h1>
+			<p className='status-desc'>
+				La empezaste, pero todavía no nos la has enviado. Nadie la puede revisar hasta que la envíes. Lo que ya
+				escribiste está guardado.
+			</p>
+			{pasos.length > 0 && (
+				<ol className='timeline' aria-label='Pasos de tu solicitud'>
+					{pasos.map(paso => (
+						<li key={paso.clave} className={`timeline-step ${paso.completo ? 'done' : 'upcoming'}`}>
+							<span className='timeline-icon' aria-hidden='true'>
+								{paso.completo ? <BsCheck size={24} /> : <BsCircle size={18} />}
+							</span>
+							<div className='timeline-body'>
+								<h3>{paso.titulo}</h3>
+								<p>{paso.completo ? 'Hecho' : 'Falta'}</p>
+							</div>
+						</li>
+					))}
+				</ol>
+			)}
+			<div className='status-actions'>
+				<Link className='btn-primary' to='/inscribirse'>
+					Continuar mi solicitud
+				</Link>
+			</div>
+		</section>
+	);
 };
 
 const Dashboard = () => {
@@ -205,9 +246,11 @@ const Dashboard = () => {
 			<Navbar />
 			<main className='dash'>
 				<div className='dash-shell'>
-					<p className='dash-greeting'>Hola, {data.nombre}</p>
+					<p className='dash-greeting'>{data.nombre ? `Hola, ${data.nombre}` : 'Hola'}</p>
 
-					{data.emailVerificado && meta ? (
+					{data.estado === 'borrador' ? (
+						<DraftCard progreso={data.progreso} />
+					) : data.emailVerificado && meta ? (
 						<section
 							className={`status-card status-card--enter tone-${meta.tone}${
 								data.estado === 'aceptado' ? ' status-card--celebrate' : ''
