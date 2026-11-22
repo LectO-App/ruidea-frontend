@@ -7,11 +7,18 @@ import Modal from "../ui/Modal";
 import StatusBadge from "./StatusBadge";
 import InlineMessage from "../ui/InlineMessage";
 import { getFileFromServer } from "../../util/getFileFromServer";
+import { isPdfDocuments } from "../../util/documents";
 
 const DIAG_LABELS = { tdah: "TDA-H" };
 
 const fmtDate = (d) =>
   d ? new Date(d).toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" }) : "—";
+
+const docsLabel = (archivoBlob, busy) => {
+  if (!archivoBlob) return "Sin documentos subidos";
+  if (isPdfDocuments(archivoBlob)) return busy ? "Abriendo…" : "Abrir diagnóstico e identificación (PDF, pestaña nueva)";
+  return busy ? "Descargando…" : "Descargar diagnóstico e identificación (ZIP)";
+};
 
 const Field = ({ label, children }) => (
   <div className="adm-field">
@@ -68,7 +75,8 @@ const AdminSolicitud = (props) => {
     }
   };
 
-  const downloadDocs = async () => {
+  // New uploads are one PDF the browser shows in a new tab; older records are a ZIP to download.
+  const openDocs = async () => {
     setDownloading("docs");
     try {
       const res = await axiosInstance.get(`/inscripcion/link-archivos/${user._id}`);
@@ -178,10 +186,10 @@ const AdminSolicitud = (props) => {
           </div>
           <button
             className="adm-btn adm-btn--ghost adm-doc-btn"
-            onClick={downloadDocs}
-            disabled={downloading === "docs"}
+            onClick={openDocs}
+            disabled={!user.archivoBlob || downloading === "docs"}
           >
-            {downloading === "docs" ? "Descargando…" : "Descargar diagnóstico e identificación"}
+            {docsLabel(user.archivoBlob, downloading === "docs")}
           </button>
         </section>
 

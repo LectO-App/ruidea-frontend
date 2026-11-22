@@ -22,6 +22,7 @@ import {
   updateOwn,
   uploadFiles,
 } from "../util/registrationApi";
+import { isPdfDocuments } from "../util/documents";
 
 import "../css/registration.scss";
 
@@ -64,6 +65,7 @@ const Form = (props) => {
   const [skipAccount, setSkipAccount] = useState(false); // account already exists
   const [formData, setFormData] = useState({});
   const [files, setFiles] = useState({ diagnostico: [], documento: [] });
+  const [docMode, setDocMode] = useState("agregar"); // editing: add the new files to the current PDF, or replace it
 
   const [index, setIndex] = useState(0); // index into `steps`
   const [direction, setDirection] = useState(1);
@@ -158,10 +160,11 @@ const Form = (props) => {
     if (files.diagnostico.length) fileGroups["Diagnostico Medico - Archivo"] = files.diagnostico;
     if (files.documento.length) fileGroups["Documento Identidad - Archivo"] = files.documento;
     const hasFiles = Object.keys(fileGroups).length > 0;
+    const modo = editing && isPdfDocuments(formData.archivoBlob) ? docMode : "reemplazar";
 
     try {
       if (editing) {
-        if (hasFiles) await uploadFiles(fileGroups);
+        if (hasFiles) await uploadFiles(fileGroups, modo);
         const payload = { ...formData };
         delete payload.csrfToken;
         if (!payload.password) delete payload.password;
@@ -208,6 +211,10 @@ const Form = (props) => {
       }
       setCompletion(result);
     } catch (err) {
+      // A file the server could not add to the PDF: its message names the file to change.
+      const status = err && err.response && err.response.status;
+      const serverMessage = err && err.response && err.response.data && err.response.data.message;
+      if ((status === 409 || status === 422) && serverMessage) throw new Error(serverMessage);
       // Field-level validation from the server (e.g. an invalid phone the lenient client
       // check let through): show each message on its own field and take the user to the
       // step that owns the first error — never a dead-end generic banner.
@@ -325,6 +332,8 @@ const Form = (props) => {
               formData={formData}
               files={files}
               setFiles={setFiles}
+              docMode={docMode}
+              setDocMode={setDocMode}
               editing={editing}
               isFirst={index === 0}
               serverErrors={serverErrors}

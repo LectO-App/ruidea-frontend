@@ -57,11 +57,14 @@ export const updateOwn = async (fields) => {
   return res.data;
 };
 
-// Upload identity/diagnosis documents (PDF or images) for the authenticated user.
-// `groups` is { label: File[] }. Returns when stored. axios sets the multipart boundary
-// automatically for FormData — do not set Content-Type by hand.
-export const uploadFiles = async (groups) => {
+// Upload identity/diagnosis documents (PDF or images) for the authenticated user. The
+// server joins them into one PDF in the order appended. `groups` is { label: File[] };
+// `modo` is "reemplazar" or "agregar" (after the pages of the current PDF). Returns when
+// stored. axios sets the multipart boundary automatically for FormData — do not set
+// Content-Type by hand.
+export const uploadFiles = async (groups, modo = "reemplazar") => {
   const fd = new FormData();
+  fd.append("modo", modo);
   Object.entries(groups).forEach(([label, files]) => {
     (files || []).forEach((file, i) => fd.append(`${label} N${i}`, file));
   });
