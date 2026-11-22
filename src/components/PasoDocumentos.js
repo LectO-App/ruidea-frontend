@@ -4,23 +4,34 @@ import { Link } from "react-router-dom";
 import { BsArrowRight, BsArrowLeft, BsShieldLock } from "react-icons/bs";
 
 import DocumentUploader from "./form/DocumentUploader";
+import { isPdfDocuments, MAX_FILES } from "../util/documents";
 
 // Step — the documents (the whole point of the passport, §5) and consent (§6). Upload is
 // framed and reassured, accepts a photo or a PDF, and consents are unbundled: marketing is
 // separate and optional; the data-processing consent is explicit and required.
+// The server joins every file into one PDF. When editing, the person chooses whether the
+// new files go after the PDF sent before or replace it; an older ZIP can only be replaced.
 const PasoDocumentos = (props) => {
-  const { formData, files, setFiles, onNext, onBack, editing } = props;
+  const { formData, files, setFiles, onNext, onBack, editing, docMode, setDocMode } = props;
   const { register, handleSubmit, errors, getValues } = useForm();
   const [filesError, setFilesError] = useState(null);
 
   const setGroup = (group) => (newFiles) =>
     setFiles((prev) => ({ ...prev, [group]: newFiles }));
 
+  const totalFiles = files.diagnostico.length + files.documento.length;
+  const hasCurrentDocs = editing && Boolean(formData.archivoBlob);
+  const canAdd = hasCurrentDocs && isPdfDocuments(formData.archivoBlob);
+
   const submit = (data) => {
     // The diagnosis report is what the medical reviewer assesses — require it for new
     // applications (when editing, the documents were already uploaded previously).
     if (!editing && files.diagnostico.length === 0) {
       setFilesError("Adjunta tu informe de diagnóstico para que el equipo médico pueda revisarlo.");
+      return;
+    }
+    if (totalFiles > MAX_FILES) {
+      setFilesError(`Puedes subir hasta ${MAX_FILES} archivos en total. Quita alguno o junta varios en un PDF.`);
       return;
     }
     setFilesError(null);
@@ -43,6 +54,11 @@ const PasoDocumentos = (props) => {
         revisa tu solicitud.
       </p>
 
+      <p className="step-intro">
+        Si puedes, sube un solo PDF con todo. Si tienes varias fotos o archivos, súbelos todos: en RUIDEA los
+        juntamos en un único PDF, en el orden que elijas.
+      </p>
+
       <DocumentUploader
         id="diagnostico"
         label="Informe de diagnóstico"
@@ -58,6 +74,38 @@ const PasoDocumentos = (props) => {
         files={files.documento}
         onFilesChange={setGroup("documento")}
       />
+
+      {hasCurrentDocs && totalFiles > 0 && canAdd && (
+        <fieldset className="choice doc-mode">
+          <legend>¿Qué hacemos con los documentos que ya nos enviaste?</legend>
+          <div className="choice-options">
+            <label className={`choice-card${docMode === "agregar" ? " selected" : ""}`}>
+              <input
+                type="radio"
+                name="modoDocumentos"
+                checked={docMode === "agregar"}
+                onChange={() => setDocMode("agregar")}
+              />
+              <span>Guardarlos y añadir los nuevos al final</span>
+            </label>
+            <label className={`choice-card${docMode === "reemplazar" ? " selected" : ""}`}>
+              <input
+                type="radio"
+                name="modoDocumentos"
+                checked={docMode === "reemplazar"}
+                onChange={() => setDocMode("reemplazar")}
+              />
+              <span>Cambiarlos por los nuevos</span>
+            </label>
+          </div>
+        </fieldset>
+      )}
+      {hasCurrentDocs && totalFiles > 0 && !canAdd && (
+        <p className="field-hint">
+          Los archivos nuevos sustituirán a los documentos que nos enviaste antes. Sube todo lo necesario: el informe
+          y tu documento de identidad.
+        </p>
+      )}
 
       {filesError && (
         <span className="error-message" role="alert">

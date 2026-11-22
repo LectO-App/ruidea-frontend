@@ -557,6 +557,56 @@ fieldset.diagnosis {
     color: $reg-muted;
   }
 }
+.file-order {
+  min-width: 1.6em;
+  text-align: center;
+  font-weight: 600;
+  color: $reg-muted;
+  font-variant-numeric: tabular-nums;
+}
+.file-move {
+  display: flex;
+  gap: 4px;
+  button {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: 1px solid $reg-border;
+    border-radius: 8px;
+    color: $reg-ink;
+    cursor: pointer;
+    &:hover:not(:disabled) {
+      border-color: $clrMain;
+      color: $clrMain;
+    }
+    &:focus-visible {
+      outline: 3px solid rgba($clrMain, 0.4);
+      outline-offset: 1px;
+    }
+    &:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+  }
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.doc-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 .file-remove {
   background: none;
   border: none;

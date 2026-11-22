@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { BsArrowLeft, BsPencil, BsCheckCircle, BsExclamationCircle, BsInfoCircle } from "react-icons/bs";
+import { isPdfDocuments } from "../util/documents";
 
 const DIAG_LABELS = {
   dislexia: "Dislexia",
@@ -19,7 +20,7 @@ const Row = ({ label, value }) => (
 // Final review (§1) — a calm summary with per-section "Editar" so people can check their
 // work without re-navigating the whole flow, then one clear primary action.
 const PasoRevision = (props) => {
-  const { formData, files, editing, onBack, onSubmit, jumpToStep } = props;
+  const { formData, files, editing, docMode, onBack, onSubmit, jumpToStep } = props;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -45,6 +46,12 @@ const PasoRevision = (props) => {
   );
 
   const totalArchivos = (files.diagnostico.length || 0) + (files.documento.length || 0);
+  const archivosNota =
+    editing && formData.archivoBlob
+      ? isPdfDocuments(formData.archivoBlob) && docMode === "agregar"
+        ? " · se añadirán al final de tus documentos actuales"
+        : " · sustituirán a tus documentos actuales"
+      : "";
 
   return (
     <div className="review">
@@ -117,7 +124,7 @@ const PasoRevision = (props) => {
         </div>
         <p>
           {totalArchivos > 0
-            ? `${totalArchivos} archivo${totalArchivos > 1 ? "s" : ""} adjunto${totalArchivos > 1 ? "s" : ""}`
+            ? `${totalArchivos} archivo${totalArchivos > 1 ? "s" : ""} adjunto${totalArchivos > 1 ? "s" : ""}${archivosNota}`
             : editing
             ? "Se conservan los documentos ya subidos"
             : "Sin documentos"}
