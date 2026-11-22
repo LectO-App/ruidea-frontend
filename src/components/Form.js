@@ -293,7 +293,7 @@ const Form = (props) => {
                 )}
                 {saveState === "saved" && (
                   <>
-                    <BsCheckCircle aria-hidden="true" /> Guardado
+                    <BsCheckCircle aria-hidden="true" /> Guardado, sin enviar
                   </>
                 )}
                 {saveState === "error" && (
