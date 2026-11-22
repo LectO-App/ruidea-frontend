@@ -164,7 +164,12 @@ const Form = (props) => {
 
     try {
       if (editing) {
-        if (hasFiles) await uploadFiles(fileGroups, modo);
+        if (hasFiles) {
+          const uploaded = await uploadFiles(fileGroups, modo);
+          // Stored: a retry after a failed save must not add the same pages again.
+          setFiles({ diagnostico: [], documento: [] });
+          mergeData({ archivoBlob: uploaded.archivoBlob });
+        }
         const payload = { ...formData };
         delete payload.csrfToken;
         if (!payload.password) delete payload.password;
