@@ -22,7 +22,7 @@ import {
   updateOwn,
   uploadFiles,
 } from "../util/registrationApi";
-import { isPdfDocuments } from "../util/documents";
+import { isPdfDocuments, uploadErrorMessage } from "../util/documents";
 
 import "../css/registration.scss";
 
@@ -71,6 +71,7 @@ const Form = (props) => {
   const [direction, setDirection] = useState(1);
   const [completion, setCompletion] = useState(null);
   const [serverErrors, setServerErrors] = useState(null); // field errors returned by the server on submit
+  const [documentsError, setDocumentsError] = useState(null); // the server refused the files as too large
   const [saveState, setSaveState] = useState("idle"); // idle | saving | saved | error — autosave feedback
 
   // When the user arrives here from a "needs revision" dashboard, carry the specialist's
@@ -127,6 +128,7 @@ const Form = (props) => {
 
   const onNext = (patch = {}, opts = {}) => {
     mergeData(patch);
+    setDocumentsError(null);
     if (!opts.skipAutosave) autosave(patch);
     if (index < steps.length - 1) goTo(index + 1);
   };
@@ -216,6 +218,13 @@ const Form = (props) => {
       }
       setCompletion(result);
     } catch (err) {
+      // Files too large to send: retrying cannot help, so say it where the files are chosen.
+      const sizeMessage = uploadErrorMessage(err);
+      if (sizeMessage) {
+        setDocumentsError(sizeMessage);
+        jumpToStep("documentos");
+        return;
+      }
       // A file the server could not add to the PDF: its message names the file to change.
       const status = err && err.response && err.response.status;
       const serverMessage = err && err.response && err.response.data && err.response.data.message;
@@ -342,6 +351,7 @@ const Form = (props) => {
               editing={editing}
               isFirst={index === 0}
               serverErrors={serverErrors}
+              documentsError={documentsError}
               onNext={onNext}
               onBack={onBack}
               onAccountCreated={onAccountCreated}

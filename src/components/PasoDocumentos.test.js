@@ -64,3 +64,23 @@ test("more than 10 files in total are stopped before sending", async () => {
   expect(screen.getByRole("alert")).toHaveTextContent("hasta 10 archivos en total");
   expect(onNext).not.toHaveBeenCalled();
 });
+
+test("a file over 25 MB is named before sending, with what to do", async () => {
+  const user = userEvent.setup();
+  const onNext = jest.fn();
+  const big = pdf("escaneo.pdf");
+  Object.defineProperty(big, "size", { value: 30 * 1024 * 1024 });
+  renderStep({ files: { diagnostico: [big], documento: [] }, onNext });
+  await user.click(screen.getByRole("checkbox", { name: /Doy mi consentimiento/ }));
+  await user.click(screen.getByRole("button", { name: /Revisar/ }));
+  const alert = screen.getByRole("alert");
+  expect(alert).toHaveTextContent("«escaneo.pdf» ocupa 30.0 MB");
+  expect(alert).toHaveTextContent("menos resolución");
+  expect(alert).not.toHaveTextContent("inténtalo otra vez");
+  expect(onNext).not.toHaveBeenCalled();
+});
+
+test("a size problem the server found on sending is shown on this step", () => {
+  renderStep({ documentsError: "Un archivo ocupa más de 25 MB, el máximo por archivo." });
+  expect(screen.getByRole("alert")).toHaveTextContent("Un archivo ocupa más de 25 MB");
+});

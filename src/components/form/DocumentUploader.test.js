@@ -37,6 +37,17 @@ test("the up and down buttons change the page order and keep the focus on the mo
   expect(screen.getByRole("button", { name: "Mover a.pdf después" })).toBeDisabled();
 });
 
+test("picked files are added once, even when picked again", async () => {
+  const user = userEvent.setup();
+  render(<Harness initial={[]} />);
+  const input = screen.getByLabelText("Informe de diagnóstico");
+  const informe = new File(["%PDF-1.7"], "informe.pdf", { type: "application/pdf", lastModified: 1 });
+  await user.upload(input, informe);
+  await user.upload(input, [informe, new File(["%PDF-1.7"], "anexo.pdf", { type: "application/pdf", lastModified: 2 })]);
+  expect(await screen.findByText("anexo.pdf")).toBeInTheDocument();
+  expect(order()).toEqual(["informe.pdf", "anexo.pdf"]);
+});
+
 test("one file has no move buttons, and the copy recommends a single PDF", () => {
   render(<Harness initial={[pdf("informe.pdf")]} />);
   expect(screen.queryByRole("button", { name: /Mover/ })).not.toBeInTheDocument();
