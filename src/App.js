@@ -22,6 +22,7 @@ const Dashboard = lazy(() => import('./components/Dashboard'));
 const MostrarPasaporte = lazy(() => import('./components/MostrarPasaporte'));
 const Form = lazy(() => import('./components/Form'));
 const Login = lazy(() => import('./components/Login'));
+const EntrarConEnlace = lazy(() => import('./components/EntrarConEnlace'));
 const Verificar = lazy(() => import('./components/Verificar'));
 const VerificarEjemplo = lazy(() => import('./components/VerificarEjemplo'));
 const VerificarEmail = lazy(() => import('./components/VerifyEmail'));
@@ -104,6 +105,8 @@ function App() {
 									<ProtectedRoute path='/dashboard' component={Dashboard} fallback={<DashboardSkeleton />} />
 									<ProtectedRoute exact path='/mostrar' component={MostrarPasaporte} />
 									<Route path='/login' component={Login} />
+									{/* Sign-in link from the email; the page spends the token with a POST once loaded. */}
+									<Route exact path='/entrar/:token' component={EntrarConEnlace} />
 									<Route exact path='/admin' component={() => <Redirect to='/admin/login' />} />
 									<Route exact path='/verificar/ejemplo' component={VerificarEjemplo} />
 									<Route exact path='/verificar/numero' component={CheckPassport} />

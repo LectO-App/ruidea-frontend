@@ -35,6 +35,7 @@ test("an ordinary page loads the beacon once, in SPA mode", () => {
 test.each([
   "/cambiarContraseña/secret-reset-token",
   "/verificarEmail/secret-email-token",
+  "/entrar/secret-sign-in-token",
   "/verificar/12345678Z/0001234",
   "/verificar/TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT0",
 ])("the beacon never loads on %s", (path) => {

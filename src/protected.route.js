@@ -8,10 +8,11 @@ import LoadingScreen from "./components/LoadingScreen";
 // not authenticated. `checkUrl` lets the same component guard user and admin areas.
 // `fallback` is shown both during the session check and while the (lazy) component's chunk
 // downloads — pass a route-specific skeleton so loading is one continuous placeholder.
+// A signed-out visitor goes to sign in with the page in state.from, and returns to it after.
 export const ProtectedRoute = ({
   component: Component,
   checkUrl = "/usuario/me",
-  redirectTo = "/",
+  redirectTo = "/login",
   fallback = <LoadingScreen />,
   ...rest
 }) => {
