@@ -7,6 +7,8 @@ import {
   AiOutlineArrowDown,
 } from "react-icons/ai";
 
+import { formatSize, shrinkPhoto, MAX_FILE_MB } from "../../util/documents";
+
 // Accessible document picker (REGISTRATION_UX.md §5): click OR drag (never drag-only,
 // WCAG 2.2 §2.5.7), accepts a phone photo or a PDF (not PDF-only), shows thumbnail
 // previews with per-file remove, and states the limits up front. The server joins the
@@ -16,13 +18,8 @@ import {
 
 const ACCEPT = "application/pdf,image/jpeg,image/png,image/webp,image/heic,image/heif";
 
-const prettySize = (bytes) => {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-};
-
-const fileKey = (f) => `${f.name}:${f.size}`;
+// Name and date, not size: a photo is smaller once shrunk, and picking it again must not add it twice.
+const fileKey = (f) => `${f.name}:${f.lastModified}`;
 
 const FilePreview = ({ file, position, total, onRemove, onMove, buttonRef }) => {
   const [url, setUrl] = useState(null);
@@ -49,7 +46,7 @@ const FilePreview = ({ file, position, total, onRemove, onMove, buttonRef }) => 
       </span>
       <span className="file-meta">
         <span className="file-name">{file.name}</span>
-        <span className="file-size">{prettySize(file.size)}</span>
+        <span className="file-size">{formatSize(file.size)}</span>
       </span>
       {total > 1 && (
         <span className="file-move">
@@ -106,20 +103,23 @@ const DocumentUploader = ({ id, label, hint, files = [], onFilesChange }) => {
     setFocusAfterMove(null);
   }, [focusAfterMove]);
 
-  const addFiles = (fileList) => {
+  const addFiles = async (fileList) => {
     const incoming = Array.from(fileList || []);
     if (!incoming.length) return;
-    // Dedupe by name+size so re-picking the same file doesn't double it up.
-    const seen = new Set(files.map(fileKey));
-    const merged = [...files];
-    incoming.forEach((f) => {
-      const key = fileKey(f);
-      if (!seen.has(key)) {
-        seen.add(key);
-        merged.push(f);
-      }
+    const shrunk = await Promise.all(incoming.map(shrinkPhoto));
+    // Shrinking takes a moment: merge into the list as it is then, not as it was on picking.
+    onFilesChange((current) => {
+      const seen = new Set(current.map(fileKey));
+      const merged = [...current];
+      shrunk.forEach((f) => {
+        const key = fileKey(f);
+        if (!seen.has(key)) {
+          seen.add(key);
+          merged.push(f);
+        }
+      });
+      return merged;
     });
-    onFilesChange(merged);
   };
 
   const removeAt = (index) => onFilesChange(files.filter((_, i) => i !== index));
@@ -158,7 +158,7 @@ const DocumentUploader = ({ id, label, hint, files = [], onFilesChange }) => {
         <AiOutlineCloudUpload size={34} aria-hidden="true" />
         <span className="dropzone-text">
           <strong>Toca para elegir</strong> o arrastra aquí
-          <small>Mejor un solo PDF · también fotos · hasta 10 archivos en total</small>
+          <small>Mejor un solo PDF · también fotos · hasta 10 archivos en total · {MAX_FILE_MB} MB como máximo cada uno</small>
         </span>
         <input
           type="file"
