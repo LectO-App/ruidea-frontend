@@ -895,6 +895,87 @@ fieldset.diagnosis {
     text-underline-offset: 2px;
   }
 }
+// Sign-in by email link: helper, "o" divider, "Mira tu correo" and the /entrar page.
+.reg.auth {
+  .btn-primary,
+  .btn-secondary,
+  .auth-link {
+    &:focus-visible {
+      outline: 3px solid $clrMainDark;
+      outline-offset: 3px;
+    }
+  }
+  .auth-title:focus {
+    outline: none;
+  }
+}
+.auth-submit.btn-secondary {
+  margin-top: 0;
+}
+.auth-helper {
+  margin: 0;
+  text-align: center;
+  color: $reg-muted;
+  font-size: 1rem;
+}
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+  color: $reg-muted;
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-top: 1px solid $reg-border;
+  }
+}
+.auth-icon {
+  display: block;
+  margin: 0 auto 12px;
+  color: $clrMainDark;
+  &--ok {
+    color: $reg-ok;
+  }
+}
+.auth-email {
+  color: $reg-ink;
+  overflow-wrap: anywhere;
+}
+.auth-steps {
+  margin: 0 0 18px;
+  padding-left: 1.6em;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: $reg-ink;
+  li + li {
+    margin-top: 6px;
+  }
+}
+.auth-note {
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  border-left: 4px solid $clrMain;
+  border-radius: $reg-radius;
+  background: rgba($clrMain, 0.08);
+  color: $reg-ink;
+  line-height: 1.6;
+}
+.auth-link--target {
+  min-height: 48px;
+  padding: 0 8px;
+}
+.auth-card--center {
+  text-align: center;
+  .auth-submit {
+    margin-top: 20px;
+  }
+}
+.inline-msg + .auth-submit {
+  margin-top: 12px;
+}
+
 .auth-modal-form {
   display: flex;
   flex-direction: column;
