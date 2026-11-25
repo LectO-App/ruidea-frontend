@@ -5,7 +5,7 @@ import { BsArrowRight, BsArrowLeft, BsShieldLock } from "react-icons/bs";
 
 import DocumentUploader from "./form/DocumentUploader";
 import SingleStepActions from "./form/SingleStepActions";
-import { isPdfDocuments, MAX_FILES } from "../util/documents";
+import { isPdfDocuments, sizeProblem, MAX_FILES } from "../util/documents";
 
 // Step — the documents (the whole point of the passport, §5) and consent (§6). Upload is
 // framed and reassured, accepts a photo or a PDF, and consents are unbundled: marketing is
@@ -13,12 +13,13 @@ import { isPdfDocuments, MAX_FILES } from "../util/documents";
 // The server joins every file into one PDF. When editing, the person chooses whether the
 // new files go after the PDF sent before or replace it; an older ZIP can only be replaced.
 const PasoDocumentos = (props) => {
-  const { formData, files, setFiles, onNext, onBack, editing, docMode, setDocMode } = props;
+  const { formData, files, setFiles, onNext, onBack, editing, docMode, setDocMode, documentsError } = props;
   const { singleStep, busy, sendsToo, campos } = props;
   const { register, handleSubmit, errors, getValues } = useForm();
-  const [filesError, setFilesError] = useState(null);
+  const [filesError, setFilesError] = useState(documentsError || null);
 
-  const setGroup = (group) => (newFiles) => setFiles((prev) => ({ ...prev, [group]: newFiles }));
+  const setGroup = (group) => (next) =>
+    setFiles((prev) => ({ ...prev, [group]: typeof next === "function" ? next(prev[group]) : next }));
 
   const totalFiles = files.diagnostico.length + files.documento.length;
   const hasCurrentDocs = editing && Boolean(formData.archivoBlob);
@@ -43,6 +44,11 @@ const PasoDocumentos = (props) => {
     }
     if (totalFiles > MAX_FILES) {
       setFilesError(`Puedes subir hasta ${MAX_FILES} archivos en total. Quita alguno o junta varios en un PDF.`);
+      return;
+    }
+    const tooLarge = sizeProblem([...files.diagnostico, ...files.documento]);
+    if (tooLarge) {
+      setFilesError(tooLarge);
       return;
     }
     setFilesError(null);
