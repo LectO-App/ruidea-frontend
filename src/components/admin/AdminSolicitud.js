@@ -7,6 +7,7 @@ import Modal from "../ui/Modal";
 import StatusBadge from "./StatusBadge";
 import InlineMessage from "../ui/InlineMessage";
 import { getFileFromServer } from "../../util/getFileFromServer";
+import { GRUPOS, MOTIVOS, OTRO_MAX, grupoLabel, isOtro } from "../../util/motivosRevision";
 import { isPdfDocuments } from "../../util/documents";
 
 const DIAG_LABELS = { tdah: "TDA-H" };
@@ -34,22 +35,49 @@ const AdminSolicitud = (props) => {
   const [downloading, setDownloading] = useState(null);
   const [revisionOpen, setRevisionOpen] = useState(false);
   const [revisionMsg, setRevisionMsg] = useState("");
+  const [revisionMotivos, setRevisionMotivos] = useState([]);
+  const [textosOtro, setTextosOtro] = useState({}); // the text of each "Otro" reason, by id
+  const [revisionError, setRevisionError] = useState(null);
   const [rejectOpen, setRejectOpen] = useState(false);
 
-  const postResultToAPI = async (estado, mensajeMedico = "", mostrarPopup = true) => {
+  const postResultToAPI = async (estado, mensajeMedico = "", motivosRevision = [], textos = {}) => {
     try {
       await axiosInstance.post(`/admin/respuesta`, {
         estado,
         mensajeMedico,
+        motivosRevision,
+        textosOtro: textos,
         emailUsuario: user.correoElectronico,
       });
-      if (mostrarPopup) {
-        toast.success("Respuesta enviada");
-        props.history.push("/admin/solicitudes");
-      }
+      toast.success("Respuesta enviada");
+      props.history.push("/admin/solicitudes");
     } catch (error) {
       toast.error("Hubo un error al mandar la respuesta.");
     }
+  };
+
+  const toggleMotivo = (id) => {
+    setRevisionError(null);
+    setRevisionMotivos((prev) => (prev.includes(id) ? prev.filter((m) => m !== id) : [...prev, id]));
+  };
+
+  const sendRevision = () => {
+    if (revisionMotivos.length === 0 && !revisionMsg.trim()) {
+      setRevisionError("Elige al menos un motivo o escribe un mensaje.");
+      return;
+    }
+    const ordered = MOTIVOS.map((m) => m.id).filter((id) => revisionMotivos.includes(id));
+    const otros = ordered.filter(isOtro);
+    const missing = otros.find((id) => !(textosOtro[id] || "").trim());
+    if (missing) {
+      setRevisionError("Escribe qué hay que cambiar en cada «Otro».");
+      const input = document.getElementById(`otro-${missing}`);
+      if (input) input.focus();
+      return;
+    }
+    setRevisionOpen(false);
+    const textos = Object.fromEntries(otros.map((id) => [id, textosOtro[id].trim()]));
+    postResultToAPI("revision", revisionMsg, ordered, textos);
   };
 
   const getUserFromAPI = useCallback(async () => {
@@ -114,9 +142,9 @@ const AdminSolicitud = (props) => {
 
   if (!user._id) return <DetailSkeleton />;
 
-  const diagnosticos = user.diagnostico
-    ? Object.keys(user.diagnostico).filter((k) => user.diagnostico[k])
-    : [];
+  const diagnosticos = user.diagnostico ? Object.keys(user.diagnostico).filter((k) => user.diagnostico[k]) : [];
+  const pedidos = MOTIVOS.filter((m) => (user.motivosRevision || []).includes(m.id));
+  const cambios = user.cambiosDesdeRevision || [];
 
   return (
     <div className="adm adm-detail">
@@ -132,10 +160,39 @@ const AdminSolicitud = (props) => {
           <h1>
             {user.nombre} {user.apellidos}
           </h1>
-          <p className="adm-detail__sub">
-            Solicitud de pasaporte DEA · creada el {fmtDate(user.fechaCreacion)}
-          </p>
+          <p className="adm-detail__sub">Solicitud de pasaporte DEA · creada el {fmtDate(user.fechaCreacion)}</p>
         </header>
+
+        {(pedidos.length > 0 || cambios.length > 0) && (
+          <section className="adm-card">
+            <h2 className="adm-card__title">Revisión</h2>
+            {pedidos.length > 0 && (
+              <>
+                <h3 className="adm-card__subtitle">Lo que se pidió cambiar</h3>
+                <ul className="adm-revision-list">
+                  {pedidos.map((m) => (
+                    <li key={m.id}>
+                      {m.admin}
+                      {m.otro && user.textosOtro && user.textosOtro[m.id] ? `: ${user.textosOtro[m.id]}` : ""}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {cambios.length > 0 && (
+              <>
+                <h3 className="adm-card__subtitle">Qué cambió</h3>
+                <ul className="adm-chips adm-chips--list">
+                  {cambios.map((g) => (
+                    <li className="adm-chip" key={g}>
+                      {grupoLabel(g)}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </section>
+        )}
 
         <section className="adm-card">
           <h2 className="adm-card__title">Identidad</h2>
@@ -197,9 +254,7 @@ const AdminSolicitud = (props) => {
           <h2 className="adm-card__title">Consentimientos</h2>
           <dl className="adm-grid">
             <Field label="Política de protección de datos">Aceptada</Field>
-            <Field label="Recibir información sobre DEA">
-              {user.aceptoRecibirInfo ? "Sí" : "No"}
-            </Field>
+            <Field label="Recibir información sobre DEA">{user.aceptoRecibirInfo ? "Sí" : "No"}</Field>
           </dl>
         </section>
 
@@ -208,16 +263,16 @@ const AdminSolicitud = (props) => {
             <button className="adm-btn adm-btn--accept" onClick={() => postResultToAPI("aceptado")}>
               Aceptar solicitud
             </button>
-            <Link
-              to={`/admin/solicitudes/${props.match.params.id}/modificar`}
-              className="adm-btn adm-btn--ghost"
-            >
+            <Link to={`/admin/solicitudes/${props.match.params.id}/modificar`} className="adm-btn adm-btn--ghost">
               Modificar datos
             </Link>
             <button
               className="adm-btn adm-btn--ghost"
               onClick={() => {
                 setRevisionMsg("");
+                setRevisionMotivos([]);
+                setTextosOtro({});
+                setRevisionError(null);
                 setRevisionOpen(true);
               }}
             >
@@ -231,10 +286,7 @@ const AdminSolicitud = (props) => {
 
         {user.estado === "aceptado" && (
           <div className="adm-actionbar">
-            <Link
-              to={`/admin/solicitudes/${props.match.params.id}/modificar`}
-              className="adm-btn adm-btn--ghost"
-            >
+            <Link to={`/admin/solicitudes/${props.match.params.id}/modificar`} className="adm-btn adm-btn--ghost">
               Modificar datos
             </Link>
             <button
@@ -279,32 +331,69 @@ const AdminSolicitud = (props) => {
         </Modal>
 
         <Modal open={revisionOpen} onClose={() => setRevisionOpen(false)} title="Pedir revisión de solicitud">
+          <fieldset className="adm-motivos">
+            <legend className="adm-modal-label">¿Qué tiene que cambiar la persona?</legend>
+            {GRUPOS.map((g) => (
+              <fieldset className="adm-motivos__group" key={g.key}>
+                <legend>{g.label}</legend>
+                {MOTIVOS.filter((m) => m.grupo === g.key).map((m) => {
+                  const checked = revisionMotivos.includes(m.id);
+                  const texto = textosOtro[m.id] || "";
+                  const inputId = `otro-${m.id}`;
+                  return (
+                    <React.Fragment key={m.id}>
+                      <label className="adm-motivo">
+                        <input type="checkbox" checked={checked} onChange={() => toggleMotivo(m.id)} />
+                        <span>{m.admin}</span>
+                      </label>
+                      {m.otro && checked && (
+                        <div className="adm-otro">
+                          <label htmlFor={inputId}>Qué tiene que cambiar (obligatorio)</label>
+                          <input
+                            id={inputId}
+                            type="text"
+                            required
+                            aria-required="true"
+                            aria-describedby={`${inputId}-count`}
+                            maxLength={OTRO_MAX}
+                            value={texto}
+                            onChange={(e) => {
+                              setRevisionError(null);
+                              setTextosOtro((prev) => ({ ...prev, [m.id]: e.target.value }));
+                            }}
+                          />
+                          <span className="adm-otro__count" id={`${inputId}-count`}>
+                            {texto.length} de {OTRO_MAX}
+                          </span>
+                        </div>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </fieldset>
+            ))}
+          </fieldset>
           <label className="adm-modal-label" htmlFor="revision-msg">
-            Mensaje para el usuario
+            Mensaje para la persona (opcional)
           </label>
           <textarea
             id="revision-msg"
             className="modal-textarea"
             value={revisionMsg}
-            onChange={(e) => setRevisionMsg(e.target.value)}
+            onChange={(e) => {
+              setRevisionError(null);
+              setRevisionMsg(e.target.value);
+            }}
             onKeyDown={(e) => {
-              if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-                setRevisionOpen(false);
-                postResultToAPI("revision", revisionMsg, !revisionMsg);
-              }
+              if ((e.metaKey || e.ctrlKey) && e.key === "Enter") sendRevision();
             }}
           />
+          <InlineMessage type="error">{revisionError}</InlineMessage>
           <div className="modal-actions">
             <button className="adm-btn adm-btn--ghost" onClick={() => setRevisionOpen(false)}>
               Cancelar
             </button>
-            <button
-              className="adm-btn adm-btn--primary"
-              onClick={() => {
-                setRevisionOpen(false);
-                postResultToAPI("revision", revisionMsg, !revisionMsg);
-              }}
-            >
+            <button className="adm-btn adm-btn--primary" onClick={sendRevision}>
               Enviar
             </button>
           </div>

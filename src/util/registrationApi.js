@@ -71,3 +71,10 @@ export const uploadFiles = async (groups, modo = "reemplazar") => {
   const res = await axiosInstance.post("/inscripcion/subir-archivos", fd);
   return res.data;
 };
+
+// Send an application returned for revision back to review (after its steps were saved
+// with enviar: false). Returns { usuario }.
+export const resubmit = async () => {
+  const res = await axiosInstance.post("/inscripcion/reenviar");
+  return res.data;
+};

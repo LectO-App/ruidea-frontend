@@ -12,6 +12,8 @@ import PasoDocumentos from "./PasoDocumentos";
 import PasoRevision from "./PasoRevision";
 import Completion from "./Completion";
 import RegistrationSkeleton from "./RegistrationSkeleton";
+import { toast } from "./ui/toast";
+import InlineMessage from "./ui/InlineMessage";
 
 import {
   getOwn,
@@ -21,7 +23,9 @@ import {
   registerOneShot,
   updateOwn,
   uploadFiles,
+  resubmit,
 } from "../util/registrationApi";
+import { motivosFor, camposFor } from "../util/motivosRevision";
 import { isPdfDocuments, uploadErrorMessage } from "../util/documents";
 
 import "../css/registration.scss";
@@ -56,6 +60,25 @@ const STEP_FOR_PATH = {
   numeroTelefono: "residencia",
 };
 
+// Steps a submitted application can open on their own (?paso=<key>&volver=panel): the
+// dashboard's revision checklist links here so the applicant changes only what was asked.
+const SINGLE_STEPS = ["datos", "residencia", "diagnostico", "documentos"];
+
+const fileGroupsOf = (files) => {
+  const groups = {};
+  if (files.diagnostico.length) groups["Diagnostico Medico - Archivo"] = files.diagnostico;
+  if (files.documento.length) groups["Documento Identidad - Archivo"] = files.documento;
+  return groups;
+};
+
+// The edit body for PUT /actualizar: the record minus what the server must not get back.
+const editPayload = (data) => {
+  const payload = { ...data };
+  delete payload.csrfToken;
+  if (!payload.password) delete payload.password;
+  return payload;
+};
+
 const Form = (props) => {
   const reduceMotion = useReducedMotion();
 
@@ -73,6 +96,9 @@ const Form = (props) => {
   const [serverErrors, setServerErrors] = useState(null); // field errors returned by the server on submit
   const [documentsError, setDocumentsError] = useState(null); // the server refused the files as too large
   const [saveState, setSaveState] = useState("idle"); // idle | saving | saved | error — autosave feedback
+  const [singleStep, setSingleStep] = useState(null); // key of the only step shown, see SINGLE_STEPS
+  const [singleSaving, setSingleSaving] = useState(false);
+  const [singleError, setSingleError] = useState(null);
 
   // When the user arrives here from a "needs revision" dashboard, carry the specialist's
   // message along so it stays in front of them while they fix the form (instead of being
@@ -94,14 +120,29 @@ const Form = (props) => {
           setDraftId(me._id); // resume an in-progress draft (account already created)
         } else {
           setEditing(true); // editing an existing submitted record (§1.5)
+          const paso = new URLSearchParams(props.location && props.location.search).get("paso");
+          if (SINGLE_STEPS.includes(paso)) {
+            setSingleStep(paso);
+            setIndex(STEPS.filter((s) => !s.accountOnly).findIndex((s) => s.key === paso));
+          }
         }
       }
       setLoaded(true);
     };
     init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const current = steps[index];
+
+  // Single-step mode: true when saving this step leaves no reason of a guided revision
+  // pending, so the step's button also sends the application ("Guardar y enviar").
+  const sendsToo = useMemo(() => {
+    if (!singleStep || formData.estado !== "revision") return false;
+    const motivos = motivosFor(formData.motivosRevision, formData.textosOtro);
+    const cambiados = new Set([...(formData.cambiosDesdeRevision || []), singleStep]);
+    return motivos.length > 0 && motivos.every((m) => cambiados.has(m.grupo));
+  }, [singleStep, formData.estado, formData.motivosRevision, formData.textosOtro, formData.cambiosDesdeRevision]);
 
   const mergeData = (patch) => {
     const next = { ...formData, ...patch };
@@ -126,7 +167,73 @@ const Form = (props) => {
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
   };
 
+  // The server joins every file into one PDF; an older ZIP can only be replaced.
+  const docModeFor = (data) => (isPdfDocuments(data.archivoBlob) ? docMode : "reemplazar");
+
+  // Upload documents while editing. Once stored, a retry after a failed save must not add
+  // the same pages again.
+  const uploadDocuments = async (groups, modo) => {
+    const uploaded = await uploadFiles(groups, modo);
+    setFiles({ diagnostico: [], documento: [] });
+    mergeData({ archivoBlob: uploaded.archivoBlob });
+  };
+
+  // Single-step mode: save just this step (without sending the application back to review)
+  // and return to the dashboard, where the checklist shows the item as done.
+  const saveSingleStep = async (patch) => {
+    if (singleSaving) return;
+    const next = mergeData(patch);
+    setSingleSaving(true);
+    setSingleError(null);
+    try {
+      if (singleStep === "documentos") await uploadDocuments(fileGroupsOf(files), docModeFor(formData));
+      else await updateOwn({ ...editPayload(next), enviar: false });
+    } catch (err) {
+      setSingleSaving(false);
+      // Files too large to send: retrying cannot help, so name the limit.
+      const sizeMessage = uploadErrorMessage(err);
+      if (sizeMessage) {
+        setSingleError(sizeMessage);
+        return;
+      }
+      // A file the server could not add to the PDF: its message names the file to change.
+      const status = err && err.response && err.response.status;
+      const serverMessage = err && err.response && err.response.data && err.response.data.message;
+      if ((status === 409 || status === 422) && serverMessage) {
+        setSingleError(serverMessage);
+        return;
+      }
+      const fieldErrors = err && err.response && err.response.data && err.response.data.errors;
+      if (Array.isArray(fieldErrors) && fieldErrors.length) {
+        setServerErrors(fieldErrors);
+        const elsewhere = fieldErrors.filter((e) => STEP_FOR_PATH[e.path] !== singleStep);
+        if (elsewhere.length) setSingleError(elsewhere.map((e) => e.message).join(" "));
+        return;
+      }
+      setSingleError("No pudimos guardar el cambio. Inténtalo otra vez en un momento.");
+      return;
+    }
+    if (!sendsToo) {
+      toast.success("Guardado. Ya puedes seguir con lo que falta.");
+      props.history.push("/dashboard");
+      return;
+    }
+    // The last pending item: send the application back to review too. If only the resend
+    // fails, the dashboard shows the all-done list with the error and "Enviar de nuevo".
+    try {
+      await resubmit();
+      toast.success("Enviamos tu solicitud de nuevo.");
+      props.history.push("/dashboard");
+    } catch (err) {
+      props.history.push("/dashboard", { reenvioFallido: true });
+    }
+  };
+
   const onNext = (patch = {}, opts = {}) => {
+    if (singleStep) {
+      saveSingleStep(patch);
+      return;
+    }
     mergeData(patch);
     setDocumentsError(null);
     if (!opts.skipAutosave) autosave(patch);
@@ -134,6 +241,10 @@ const Form = (props) => {
   };
 
   const onBack = (patch = {}) => {
+    if (singleStep) {
+      props.history.push("/dashboard");
+      return;
+    }
     mergeData(patch);
     if (index > 0) goTo(index - 1);
   };
@@ -158,24 +269,14 @@ const Form = (props) => {
   // Final submission. Editing -> PUT actualizar; new/draft -> POST enviar. Documents are
   // uploaded to the authenticated endpoint (a session exists since the account step).
   const onSubmit = async () => {
-    const fileGroups = {};
-    if (files.diagnostico.length) fileGroups["Diagnostico Medico - Archivo"] = files.diagnostico;
-    if (files.documento.length) fileGroups["Documento Identidad - Archivo"] = files.documento;
+    const fileGroups = fileGroupsOf(files);
     const hasFiles = Object.keys(fileGroups).length > 0;
-    const modo = editing && isPdfDocuments(formData.archivoBlob) ? docMode : "reemplazar";
+    const modo = editing ? docModeFor(formData) : "reemplazar";
 
     try {
       if (editing) {
-        if (hasFiles) {
-          const uploaded = await uploadFiles(fileGroups, modo);
-          // Stored: a retry after a failed save must not add the same pages again.
-          setFiles({ diagnostico: [], documento: [] });
-          mergeData({ archivoBlob: uploaded.archivoBlob });
-        }
-        const payload = { ...formData };
-        delete payload.csrfToken;
-        if (!payload.password) delete payload.password;
-        await updateOwn(payload);
+        if (hasFiles) await uploadDocuments(fileGroups, modo);
+        await updateOwn(editPayload(formData));
         setCompletion({
           editing: true,
           mensaje: "Hemos guardado tus cambios",
@@ -256,6 +357,11 @@ const Form = (props) => {
   }
 
   const StepComponent = current.Component;
+  // Single-step mode: the reasons for this step, and the only fields they need.
+  const stepMotivos = singleStep
+    ? motivosFor(formData.motivosRevision, formData.textosOtro).filter((m) => m.grupo === singleStep)
+    : [];
+  const campos = singleStep ? camposFor(stepMotivos) : null;
   const totalForUser = steps.length;
   const variants = reduceMotion
     ? { enter: { opacity: 1 }, center: { opacity: 1 }, exit: { opacity: 1 } }
@@ -277,59 +383,90 @@ const Form = (props) => {
         <title>Inscribirse | RUIDEA</title>
       </Helmet>
 
-      <Link className="reg-close" to="/" aria-label="Cerrar y volver al inicio" role="button" />
+      {singleStep ? (
+        <Link className="reg-close" to="/dashboard" aria-label="Cerrar y volver a tu panel" role="button" />
+      ) : (
+        <Link className="reg-close" to="/" aria-label="Cerrar y volver al inicio" role="button" />
+      )}
 
       <div className="reg-shell">
-        {revisionMessage && (
+        {!singleStep && revisionMessage && (
           <div className="status-note reg-revision-note">
             <span className="status-note-label">Mensaje del especialista</span>
             <p>{revisionMessage}</p>
           </div>
         )}
 
-        <header className="reg-progress">
-          <div className="reg-progress-meta">
-            <p className="reg-step-count">
-              Paso{" "}
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.span
-                  key={index}
-                  className="reg-step-num"
-                  initial={reduceMotion ? false : { opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -4 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  {index + 1}
-                </motion.span>
-              </AnimatePresence>{" "}
-              de {totalForUser}
-            </p>
-            {draftId && saveState !== "idle" && (
-              <span className={`reg-save reg-save-${saveState}`} role="status" aria-live="polite">
-                {saveState === "saving" && (
-                  <>
-                    <BsCloudUpload aria-hidden="true" /> Guardando…
-                  </>
+        {singleStep ? (
+          <header className="reg-progress reg-progress--single">
+            {stepMotivos.length === 1 ? (
+              <>
+                <h1 className="reg-title">{stepMotivos[0].titulo}</h1>
+                {stepMotivos[0].consejo && <p className="reg-single-tip">{stepMotivos[0].consejo}</p>}
+              </>
+            ) : (
+              <>
+                <h1 className="reg-title">{current.title}</h1>
+                {stepMotivos.length > 1 && (
+                  <ul className="reg-single-list">
+                    {stepMotivos.map((m) => (
+                      <li key={m.id}>
+                        <strong>{m.titulo}</strong>
+                        {m.consejo && <span> {m.consejo}</span>}
+                      </li>
+                    ))}
+                  </ul>
                 )}
-                {saveState === "saved" && (
-                  <>
-                    <BsCheckCircle aria-hidden="true" /> Guardado, sin enviar
-                  </>
-                )}
-                {saveState === "error" && (
-                  <>
-                    <BsExclamationCircle aria-hidden="true" /> Lo guardaremos al enviar
-                  </>
-                )}
-              </span>
+              </>
             )}
-          </div>
-          <div className="reg-bar" role="progressbar" aria-valuemin={1} aria-valuemax={totalForUser} aria-valuenow={index + 1}>
-            <span className="reg-bar-fill" style={{ width: `${((index + 1) / totalForUser) * 100}%` }} />
-          </div>
-          <h1 className="reg-title">{current.title}</h1>
-        </header>
+          </header>
+        ) : (
+          <header className="reg-progress">
+            <div className="reg-progress-meta">
+              <p className="reg-step-count">
+                Paso{" "}
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={index}
+                    className="reg-step-num"
+                    initial={reduceMotion ? false : { opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -4 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    {index + 1}
+                  </motion.span>
+                </AnimatePresence>{" "}
+                de {totalForUser}
+              </p>
+              {draftId && saveState !== "idle" && (
+                <span className={`reg-save reg-save-${saveState}`} role="status" aria-live="polite">
+                  {saveState === "saving" && (
+                    <>
+                      <BsCloudUpload aria-hidden="true" /> Guardando…
+                    </>
+                  )}
+                  {saveState === "saved" && (
+                    <>
+                      <BsCheckCircle aria-hidden="true" /> Guardado, sin enviar
+                    </>
+                  )}
+                  {saveState === "error" && (
+                    <>
+                      <BsExclamationCircle aria-hidden="true" /> Lo guardaremos al enviar
+                    </>
+                  )}
+                </span>
+              )}
+            </div>
+            <div className="reg-bar" role="progressbar" aria-valuemin={1} aria-valuemax={totalForUser} aria-valuenow={index + 1}>
+              <span className="reg-bar-fill" style={{ width: `${((index + 1) / totalForUser) * 100}%` }} />
+            </div>
+            <h1 className="reg-title">{current.title}</h1>
+          </header>
+        )}
+
+        <InlineMessage type="error">{singleError}</InlineMessage>
 
         <AnimatePresence mode="wait" custom={direction} initial={false}>
           <motion.div
@@ -349,7 +486,11 @@ const Form = (props) => {
               docMode={docMode}
               setDocMode={setDocMode}
               editing={editing}
-              isFirst={index === 0}
+              isFirst={!singleStep && index === 0}
+              singleStep={!!singleStep}
+              campos={campos}
+              busy={singleSaving}
+              sendsToo={sendsToo}
               serverErrors={serverErrors}
               documentsError={documentsError}
               onNext={onNext}

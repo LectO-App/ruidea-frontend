@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { axiosInstance } from '../axios';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import {
 	BsAward,
 	BsClock,
@@ -23,6 +23,8 @@ import { toast } from './ui/toast';
 import Modal from './ui/Modal';
 import InlineMessage from './ui/InlineMessage';
 import StatusSteps from './StatusSteps';
+import RevisionChecklist from './RevisionChecklist';
+import { motivosFor } from '../util/motivosRevision';
 
 import logoLecto from '../img/webp/logo-lecto.webp';
 import logoLectoPNG from '../img/png/logo-lecto.png';
@@ -93,6 +95,8 @@ const STATUS = {
 	},
 };
 
+const RESUBMIT_ERROR = 'No pudimos enviarla. Tus cambios están guardados. Inténtalo otra vez.';
+
 // An unfinished application (estado 'borrador'): nothing was sent yet. `progreso` comes
 // from GET /usuario/me and lists the form steps, done or still missing.
 const DraftCard = ({ progreso }) => {
@@ -132,6 +136,8 @@ const DraftCard = ({ progreso }) => {
 };
 
 const Dashboard = () => {
+	const location = useLocation();
+	const history = useHistory();
 	const [data, setData] = useState({});
 	const [loaded, setLoaded] = useState(false); // first /usuario/me fetch has resolved
 	const [error, setError] = useState(false); // the /usuario/me fetch failed — show the retry card
@@ -139,6 +145,11 @@ const Dashboard = () => {
 	const [resending, setResending] = useState(false); // resend-verification request in flight
 	const [resendError, setResendError] = useState(null); // inline failure shown under the resend button
 	const [shareUrl, setShareUrl] = useState(null); // shown when the clipboard API is unavailable
+	const [resubmitting, setResubmitting] = useState(false);
+	// The single-step page saved the last item but could not send it: show why, here.
+	const [resubmitError, setResubmitError] = useState(
+		location.state && location.state.reenvioFallido ? RESUBMIT_ERROR : null
+	);
 
 	const fetchFromAPI = async () => {
 		// Always resolve the loading state (finally) so a failed request can never leave the
@@ -158,6 +169,9 @@ const Dashboard = () => {
 
 	useEffect(() => {
 		fetchFromAPI();
+		// Drop the one-time flag so a reload does not show the error again.
+		if (location.state && location.state.reenvioFallido) history.replace({ ...location, state: undefined });
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const downloadFile = async type => {
@@ -199,6 +213,20 @@ const Dashboard = () => {
 		}
 	};
 
+	const resubmit = async () => {
+		setResubmitting(true);
+		setResubmitError(null);
+		try {
+			const res = await axiosInstance.post('/inscripcion/reenviar');
+			setData(prev => ({ ...prev, ...res.data.usuario }));
+			toast.success('Enviamos tu solicitud de nuevo.');
+		} catch (err) {
+			setResubmitError(RESUBMIT_ERROR);
+		} finally {
+			setResubmitting(false);
+		}
+	};
+
 	// Initial load: show the skeleton (same chrome + layout as the loaded view). The overlay
 	// spinner below is reserved for blocking actions (file downloads) once data is present.
 	if (!loaded) return <DashboardSkeleton />;
@@ -235,6 +263,10 @@ const Dashboard = () => {
 		);
 	}
 
+	// A revision with reasons from the catalog gets the guided checklist; one with only a
+	// free-text note keeps the full edit form.
+	// The checklist brings its own heading, so the status badge, title and text are left out.
+	const guided = data.estado === 'revision' && motivosFor(data.motivosRevision, data.textosOtro).length > 0;
 	const meta = STATUS[data.estado];
 
 	return (
@@ -256,15 +288,31 @@ const Dashboard = () => {
 								data.estado === 'aceptado' ? ' status-card--celebrate' : ''
 							}`}
 						>
-							<span className='status-badge' aria-hidden='true'>
-								<meta.Icon size={38} />
-							</span>
-							<h1 className='status-title'>{meta.title}</h1>
-							<p className='status-desc'>{meta.desc}</p>
+							{!guided && (
+								<>
+									<span className='status-badge' aria-hidden='true'>
+										<meta.Icon size={38} />
+									</span>
+									<h1 className='status-title'>{meta.title}</h1>
+									<p className='status-desc'>{meta.desc}</p>
+								</>
+							)}
 
 							{data.estado === 'pendiente' && <StatusSteps steps={PENDING_STEPS} activeKey='revision' />}
 
-							{data.estado === 'revision' && data.mensajeMedico && (
+							{guided && (
+								<RevisionChecklist
+									motivosRevision={data.motivosRevision}
+									textosOtro={data.textosOtro}
+									cambiosDesdeRevision={data.cambiosDesdeRevision}
+									mensajeMedico={data.mensajeMedico}
+									onReenviar={resubmit}
+									sending={resubmitting}
+									error={resubmitError}
+								/>
+							)}
+
+							{data.estado === 'revision' && !guided && data.mensajeMedico && (
 								<div className='status-note'>
 									<span className='status-note-label'>Mensaje del especialista</span>
 									<p>{data.mensajeMedico}</p>
@@ -307,7 +355,7 @@ const Dashboard = () => {
 								</div>
 							)}
 
-							{data.estado === 'revision' && (
+							{data.estado === 'revision' && !guided && (
 								<div className='status-actions'>
 									<Link
 										className='btn-primary'

@@ -97,11 +97,121 @@
 	}
 }
 .status-note-label {
-	font-size: 0.8rem;
+	font-size: 0.95rem;
 	font-weight: 700;
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
 	color: $reg-muted;
+}
+
+/* ---------- Guided revision checklist ---------- */
+.revision {
+	width: 100%;
+	text-align: left;
+}
+.revision-title {
+	font-size: clamp(1.5rem, 4vw, 1.85rem);
+	line-height: 1.3;
+	margin: 0;
+	color: $reg-ink;
+}
+.revision-progress {
+	margin: 6px 0 0;
+	color: $reg-muted;
+	font-size: 1.05rem;
+}
+.revision-list {
+	list-style: none;
+	margin: 20px 0 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+// The whole card is the link: one target per item, at least 56px tall.
+.revision-item {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	min-height: 56px;
+	padding: 16px 18px;
+	border-radius: $reg-radius;
+	background: $reg-bg;
+	border: 2px solid $reg-border;
+	color: $reg-ink;
+	text-decoration: none;
+	transition: border-color 0.15s ease, background 0.15s ease;
+	&:hover {
+		border-color: $clrMain;
+		background: $reg-surface;
+	}
+	&:focus-visible {
+		outline: 3px solid $clrMainDark;
+		outline-offset: 3px;
+	}
+}
+.revision-item-body {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	flex: 1;
+	min-width: 0;
+}
+.revision-item-step {
+	font-size: 0.9rem;
+	color: $reg-muted;
+}
+.revision-item-title {
+	font-weight: 700;
+	font-size: 1.1rem;
+	line-height: 1.45;
+}
+.revision-item-tip {
+	line-height: 1.5;
+	color: $reg-ink;
+}
+.revision-arrow {
+	flex-shrink: 0;
+	font-size: 1.4rem;
+	color: $clrMainDark;
+}
+.revision-done {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-weight: 700;
+	color: $reg-ok;
+}
+// Quieter than the items: no box, smaller label.
+.revision-note {
+	margin-top: 20px;
+	padding-left: 14px;
+	border-left: 3px solid $reg-border;
+	color: $reg-ink;
+	p {
+		margin: 0;
+		line-height: 1.6;
+	}
+}
+.revision-note-label {
+	font-size: 0.9rem;
+	color: $reg-muted;
+}
+// Full contrast (white on the dark teal): the pale teal looked disabled.
+.revision-send.btn-primary {
+	margin: 24px 0 0;
+	background: $clrMainDark;
+	&:hover:not(:disabled) {
+		background: #1f6a73;
+	}
+	&:focus-visible {
+		outline: 3px solid $clrMainDark;
+		outline-offset: 3px;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.revision-item {
+		transition: none;
+	}
 }
 .status-actions {
 	display: flex;

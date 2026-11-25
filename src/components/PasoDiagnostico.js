@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BsArrowRight, BsArrowLeft } from "react-icons/bs";
 
 import DiagnosisCards from "./form/DiagnosisCards";
+import SingleStepActions from "./form/SingleStepActions";
 
 const seed = (d) => ({
   dislexia: !!(d && d.dislexia),
@@ -12,7 +13,7 @@ const seed = (d) => ({
 });
 
 const PasoDiagnostico = (props) => {
-  const { formData, onNext, onBack } = props;
+  const { formData, onNext, onBack, singleStep, busy, sendsToo } = props;
   const [diag, setDiag] = useState(() => seed(formData.diagnostico));
   const [error, setError] = useState(null);
 
@@ -37,16 +38,21 @@ const PasoDiagnostico = (props) => {
           if (error) setError(null);
         }}
         error={error}
+        hint={singleStep ? "Puedes marcar más de uno. Solo lo ve el equipo médico." : undefined}
       />
 
-      <div className="step-actions">
-        <button type="button" className="btn-secondary" onClick={back}>
-          <BsArrowLeft aria-hidden="true" /> Atrás
-        </button>
-        <button type="submit" className="btn-primary">
-          Continuar <BsArrowRight aria-hidden="true" />
-        </button>
-      </div>
+      {singleStep ? (
+        <SingleStepActions busy={busy} sendsToo={sendsToo} />
+      ) : (
+        <div className="step-actions">
+          <button type="button" className="btn-secondary" onClick={back}>
+            <BsArrowLeft aria-hidden="true" /> Atrás
+          </button>
+          <button type="submit" className="btn-primary">
+            Continuar <BsArrowRight aria-hidden="true" />
+          </button>
+        </div>
+      )}
     </form>
   );
 };

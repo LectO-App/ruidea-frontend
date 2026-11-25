@@ -65,6 +65,23 @@ test("more than 10 files in total are stopped before sending", async () => {
   expect(onNext).not.toHaveBeenCalled();
 });
 
+test("a step opened for the report shows only its uploader, and both when replacing the PDF", () => {
+  const props = {
+    editing: true,
+    singleStep: true,
+    campos: new Set(["informe"]),
+    formData: { archivoBlob: "aaaaaaaaaaaaaaaaaaaaaaaa/2026-03-01T00:00:00.000Z.pdf" },
+    files: { diagnostico: [pdf("nuevo.pdf")], documento: [] },
+  };
+  const { unmount } = renderStep(props);
+  expect(screen.getByText("Informe de diagnóstico")).toBeInTheDocument();
+  expect(screen.queryByText("DNI, NIE o pasaporte")).not.toBeInTheDocument();
+  unmount();
+
+  renderStep({ ...props, docMode: "reemplazar" });
+  expect(screen.getByText("DNI, NIE o pasaporte")).toBeInTheDocument();
+});
+
 test("a file over 25 MB is named before sending, with what to do", async () => {
   const user = userEvent.setup();
   const onNext = jest.fn();
