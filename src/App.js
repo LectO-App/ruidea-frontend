@@ -20,6 +20,7 @@ import LandingPage from './components/LandingPage';
 
 const Dashboard = lazy(() => import('./components/Dashboard'));
 const MostrarPasaporte = lazy(() => import('./components/MostrarPasaporte'));
+const MisDatos = lazy(() => import('./components/MisDatos'));
 const Form = lazy(() => import('./components/Form'));
 const Login = lazy(() => import('./components/Login'));
 const Verificar = lazy(() => import('./components/Verificar'));
@@ -103,6 +104,7 @@ function App() {
 										/>
 									<ProtectedRoute path='/dashboard' component={Dashboard} fallback={<DashboardSkeleton />} />
 									<ProtectedRoute exact path='/mostrar' component={MostrarPasaporte} />
+									<ProtectedRoute exact path='/mis-datos' component={MisDatos} />
 									<Route path='/login' component={Login} />
 									<Route exact path='/admin' component={() => <Redirect to='/admin/login' />} />
 									<Route exact path='/verificar/ejemplo' component={VerificarEjemplo} />

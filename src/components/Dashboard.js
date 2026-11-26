@@ -17,6 +17,8 @@ import {
 	BsPencilSquare,
 	BsCheck,
 	BsCircle,
+	BsLock,
+	BsChevronRight,
 } from 'react-icons/bs';
 
 import { toast } from './ui/toast';
@@ -130,6 +132,20 @@ const DraftCard = ({ progreso }) => {
 		</section>
 	);
 };
+
+// Below the status card in every state: what is stored, a copy, the newsletter switch, deletion.
+const MisDatosCard = () => (
+	<Link className='dash-link-card' to='/mis-datos'>
+		<span className='dash-link-card-icon' aria-hidden='true'>
+			<BsLock size={22} />
+		</span>
+		<span className='dash-link-card-body'>
+			<span className='dash-link-card-title'>Mis datos</span>
+			<span className='dash-link-card-desc'>Mira lo que guardamos, descárgalo o bórralo.</span>
+		</span>
+		<BsChevronRight className='dash-link-card-chevron' aria-hidden='true' size={20} />
+	</Link>
+);
 
 const Dashboard = () => {
 	const [data, setData] = useState({});
@@ -350,6 +366,8 @@ const Dashboard = () => {
 							<InlineMessage type='error'>{resendError}</InlineMessage>
 						</section>
 					)}
+
+					<MisDatosCard />
 
 					<div className='dash-credit'>
 						<span>Sistema creado por el equipo de LectO</span>

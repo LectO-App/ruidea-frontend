@@ -1,0 +1,340 @@
+@import './variables.scss';
+
+// "Mis datos" (/mis-datos): the dashboard's surfaces and tokens, one calm column of numbered
+// white cards. Every control is at least 44px tall and shows a visible focus ring.
+
+$md-yellow-bg: #fdf1c7;
+$md-yellow-ink: #6b5200;
+$md-teal-bg: #d7f1f4;
+$md-teal-ink: #1f6b73;
+
+.md {
+	font-family: 'Mulish', sans-serif;
+	line-height: 1.6;
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+	a,
+	button {
+		&:focus-visible {
+			outline: 3px solid $clrMainDark;
+			outline-offset: 3px;
+		}
+	}
+	.btn-primary,
+	.btn-secondary {
+		margin-left: 0;
+	}
+}
+.md-shell {
+	width: 100%;
+	max-width: 640px;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+.md-back {
+	align-self: flex-start;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 44px;
+	padding: 0 6px;
+	color: $clrMainDark;
+	font-weight: 600;
+	text-decoration: none;
+	border-radius: 8px;
+	&:hover {
+		text-decoration: underline;
+	}
+}
+.md-title {
+	font-size: clamp(1.6rem, 4vw, 2.1rem);
+	line-height: 1.25;
+	margin: 0;
+	text-wrap: balance;
+	scroll-margin-top: 96px; // clear of the sticky navbar when focused
+	&:focus {
+		outline: none;
+	}
+}
+.md-lead {
+	margin: 0;
+	color: $reg-muted;
+	font-size: 1.1rem;
+}
+.md-block {
+	background: $reg-surface;
+	border-radius: 18px;
+	padding: clamp(20px, 4vw, 32px);
+	box-shadow: 0 1px 2px rgba(43, 43, 51, 0.05), 0 10px 30px rgba(43, 43, 51, 0.08);
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 14px;
+}
+.md-block-title {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	font-size: 1.3rem;
+	margin: 0;
+}
+.md-num {
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	display: grid;
+	place-items: center;
+	flex-shrink: 0;
+	background: rgba($clrMain, 0.14);
+	color: $clrMainDark;
+	font-size: 1rem;
+	font-weight: 700;
+}
+.md-text {
+	margin: 0;
+	font-size: 1.05rem;
+}
+.md-hint {
+	margin: 2px 0 0;
+	color: $reg-muted;
+}
+.md-chip {
+	display: inline-block;
+	font-size: 0.85rem;
+	font-weight: 700;
+	line-height: 1.4;
+	padding: 2px 10px;
+	border-radius: 99px;
+	white-space: nowrap;
+	&--enlace {
+		background: $md-yellow-bg;
+		color: $md-yellow-ink;
+	}
+	&--equipo {
+		background: $md-teal-bg;
+		color: $md-teal-ink;
+	}
+}
+.md-groups {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+.md-group {
+	border: 1px solid $reg-border;
+	border-radius: $reg-radius;
+	padding: 14px 16px;
+	background: #fbfaf7;
+	dl {
+		margin: 8px 0 0;
+	}
+}
+.md-group-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+	h3 {
+		margin: 0;
+		font-size: 1.05rem;
+	}
+}
+.md-row {
+	display: flex;
+	gap: 14px;
+	padding: 3px 0;
+	dt {
+		color: $reg-muted;
+		min-width: 40%;
+	}
+	dd {
+		margin: 0;
+		font-weight: 600;
+		overflow-wrap: anywhere;
+	}
+}
+
+.md-switch-row {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+.md-switch-label {
+	font-weight: 700;
+	font-size: 1.05rem;
+}
+.md-switch {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 44px;
+	min-width: 44px;
+	padding: 6px 8px;
+	border: none;
+	border-radius: 99px;
+	background: transparent;
+	font: inherit;
+	font-weight: 700;
+	color: $reg-ink;
+	cursor: pointer;
+	flex-shrink: 0;
+	&:disabled {
+		opacity: 0.6;
+		cursor: default;
+	}
+}
+.md-switch-track {
+	position: relative;
+	width: 56px;
+	height: 32px;
+	border-radius: 99px;
+	background: #b9b5ad;
+	transition: background 0.15s ease;
+}
+.md-switch-thumb {
+	position: absolute;
+	top: 4px;
+	left: 4px;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: #fff;
+	box-shadow: 0 1px 3px rgba(43, 43, 51, 0.25);
+	transition: transform 0.15s ease;
+}
+.md-switch[aria-checked='true'] {
+	.md-switch-track {
+		background: $clrMainDark;
+	}
+	.md-switch-thumb {
+		transform: translateX(24px);
+	}
+}
+.md-switch-state {
+	min-width: 2ch;
+}
+
+.md-btn-danger-outline,
+.md-btn-danger {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 52px;
+	padding: 12px 26px;
+	border-radius: 10px;
+	border: 2px solid $reg-error;
+	font: inherit;
+	font-size: 1.05rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.15s ease;
+	&:disabled {
+		opacity: 0.6;
+		cursor: default;
+	}
+	&:focus-visible {
+		outline-color: $reg-error;
+	}
+}
+.md-btn-danger-outline {
+	background: transparent;
+	color: $reg-error;
+	&:hover {
+		background: rgba($reg-error, 0.06);
+	}
+}
+.md-btn-danger {
+	background: $reg-error;
+	color: #fff;
+	&:hover:not(:disabled) {
+		background: darken($reg-error, 6%);
+	}
+}
+
+// Confirmation: the safe choice is the large primary button at the top; the destructive one
+// sits far below, after the consequences and the offer to download first.
+.md-keep {
+	width: 100%;
+	min-height: 60px;
+	font-size: 1.15rem;
+}
+.md-steps {
+	margin: 0;
+	padding-left: 1.6em;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	font-size: 1.05rem;
+	li::marker {
+		font-weight: 700;
+		color: $clrMainDark;
+	}
+}
+.md-offer {
+	background: $md-yellow-bg;
+	border: 1px solid darken($md-yellow-bg, 12%);
+	border-radius: 14px;
+	padding: 18px 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+	p {
+		margin: 0;
+		font-weight: 600;
+		color: $md-yellow-ink;
+	}
+	.btn-secondary {
+		background: $reg-surface;
+	}
+}
+.md-danger-zone {
+	margin-top: clamp(72px, 14vh, 140px);
+	padding-top: 24px;
+	border-top: 1px solid $reg-border;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+}
+
+.md-done {
+	align-items: center;
+	text-align: center;
+}
+.md-done-icon {
+	width: 72px;
+	height: 72px;
+	border-radius: 50%;
+	display: grid;
+	place-items: center;
+	background: rgba($clrMain, 0.14);
+	color: $clrMainDark;
+}
+
+@media screen and (max-width: 560px) {
+	.md-row {
+		flex-direction: column;
+		gap: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.md *,
+	.md *::before,
+	.md *::after {
+		transition-duration: 0.001ms !important;
+		animation-duration: 0.001ms !important;
+	}
+}
