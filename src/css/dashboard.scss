@@ -210,6 +210,61 @@
 		animation: none;
 	}
 }
+// "Mis datos" card under the status card (links to /mis-datos).
+.dash-link-card {
+	margin-top: 16px;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	min-height: 72px;
+	padding: 16px 20px;
+	background: $reg-surface;
+	border: 1px solid $reg-border;
+	border-radius: 14px;
+	color: $reg-ink;
+	text-decoration: none;
+	transition: border-color 0.15s ease;
+	&:hover {
+		border-color: $clrMain;
+	}
+	&:focus-visible {
+		outline: 3px solid $clrMainDark;
+		outline-offset: 3px;
+	}
+}
+.dash-link-card-icon {
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	display: grid;
+	place-items: center;
+	flex-shrink: 0;
+	background: rgba($clrMain, 0.12);
+	color: $clrMainDark;
+}
+.dash-link-card-body {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	text-align: left;
+}
+.dash-link-card-title {
+	font-weight: 700;
+	font-size: 1.1rem;
+}
+.dash-link-card-desc {
+	color: $reg-muted;
+}
+.dash-link-card-chevron {
+	color: $clrMainDark;
+	flex-shrink: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+	.dash-link-card {
+		transition: none;
+	}
+}
+
 .dash-credit {
 	margin-top: clamp(28px, 5vw, 44px);
 	display: flex;

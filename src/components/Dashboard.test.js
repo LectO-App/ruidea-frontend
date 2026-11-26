@@ -76,3 +76,17 @@ test('a draft never sees wording that says it was sent or is waiting for review'
 	expect(screen.queryByText(/en camino|recibida|revisar tu solicitud|Confirma tu correo/)).not.toBeInTheDocument();
 	expect(screen.queryByRole('button', { name: /Reenviar el correo/ })).not.toBeInTheDocument();
 });
+
+test.each([
+	['an approved passport', approved],
+	['a pending application', { ...approved, estado: 'pendiente' }],
+	['a rejected application', { ...approved, estado: 'rechazado' }],
+	['an application to revise', { ...approved, estado: 'revision' }],
+	['an unverified email', { ...approved, estado: 'pendiente', emailVerificado: false }],
+	['a draft', draft],
+])('the Mis datos card links to /mis-datos for %s', async (label, data) => {
+	renderDashboard(data);
+	const card = await screen.findByRole('link', { name: /Mis datos/ });
+	expect(card).toHaveAttribute('href', '/mis-datos');
+	expect(card).toHaveTextContent('Mira lo que guardamos, descárgalo o bórralo.');
+});
