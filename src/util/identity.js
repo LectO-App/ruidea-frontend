@@ -53,7 +53,7 @@ export const looksLikePhone = (value) => {
   return /^[+]?[\d ]+$/.test(String(value || "").trim()) && digits.length >= 6 && digits.length <= 15;
 };
 
-const COMMON_DOMAINS = [
+export const COMMON_DOMAINS = [
   "gmail.com", "hotmail.com", "outlook.com", "yahoo.com", "yahoo.es",
   "hotmail.es", "outlook.es", "live.com", "icloud.com", "protonmail.com",
 ];
@@ -90,6 +90,24 @@ export const suggestEmail = (email) => {
     }
   }
   return best && bestDist > 0 && bestDist <= 2 ? `${local}@${best}` : null;
+};
+
+const domainOf = (email) => {
+  const value = String(email || "").trim().toLowerCase();
+  const at = value.lastIndexOf("@");
+  return at < 1 ? "" : value.slice(at + 1);
+};
+
+// What to say about the domain of an address being typed: a known domain ("known"), a
+// near miss of one ("suggest", with the corrected address), or nothing (null). An unknown
+// domain gets nothing: school and work domains are valid.
+export const emailDomainFeedback = (email) => {
+  const domain = domainOf(email);
+  if (!domain) return null;
+  if (COMMON_DOMAINS.includes(domain)) return { kind: "known", domain };
+  const suggestion = suggestEmail(email);
+  if (!suggestion) return null;
+  return { kind: "suggest", domain, suggestion, suggestedDomain: domainOf(suggestion) };
 };
 
 // Month names so the date of birth is picked from a list (dyscalculia §2) rather than

@@ -73,6 +73,6 @@ test('a draft says the application is not sent yet, lists what is left and links
 test('a draft never sees wording that says it was sent or is waiting for review', async () => {
 	renderDashboard({ ...draft, emailVerificado: true, nombre: 'Ana' });
 	await screen.findByRole('heading', { name: 'Tu solicitud aún no está enviada' });
-	expect(screen.queryByText(/en camino|recibida|revisar tu solicitud|Confirma tu correo/)).not.toBeInTheDocument();
+	expect(screen.queryByText(/en camino|recibida|revisar tu solicitud|confirma tu correo/i)).not.toBeInTheDocument();
 	expect(screen.queryByRole('button', { name: /Reenviar el correo/ })).not.toBeInTheDocument();
 });

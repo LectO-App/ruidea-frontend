@@ -21,8 +21,8 @@ import {
 
 import { toast } from './ui/toast';
 import Modal from './ui/Modal';
-import InlineMessage from './ui/InlineMessage';
 import StatusSteps from './StatusSteps';
+import ConfirmEmailCard from './ConfirmEmailCard';
 
 import logoLecto from '../img/webp/logo-lecto.webp';
 import logoLectoPNG from '../img/png/logo-lecto.png';
@@ -136,8 +136,6 @@ const Dashboard = () => {
 	const [loaded, setLoaded] = useState(false); // first /usuario/me fetch has resolved
 	const [error, setError] = useState(false); // the /usuario/me fetch failed — show the retry card
 	const [downloading, setDownloading] = useState(null); // 'pdf' | 'img' — per-button spinner
-	const [resending, setResending] = useState(false); // resend-verification request in flight
-	const [resendError, setResendError] = useState(null); // inline failure shown under the resend button
 	const [shareUrl, setShareUrl] = useState(null); // shown when the clipboard API is unavailable
 
 	const fetchFromAPI = async () => {
@@ -180,22 +178,6 @@ const Dashboard = () => {
 		} catch (err) {
 			// Clipboard API unavailable (e.g. non-HTTPS) — show the link so it can be copied manually.
 			setShareUrl(url);
-		}
-	};
-
-	const resendVerification = async () => {
-		setResending(true);
-		setResendError(null);
-		try {
-			await axiosInstance.post(`/emailVerification/resend`);
-			// Success is a background confirmation — toast is correct here.
-			toast.success('Te reenviamos el correo de verificación.');
-		} catch (err) {
-			// The whole point of this branch is to unblock the user, so its failure goes inline,
-			// right under the button — not a toast that auto-dismisses out of sight.
-			setResendError('No pudimos reenviar el correo. Inténtalo de nuevo en un momento.');
-		} finally {
-			setResending(false);
 		}
 	};
 
@@ -327,28 +309,11 @@ const Dashboard = () => {
 							)}
 						</section>
 					) : (
-						<section className='status-card status-card--enter tone-warn'>
-							<span className='status-badge' aria-hidden='true'>
-								<BsEnvelope size={36} />
-							</span>
-							<h1 className='status-title'>Confirma tu correo para continuar</h1>
-							<p className='status-desc'>
-								Te enviamos un enlace a <strong>{data.correoElectronico || 'tu correo'}</strong>. Ábrelo para
-								confirmar tu correo y que un especialista pueda revisar tu solicitud. Si no lo ves, revisa la
-								carpeta de spam.
-							</p>
-							<div className='status-actions'>
-								<button className='btn-primary' onClick={resendVerification} disabled={resending}>
-									{resending ? (
-										<span className='btn-spinner' aria-hidden='true' />
-									) : (
-										<BsArrowRepeat aria-hidden='true' />
-									)}
-									Reenviar el correo
-								</button>
-							</div>
-							<InlineMessage type='error'>{resendError}</InlineMessage>
-						</section>
+						<ConfirmEmailCard
+							correo={data.correoElectronico}
+							onConfirmed={() => setData(d => ({ ...d, emailVerificado: true }))}
+							onEmailChanged={correo => setData(d => ({ ...d, correoElectronico: correo }))}
+						/>
 					)}
 
 					<div className='dash-credit'>
