@@ -2,10 +2,18 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, Redirect } from 'react-router-dom';
 import QRCode from 'qrcode';
-import { BsArrowLeft, BsVolumeUp, BsStopFill, BsArrowRepeat } from 'react-icons/bs';
+import { BsArrowLeft, BsVolumeUp, BsStopFill, BsArrowRepeat, BsCheckCircle } from 'react-icons/bs';
 
 import { axiosInstance } from '../axios';
 import { passportUrl, paddedPassportNumber } from '../util/passport';
+import {
+	isApprovedHolder,
+	isNetworkError,
+	loadOfflinePassport,
+	removeOfflinePassport,
+	offlinePassportRemoved,
+	formatSavedAt,
+} from '../util/offlinePassport';
 import LoadingScreen from './LoadingScreen';
 
 import '../css/registration.scss';
@@ -56,9 +64,30 @@ const useWakeLock = active => {
 	return locked;
 };
 
+// Online: what this device keeps for offline use, and a way to remove it.
+const OfflineReady = ({ removed, onRemove }) =>
+	removed ? (
+		<p className='show-offline-ready' role='status'>
+			Quitado de este móvil. Se guardará de nuevo cuando vuelvas a entrar con tu cuenta.
+		</p>
+	) : (
+		<section className='show-offline-ready' aria-labelledby='show-offline-ready-title'>
+			<h2 id='show-offline-ready-title'>
+				<BsCheckCircle aria-hidden='true' /> Listo también sin internet
+			</h2>
+			<p>Este móvil guarda tu nombre, tu número de pasaporte y el código QR, para enseñarlo sin conexión.</p>
+			<button type='button' className='show-btn' onClick={onRemove}>
+				Quitar de este móvil
+			</button>
+		</section>
+	);
+
 const MostrarPasaporte = () => {
 	const [usuario, setUsuario] = useState(null);
+	// The copy saved on this device, shown when /usuario/me cannot be reached.
+	const [copy, setCopy] = useState(null);
 	const [error, setError] = useState(false);
+	const [removed, setRemoved] = useState(offlinePassportRemoved);
 	const [qrSrc, setQrSrc] = useState(null);
 	const [speaking, setSpeaking] = useState(false);
 
@@ -67,8 +96,11 @@ const MostrarPasaporte = () => {
 		try {
 			const res = await axiosInstance.get('/usuario/me');
 			setUsuario(res.data);
+			setCopy(null);
 		} catch (err) {
-			setError(true);
+			const saved = isNetworkError(err) && loadOfflinePassport();
+			if (saved) setCopy(saved);
+			else setError(true);
 		}
 	}, []);
 
@@ -76,8 +108,16 @@ const MostrarPasaporte = () => {
 		load();
 	}, [load]);
 
-	const approved = !!usuario && usuario.emailVerificado && usuario.estado === 'aceptado';
-	const url = approved ? passportUrl(usuario) : null;
+	const approved = isApprovedHolder(usuario);
+	const passport = copy
+		? copy
+		: approved && {
+				nombre: usuario.nombre,
+				apellidos: usuario.apellidos,
+				numeroPasaporte: paddedPassportNumber(usuario.numeroPasaporte),
+				url: passportUrl(usuario),
+		  };
+	const url = passport ? passport.url : null;
 
 	useEffect(() => {
 		if (!url) return undefined;
@@ -90,7 +130,7 @@ const MostrarPasaporte = () => {
 		};
 	}, [url]);
 
-	const screenOn = useWakeLock(approved);
+	const screenOn = useWakeLock(!!passport);
 
 	useEffect(() => () => canSpeak() && window.speechSynthesis.cancel(), []);
 
@@ -131,10 +171,14 @@ const MostrarPasaporte = () => {
 		);
 	}
 
-	if (!usuario) return <LoadingScreen />;
-	if (!approved) return <Redirect to='/dashboard' />;
+	if (!usuario && !copy) return <LoadingScreen />;
+	if (!passport) return <Redirect to='/dashboard' />;
 
-	const nombre = [usuario.nombre, usuario.apellidos].filter(Boolean).join(' ');
+	const nombre = [passport.nombre, passport.apellidos].filter(Boolean).join(' ');
+	const removeCopy = () => {
+		removeOfflinePassport();
+		setRemoved(true);
+	};
 
 	return (
 		<div className='show'>
@@ -143,9 +187,15 @@ const MostrarPasaporte = () => {
 			</Helmet>
 			<main className='show-shell'>
 				<div className='show-top'>
-					<Link className='show-btn' to='/dashboard'>
-						<BsArrowLeft aria-hidden='true' /> Volver
-					</Link>
+					{copy ? (
+						<button type='button' className='show-btn' onClick={load}>
+							<BsArrowRepeat aria-hidden='true' /> Reintentar
+						</button>
+					) : (
+						<Link className='show-btn' to='/dashboard'>
+							<BsArrowLeft aria-hidden='true' /> Volver
+						</Link>
+					)}
 					{canSpeak() && (
 						<button className='show-btn' onClick={toggleSpeech}>
 							{speaking ? <BsStopFill aria-hidden='true' /> : <BsVolumeUp aria-hidden='true' />}
@@ -154,13 +204,20 @@ const MostrarPasaporte = () => {
 					)}
 				</div>
 
+				{copy && (
+					<p className='show-offline' role='status'>
+						Sin conexión: copia de este móvil. Comprobado en línea el {formatSavedAt(copy.guardadoEn)}. Quien escanee
+						el QR lo comprueba en su propio móvil.
+					</p>
+				)}
+
 				<section className='show-card' aria-labelledby='show-title'>
 					<h1 className='show-band' id='show-title'>
 						Pasaporte DEA
 					</h1>
 					<div className='show-body'>
 						<p className='show-name'>{nombre}</p>
-						<p className='show-number'>N.º {paddedPassportNumber(usuario.numeroPasaporte)}</p>
+						<p className='show-number'>N.º {passport.numeroPasaporte}</p>
 						<div className='show-qr'>
 							{qrSrc && <img src={qrSrc} alt='Código QR de verificación del Pasaporte DEA' />}
 						</div>
@@ -174,6 +231,8 @@ const MostrarPasaporte = () => {
 					<h2 id='show-sentence-label'>Si te cuesta explicarlo, enseña o lee esto</h2>
 					<p>{SENTENCE}</p>
 				</section>
+
+				{!copy && usuario.shareToken && <OfflineReady removed={removed} onRemove={removeCopy} />}
 
 				{screenOn && <p className='show-footer'>La pantalla se queda encendida mientras lo muestras.</p>}
 			</main>

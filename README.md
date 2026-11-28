@@ -72,3 +72,12 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 The site uses Cloudflare Web Analytics, which sets no cookies. Set `REACT_APP_CF_BEACON_TOKEN` at build time to the Web Analytics site token (Cloudflare dashboard → Analytics & Logs → Web Analytics); leave it unset in development, and nothing is loaded.
 
 The beacon reports each page's path (not its query string or hash) and its referrer. Token pages (`/verificar/…`, `/verificarEmail/…`, `/cambiarContraseña/…`) must never be reported, so `src/analytics.js` does not load the beacon on them or on a page they linked to, and turns an in-app move to one of them into a full page load that drops the beacon.
+
+## Offline passport
+
+Production builds register a Workbox service worker (`src/service-worker.js`). It precaches the app shell and every build file, so the pages open with no connection in a normal browser tab. Installing the PWA is not needed. API calls (`/api/*`) are never cached.
+
+- Updates: a new worker activates at once (`skipWaiting`). Open pages reload when it takes control, except `/mostrar`, which picks up the new build on its next load.
+- Each successful `GET /usuario/me` for an approved holder saves a copy of the passport in `localStorage` (`src/util/offlinePassport.js`): the name, the padded number, the share link and the save time. Nothing else.
+- The copy is deleted when the holder is no longer approved, when `/usuario/me` answers 404, on logout and by «Quitar de este móvil». A 401 keeps it, because an expired session is a time the holder may still need it.
+- Safari on iPhone deletes a site's storage after about 7 days without a visit unless it is on the home screen. The approval email carries the passport card as the fallback.

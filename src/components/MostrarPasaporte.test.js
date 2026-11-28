@@ -141,3 +141,94 @@ test('the footer line is hidden when the wake lock is refused', async () => {
 	await waitFor(() => expect(navigator.wakeLock.request).toHaveBeenCalled());
 	expect(screen.queryByText('La pantalla se queda encendida mientras lo muestras.')).not.toBeInTheDocument();
 });
+
+describe('the copy on this device', () => {
+	const networkError = () => Object.assign(new Error('Network Error'), { code: 'ERR_NETWORK' });
+	const saveCopy = () =>
+		window.localStorage.setItem(
+			'ruidea-pasaporte',
+			JSON.stringify({
+				nombre: 'Ana',
+				apellidos: 'Prueba Ejemplo',
+				numeroPasaporte: '0001042',
+				url: `${window.location.origin}/verificar/token-de-prueba`,
+				guardadoEn: '2026-11-20T09:30:00.000Z',
+			})
+		);
+	const renderOffline = () => {
+		axiosInstance.get.mockRejectedValue(networkError());
+		return render(
+			<HelmetProvider>
+				<MemoryRouter initialEntries={['/mostrar']}>
+					<Route path='/mostrar' component={MostrarPasaporte} />
+				</MemoryRouter>
+			</HelmetProvider>
+		);
+	};
+
+	afterEach(() => window.localStorage.clear());
+
+	test('online, it says the passport is ready without internet and Quitar de este móvil removes it', async () => {
+		saveCopy();
+		renderShow(approved);
+		expect(await screen.findByRole('heading', { name: 'Listo también sin internet' })).toBeInTheDocument();
+		expect(
+			screen.getByText('Este móvil guarda tu nombre, tu número de pasaporte y el código QR, para enseñarlo sin conexión.')
+		).toBeInTheDocument();
+
+		await userEvent.click(screen.getByRole('button', { name: 'Quitar de este móvil' }));
+		expect(window.localStorage.getItem('ruidea-pasaporte')).toBeNull();
+		expect(screen.getByRole('status')).toHaveTextContent('Quitado de este móvil.');
+	});
+
+	test('with no connection it shows the saved passport with the offline note and its date', async () => {
+		saveCopy();
+		renderOffline();
+
+		expect(await screen.findByText('Ana Prueba Ejemplo')).toBeInTheDocument();
+		expect(screen.getByText('N.º 0001042')).toBeInTheDocument();
+		const note = screen.getByRole('status');
+		expect(note).toHaveTextContent('Sin conexión: copia de este móvil.');
+		expect(note).toHaveTextContent('Comprobado en línea el 20 de noviembre de 2026');
+		expect(note).toHaveTextContent('Quien escanee el QR lo comprueba en su propio móvil.');
+		await screen.findByAltText('Código QR de verificación del Pasaporte DEA');
+		expect(QRCode.toString.mock.calls[0][0]).toBe(`${window.location.origin}/verificar/token-de-prueba`);
+		expect(screen.queryByRole('button', { name: 'Quitar de este móvil' })).not.toBeInTheDocument();
+	});
+
+	test('offline, read aloud and the wake lock keep working', async () => {
+		saveCopy();
+		const speak = jest.fn();
+		window.speechSynthesis = { speak, cancel: jest.fn() };
+		window.SpeechSynthesisUtterance = function (text) {
+			this.text = text;
+		};
+		navigator.wakeLock = {
+			request: jest.fn(async () => ({ release: jest.fn().mockResolvedValue(), addEventListener: jest.fn() })),
+		};
+		renderOffline();
+
+		await userEvent.click(await screen.findByRole('button', { name: 'Leer en voz alta' }));
+		expect(speak).toHaveBeenCalledTimes(1);
+		expect(await screen.findByText('La pantalla se queda encendida mientras lo muestras.')).toBeInTheDocument();
+	});
+
+	test('offline with no copy, the error stays', async () => {
+		renderOffline();
+		expect(await screen.findByRole('heading', { name: 'No pudimos cargar tu pasaporte' })).toBeInTheDocument();
+	});
+
+	test('a 401 while online shows the error, not the copy', async () => {
+		saveCopy();
+		axiosInstance.get.mockRejectedValue(Object.assign(new Error('401'), { response: { status: 401 } }));
+		render(
+			<HelmetProvider>
+				<MemoryRouter initialEntries={['/mostrar']}>
+					<Route path='/mostrar' component={MostrarPasaporte} />
+				</MemoryRouter>
+			</HelmetProvider>
+		);
+		expect(await screen.findByRole('heading', { name: 'No pudimos cargar tu pasaporte' })).toBeInTheDocument();
+		expect(screen.queryByText('Ana Prueba Ejemplo')).not.toBeInTheDocument();
+	});
+});

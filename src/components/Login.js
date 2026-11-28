@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { axiosInstance } from '../axios';
+import { allowOfflinePassport } from '../util/offlinePassport';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
@@ -29,6 +30,7 @@ const Login = props => {
 		try {
 			// Session + CSRF cookies are set by the server; nothing to store client-side.
 			await axiosInstance.post(`/usuario/login`, data);
+			allowOfflinePassport();
 			props.history.push('/dashboard');
 		} catch (err) {
 			setError('Email y/o contraseña incorrecta. Revisa los datos e inténtalo de nuevo.');

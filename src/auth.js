@@ -1,5 +1,6 @@
 import { axiosInstance } from "./axios";
 import { clearCsrf } from "./csrf";
+import { clearOfflinePassport } from "./util/offlinePassport";
 
 // Auth state lives on the server (httpOnly session cookie). The client can no longer
 // "log itself in" by setting a cookie (SECURITY_ASSESSMENT.md §1.4); it can only ask
@@ -14,6 +15,7 @@ class Auth {
     }
   }
   async logout() {
+    clearOfflinePassport();
     try {
       await axiosInstance.post("/usuario/logout");
     } catch (err) {
