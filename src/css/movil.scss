@@ -1,0 +1,126 @@
+@import "./variables.scss";
+
+// The phone page of "Hazles una foto con el móvil": one big action per screen, full-width
+// targets well over 44px, the registration surfaces and type.
+
+.movil-shell {
+  max-width: 480px;
+  .reg-title {
+    margin: 8px 0 20px;
+    &:focus {
+      outline: none;
+    }
+    &:focus-visible {
+      outline: 3px solid rgba($clrMain, 0.4);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  }
+}
+
+.movil {
+  .btn-primary,
+  .btn-secondary,
+  .movil-paper,
+  .movil-link {
+    &:focus-visible {
+      outline: 3px solid rgba($clrMain, 0.5);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.movil-wide {
+  width: 100%;
+  margin-left: 0;
+}
+
+// The visible button is the label; the input inside stays reachable by keyboard.
+.movil-file {
+  position: relative;
+  input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+  &:focus-within {
+    outline: 3px solid rgba($clrMain, 0.5);
+    outline-offset: 2px;
+  }
+}
+
+.movil-papers {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.movil-paper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-height: 88px;
+  padding: 18px 20px;
+  font-family: inherit;
+  font-size: 1.1rem;
+  text-align: left;
+  color: $reg-ink;
+  background: #fbfaf7;
+  border: 2px solid $reg-border;
+  border-radius: $reg-radius;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  span {
+    font-size: 0.95rem;
+    color: $reg-muted;
+  }
+  &:hover {
+    border-color: $clrMain;
+    background: rgba($clrMain, 0.05);
+  }
+}
+
+.movil-link {
+  align-self: center;
+  min-height: 44px;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: $clrMainDark;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.movil-preview {
+  display: block;
+  width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #f1ede6;
+}
+
+.movil-sent {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 1.05rem;
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  svg {
+    color: $reg-ok;
+    flex-shrink: 0;
+  }
+}

@@ -32,6 +32,7 @@ const AdminSolicitud = lazy(() => import('./components/admin/AdminSolicitud'));
 const AdminEstadisticas = lazy(() => import('./components/admin/AdminEstadisticas'));
 const AdminModify = lazy(() => import('./components/admin/AdminModify'));
 const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
+const MovilFotos = lazy(() => import('./components/MovilFotos'));
 
 // Shared top-level page transition: a short fade + small upward rise. This smooths
 // the lazy/Suspense pop-in without implying a spatial relationship between unrelated
@@ -143,6 +144,8 @@ function App() {
 									/>
 									<Route exact path='/verificarEmail/:token' component={VerificarEmail} />
 									<Route exact path='/politica-privacidad' component={PrivacyPolicy} />
+									{/* Public phone page for the photos of the Documents step: the QR opens /movil/<token>. */}
+									<Route exact path='/movil/:token?' component={MovilFotos} />
 								</Switch>
 								</PageTransition>
 							</AnimatePresence>

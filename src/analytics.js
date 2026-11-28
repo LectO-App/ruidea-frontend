@@ -11,7 +11,7 @@ import { useHistory } from "react-router-dom";
 //     load, which drops the beacon, instead of a history change the beacon would report.
 // REACT_APP_CF_BEACON_TOKEN is the Web Analytics site token; unset (as in dev) loads nothing.
 
-const SENSITIVE = ["/verificar/", "/cambiarContrase", "/verificarEmail/"];
+const SENSITIVE = ["/verificar/", "/cambiarContrase", "/verificarEmail/", "/movil/"];
 const BEACON_SRC = "https://static.cloudflareinsights.com/beacon.min.js";
 
 export const isSensitivePath = (path) => SENSITIVE.some((p) => path.startsWith(p));

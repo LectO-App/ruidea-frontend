@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { BsArrowRight, BsArrowLeft, BsShieldLock } from "react-icons/bs";
 
 import DocumentUploader from "./form/DocumentUploader";
+import PhoneUploadCard from "./form/PhoneUploadCard";
 import { isPdfDocuments, sizeProblem, MAX_FILES } from "../util/documents";
+import { deleteStaged, mergeStaged } from "../util/phoneUpload";
 
 // Step — the documents (the whole point of the passport, §5) and consent (§6). Upload is
 // framed and reassured, accepts a photo or a PDF, and consents are unbundled: marketing is
 // separate and optional; the data-processing consent is explicit and required.
 // The server joins every file into one PDF. When editing, the person chooses whether the
 // new files go after the PDF sent before or replace it; an older ZIP can only be replaced.
+// Photos taken with the phone (PhoneUploadCard) are kept on the server and join the same
+// numbered lists; picked files stay in the browser until the application is sent.
 const PasoDocumentos = (props) => {
   const { formData, files, setFiles, onNext, onBack, editing, docMode, setDocMode, documentsError } = props;
   const { register, handleSubmit, errors, getValues } = useForm();
@@ -18,6 +22,20 @@ const PasoDocumentos = (props) => {
 
   const setGroup = (group) => (next) =>
     setFiles((prev) => ({ ...prev, [group]: typeof next === "function" ? next(prev[group]) : next }));
+
+  // Phone photos being deleted: a check that ran before the delete must not bring them back.
+  const removing = useRef(new Set());
+  const onStaged = useCallback(
+    (archivos, options) => setFiles((prev) => mergeStaged(prev, archivos, { ...options, ignored: removing.current })),
+    [setFiles]
+  );
+  const removeStaged = (item) => {
+    removing.current.add(item.id);
+    deleteStaged(item.id).catch(() => {
+      removing.current.delete(item.id);
+      setFilesError("No hemos podido quitar la foto del móvil. Vuelve a intentarlo en un momento.");
+    });
+  };
 
   const totalFiles = files.diagnostico.length + files.documento.length;
   const hasCurrentDocs = editing && Boolean(formData.archivoBlob);
@@ -34,7 +52,7 @@ const PasoDocumentos = (props) => {
       setFilesError(`Puedes subir hasta ${MAX_FILES} archivos en total. Quita alguno o junta varios en un PDF.`);
       return;
     }
-    const tooLarge = sizeProblem([...files.diagnostico, ...files.documento]);
+    const tooLarge = sizeProblem([...files.diagnostico, ...files.documento].filter((f) => !f.movil));
     if (tooLarge) {
       setFilesError(tooLarge);
       return;
@@ -64,12 +82,17 @@ const PasoDocumentos = (props) => {
         juntamos en un único PDF, en el orden que elijas.
       </p>
 
+      <PhoneUploadCard onStaged={onStaged} />
+
+      <h2 className="uploader-section-title">¿Lo tienes en el ordenador? Elige el archivo aquí, como siempre.</h2>
+
       <DocumentUploader
         id="diagnostico"
         label="Informe de diagnóstico"
         hint="Sube el informe firmado por el profesional. Puede ser un PDF o una foto del documento en papel."
         files={files.diagnostico}
         onFilesChange={setGroup("diagnostico")}
+        onRemoveStaged={removeStaged}
       />
 
       <DocumentUploader
@@ -78,6 +101,7 @@ const PasoDocumentos = (props) => {
         hint="Una foto o un PDF, por ambas caras si aplica."
         files={files.documento}
         onFilesChange={setGroup("documento")}
+        onRemoveStaged={removeStaged}
       />
 
       {hasCurrentDocs && totalFiles > 0 && canAdd && (

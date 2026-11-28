@@ -461,6 +461,95 @@ fieldset.diagnosis {
   background: rgba($clrMain, 0.06);
 }
 
+/* ---------- Photos from the phone ---------- */
+.phone-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 20px;
+  border: 1px solid $reg-border;
+  border-left: 4px solid $clrMain;
+  border-radius: $reg-radius;
+  background: rgba($clrMain, 0.05);
+  p {
+    margin: 0;
+  }
+  .btn-secondary {
+    align-self: flex-start;
+    background: $reg-surface;
+  }
+  .btn-secondary:focus-visible {
+    outline: 3px solid rgba($clrMain, 0.5);
+    outline-offset: 2px;
+  }
+}
+.phone-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.35;
+  svg {
+    color: $clrMainDark;
+    flex-shrink: 0;
+  }
+}
+.phone-card-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+}
+.phone-card-steps {
+  flex: 1 1 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  ol {
+    margin: 0;
+    padding-left: 1.3em;
+  }
+}
+.phone-address {
+  white-space: nowrap;
+}
+.phone-code {
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+  color: $reg-ink;
+}
+.phone-qr {
+  width: 168px;
+  height: 168px;
+  border-radius: 10px;
+  background: #fff;
+}
+.phone-live {
+  font-weight: 600;
+  color: $reg-ok;
+  &:empty {
+    display: none;
+  }
+}
+.uploader-section-title {
+  margin: 4px 0 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.file-tag {
+  align-self: flex-start;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $clrMainDark;
+  background: rgba($clrMain, 0.12);
+  border-radius: 6px;
+  padding: 1px 8px;
+}
+
 /* ---------- Uploader ---------- */
 .uploader {
   display: flex;
@@ -568,8 +657,8 @@ fieldset.diagnosis {
   display: flex;
   gap: 4px;
   button {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     display: grid;
     place-items: center;
     background: none;
@@ -612,12 +701,17 @@ fieldset.diagnosis {
   border: none;
   color: $reg-muted;
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
   &:hover {
     color: $reg-error;
+  }
+  &:focus-visible {
+    outline: 3px solid rgba($clrMain, 0.4);
+    outline-offset: 1px;
+    border-radius: 8px;
   }
 }
 
