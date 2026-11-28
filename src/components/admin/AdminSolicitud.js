@@ -179,144 +179,144 @@ const AdminSolicitud = (props) => {
         </div>
 
         <div className="adm-review__data">
-        <header className="adm-detail__head">
-          <h1>
-            {user.nombre} {user.apellidos}
-          </h1>
-          <p className="adm-detail__sub">
-            {user.fechaEnvio ? `Enviada el ${fmtDate(user.fechaEnvio)}` : `Creada el ${fmtDate(user.fechaCreacion)}`}
-            {presentedBy(user)}
-          </p>
-          {pendiente && <WaitingTag item={user} />}
-        </header>
-
-        {pendiente && (
-          <>
-            <ReviewChecks
-              answers={answers}
-              values={checkValues}
-              onAnswer={(key, value) => setAnswers((a) => ({ ...a, [key]: value }))}
-            />
-            <div className="adm-actionbar adm-actionbar--review">
-              <button
-                className="adm-btn adm-btn--ghost"
-                onClick={() => {
-                  setRevisionMsg(motivos.join("\n"));
-                  setRevisionOpen(true);
-                }}
-              >
-                Pedir revisión
-                {motivos.length > 0 && ` (${motivos.length} ${motivos.length === 1 ? "motivo" : "motivos"})`}
-              </button>
-              <button className="adm-btn adm-btn--reject" onClick={() => setRejectOpen(true)}>
-                Rechazar
-              </button>
-              <span className="adm-accept">
-                <button
-                  className="adm-btn adm-btn--accept"
-                  onClick={() => postResultToAPI("aceptado")}
-                  disabled={!canAccept}
-                  aria-describedby={canAccept ? undefined : "accept-blocked"}
-                >
-                  Aceptar solicitud
-                </button>
-                {!canAccept && (
-                  <span className="adm-accept__why" id="accept-blocked">
-                    {acceptBlocked}
-                  </span>
-                )}
-              </span>
-              <Link to={`/admin/solicitudes/${id}/modificar`} className="adm-link adm-actionbar__modify">
-                Modificar datos
-              </Link>
-            </div>
-            <AfterDecision next={next} />
-          </>
-        )}
-
-        <section className="adm-card">
-          <h2 className="adm-card__title">Identidad</h2>
-          <dl className="adm-grid">
-            <Field label="Nombre completo">
+          <header className="adm-detail__head">
+            <h1>
               {user.nombre} {user.apellidos}
-            </Field>
-            <Field label="DNI o documento">{user.numeroDocumento}</Field>
-            <Field label="Fecha de nacimiento">{fmtDate(user.fechaNacimiento)}</Field>
-            <Field label="Lugar de nacimiento">{user.lugarNacimiento}</Field>
-          </dl>
-        </section>
+            </h1>
+            <p className="adm-detail__sub">
+              {user.fechaEnvio ? `Enviada el ${fmtDate(user.fechaEnvio)}` : `Creada el ${fmtDate(user.fechaCreacion)}`}
+              {presentedBy(user)}
+            </p>
+            {pendiente && <WaitingTag item={user} />}
+          </header>
 
-        {user.esTutor && (
+          {pendiente && (
+            <>
+              <ReviewChecks
+                answers={answers}
+                values={checkValues}
+                onAnswer={(key, value) => setAnswers((a) => ({ ...a, [key]: value }))}
+              />
+              <div className="adm-actionbar adm-actionbar--review">
+                <button
+                  className="adm-btn adm-btn--ghost"
+                  onClick={() => {
+                    setRevisionMsg(motivos.join("\n"));
+                    setRevisionOpen(true);
+                  }}
+                >
+                  Pedir revisión
+                  {motivos.length > 0 && ` (${motivos.length} ${motivos.length === 1 ? "motivo" : "motivos"})`}
+                </button>
+                <button className="adm-btn adm-btn--reject" onClick={() => setRejectOpen(true)}>
+                  Rechazar
+                </button>
+                <span className="adm-accept">
+                  <button
+                    className="adm-btn adm-btn--accept"
+                    onClick={() => postResultToAPI("aceptado")}
+                    disabled={!canAccept}
+                    aria-describedby={canAccept ? undefined : "accept-blocked"}
+                  >
+                    Aceptar solicitud
+                  </button>
+                  {!canAccept && (
+                    <span className="adm-accept__why" id="accept-blocked">
+                      {acceptBlocked}
+                    </span>
+                  )}
+                </span>
+                <Link to={`/admin/solicitudes/${id}/modificar`} className="adm-link adm-actionbar__modify">
+                  Modificar datos
+                </Link>
+              </div>
+              <AfterDecision next={next} />
+            </>
+          )}
+
           <section className="adm-card">
-            <h2 className="adm-card__title">Presentada por (tutor/representante)</h2>
+            <h2 className="adm-card__title">Identidad</h2>
             <dl className="adm-grid">
-              <Field label="Nombre del tutor/a">
-                {user.tutorNombre} {user.tutorApellidos}
+              <Field label="Nombre completo">
+                {user.nombre} {user.apellidos}
               </Field>
-              <Field label="Relación con la persona">{user.tutorParentesco}</Field>
+              <Field label="DNI o documento">{user.numeroDocumento}</Field>
+              <Field label="Fecha de nacimiento">{fmtDate(user.fechaNacimiento)}</Field>
+              <Field label="Lugar de nacimiento">{user.lugarNacimiento}</Field>
             </dl>
           </section>
-        )}
 
-        <section className="adm-card">
-          <h2 className="adm-card__title">Residencia y contacto</h2>
-          <dl className="adm-grid">
-            <Field label="País de residencia">{user.paisResidencia}</Field>
-            <Field label="Localidad">{user.localidadResidencia}</Field>
-            <Field label="Correo electrónico">{user.correoElectronico}</Field>
-            <Field label="Teléfono">{user.numeroTelefono}</Field>
-          </dl>
-        </section>
+          {user.esTutor && (
+            <section className="adm-card">
+              <h2 className="adm-card__title">Presentada por (tutor/representante)</h2>
+              <dl className="adm-grid">
+                <Field label="Nombre del tutor/a">
+                  {user.tutorNombre} {user.tutorApellidos}
+                </Field>
+                <Field label="Relación con la persona">{user.tutorParentesco}</Field>
+              </dl>
+            </section>
+          )}
 
-        <section className="adm-card">
-          <h2 className="adm-card__title">Diagnóstico</h2>
-          <div className="adm-chips">
-            {diagnosticos.length ? (
-              diagnosticos.map((d) => (
-                <span className="adm-chip" key={d}>
-                  {diagLabel(d)}
-                </span>
-              ))
-            ) : (
-              <span className="adm-muted">Sin diagnóstico indicado</span>
-            )}
-          </div>
-        </section>
+          <section className="adm-card">
+            <h2 className="adm-card__title">Residencia y contacto</h2>
+            <dl className="adm-grid">
+              <Field label="País de residencia">{user.paisResidencia}</Field>
+              <Field label="Localidad">{user.localidadResidencia}</Field>
+              <Field label="Correo electrónico">{user.correoElectronico}</Field>
+              <Field label="Teléfono">{user.numeroTelefono}</Field>
+            </dl>
+          </section>
 
-        <section className="adm-card">
-          <h2 className="adm-card__title">Consentimientos</h2>
-          <dl className="adm-grid">
-            <Field label="Política de protección de datos">Aceptada</Field>
-            <Field label="Recibir información sobre DEA">
-              {user.aceptoRecibirInfo ? "Sí" : "No"}
-            </Field>
-          </dl>
-        </section>
+          <section className="adm-card">
+            <h2 className="adm-card__title">Diagnóstico</h2>
+            <div className="adm-chips">
+              {diagnosticos.length ? (
+                diagnosticos.map((d) => (
+                  <span className="adm-chip" key={d}>
+                    {diagLabel(d)}
+                  </span>
+                ))
+              ) : (
+                <span className="adm-muted">Sin diagnóstico indicado</span>
+              )}
+            </div>
+          </section>
 
-        {user.estado === "aceptado" && (
-          <div className="adm-actionbar">
-            <Link
-              to={`/admin/solicitudes/${id}/modificar`}
-              className="adm-btn adm-btn--ghost"
-            >
-              Modificar datos
-            </Link>
-            <button
-              className="adm-btn adm-btn--primary"
-              onClick={() => downloadFile("pdf")}
-              disabled={downloading === "pdf"}
-            >
-              {downloading === "pdf" ? "Generando…" : "Certificado PDF"}
-            </button>
-            <button
-              className="adm-btn adm-btn--ghost"
-              onClick={() => downloadFile("img")}
-              disabled={downloading === "img"}
-            >
-              {downloading === "img" ? "Generando…" : "Certificado JPG"}
-            </button>
-          </div>
-        )}
+          <section className="adm-card">
+            <h2 className="adm-card__title">Consentimientos</h2>
+            <dl className="adm-grid">
+              <Field label="Política de protección de datos">Aceptada</Field>
+              <Field label="Recibir información sobre DEA">
+                {user.aceptoRecibirInfo ? "Sí" : "No"}
+              </Field>
+            </dl>
+          </section>
+
+          {user.estado === "aceptado" && (
+            <div className="adm-actionbar">
+              <Link
+                to={`/admin/solicitudes/${id}/modificar`}
+                className="adm-btn adm-btn--ghost"
+              >
+                Modificar datos
+              </Link>
+              <button
+                className="adm-btn adm-btn--primary"
+                onClick={() => downloadFile("pdf")}
+                disabled={downloading === "pdf"}
+              >
+                {downloading === "pdf" ? "Generando…" : "Certificado PDF"}
+              </button>
+              <button
+                className="adm-btn adm-btn--ghost"
+                onClick={() => downloadFile("img")}
+                disabled={downloading === "img"}
+              >
+                {downloading === "img" ? "Generando…" : "Certificado JPG"}
+              </button>
+            </div>
+          )}
         </div>
 
         <Modal open={rejectOpen} onClose={() => setRejectOpen(false)} title="Rechazar solicitud">
