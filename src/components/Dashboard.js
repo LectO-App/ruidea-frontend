@@ -34,6 +34,7 @@ import DashboardSkeleton from './DashboardSkeleton';
 import Navbar from './Navbar';
 import { getFileFromServer } from '../util/getFileFromServer';
 import { passportUrl } from '../util/passport';
+import { isNetworkError, loadOfflinePassport } from '../util/offlinePassport';
 
 import '../css/registration.scss';
 
@@ -135,6 +136,8 @@ const Dashboard = () => {
 	const [data, setData] = useState({});
 	const [loaded, setLoaded] = useState(false); // first /usuario/me fetch has resolved
 	const [error, setError] = useState(false); // the /usuario/me fetch failed — show the retry card
+	const [offlineCopy, setOfflineCopy] = useState(false); // no connection, and a passport copy is on this device
+	const [mailing, setMailing] = useState(false); // "Enviarme el pasaporte por correo" in flight
 	const [downloading, setDownloading] = useState(null); // 'pdf' | 'img' — per-button spinner
 	const [resending, setResending] = useState(false); // resend-verification request in flight
 	const [resendError, setResendError] = useState(null); // inline failure shown under the resend button
@@ -151,6 +154,7 @@ const Dashboard = () => {
 			setData(res.data);
 		} catch (err) {
 			setError(true);
+			setOfflineCopy(isNetworkError(err) && !!loadOfflinePassport());
 		} finally {
 			setLoaded(true);
 		}
@@ -180,6 +184,22 @@ const Dashboard = () => {
 		} catch (err) {
 			// Clipboard API unavailable (e.g. non-HTTPS) — show the link so it can be copied manually.
 			setShareUrl(url);
+		}
+	};
+
+	const mailPassport = async () => {
+		setMailing(true);
+		try {
+			await axiosInstance.post('/usuario/enviar-pasaporte');
+			toast.success('Te enviamos el pasaporte a tu correo.');
+		} catch (err) {
+			toast.error(
+				err.response && err.response.status === 429
+					? 'Ya lo pediste varias veces. Inténtalo de nuevo dentro de una hora.'
+					: 'No pudimos enviar el correo. Inténtalo de nuevo.'
+			);
+		} finally {
+			setMailing(false);
 		}
 	};
 
@@ -224,7 +244,12 @@ const Dashboard = () => {
 								Hubo un problema al obtener tu solicitud. Revisa tu conexión e inténtalo de nuevo.
 							</p>
 							<div className='status-actions'>
-								<button className='btn-primary' onClick={fetchFromAPI}>
+								{offlineCopy && (
+									<Link className='btn-primary' to='/mostrar'>
+										<BsPhone aria-hidden='true' /> Mostrar mi pasaporte
+									</Link>
+								)}
+								<button className={offlineCopy ? 'btn-secondary' : 'btn-primary'} onClick={fetchFromAPI}>
 									<BsArrowRepeat aria-hidden='true' /> Reintentar
 								</button>
 							</div>
@@ -304,6 +329,10 @@ const Dashboard = () => {
 									<a className='btn-secondary' href={passportUrl(data)} target='_blank' rel='noopener noreferrer'>
 										<BsBoxArrowUpRight aria-hidden='true' /> Abrir pasaporte
 									</a>
+									<button className='btn-secondary' onClick={mailPassport} disabled={mailing}>
+										{mailing ? <span className='btn-spinner' aria-hidden='true' /> : <BsEnvelope aria-hidden='true' />}
+										Enviarme el pasaporte por correo
+									</button>
 								</div>
 							)}
 

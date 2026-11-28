@@ -185,8 +185,24 @@
 	flex-direction: column;
 	gap: 12px;
 	margin-top: 12px;
-	.btn-primary {
-		margin-left: 0;
+}
+.offline-bar__link {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 44px;
+	padding: 8px 16px;
+	border-radius: 10px;
+	background: $clrMainDark;
+	color: #fff;
+	font-weight: 700;
+	text-decoration: none;
+	&:hover {
+		background: darken($clrMainDark, 6%);
+	}
+	&:focus-visible {
+		outline: 3px solid $reg-ink;
+		outline-offset: 2px;
 	}
 }
 
@@ -194,5 +210,75 @@
 	.show-btn,
 	.status-show .btn-primary {
 		transition: none;
+	}
+}
+
+// Offline copy: a calm yellow note above the card (never red: the passport is still shown).
+.show-offline {
+	margin: 0;
+	padding: 12px 16px;
+	border-radius: $reg-radius;
+	border: 2px solid #e0b43c;
+	background: #fff4cc;
+	color: $reg-ink;
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+.show-offline-ready {
+	margin: 0;
+	padding: 14px 18px;
+	border-radius: $reg-radius;
+	border: 1px solid $reg-border;
+	background: $reg-surface;
+	color: $reg-ink;
+	line-height: 1.5;
+	h2 {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0 0 4px;
+		font-size: 1rem;
+		font-weight: 700;
+		color: $reg-ok;
+	}
+	p {
+		margin: 0 0 10px;
+		color: $reg-muted;
+	}
+}
+
+.offline-bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 8px 16px;
+	padding: 10px 16px;
+	background: #fff4cc;
+	border-bottom: 2px solid #e0b43c;
+	color: $reg-ink;
+	p {
+		margin: 0;
+		font-weight: 600;
+	}
+}
+.offline-bar__link {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 44px;
+	padding: 8px 16px;
+	border-radius: 10px;
+	background: $clrMainDark;
+	color: #fff;
+	font-weight: 700;
+	text-decoration: none;
+	&:hover {
+		background: darken($clrMainDark, 6%);
+	}
+	&:focus-visible {
+		outline: 3px solid $reg-ink;
+		outline-offset: 2px;
 	}
 }

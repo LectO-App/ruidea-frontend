@@ -11,6 +11,7 @@ import CheckPassport from './components/CheckPassport';
 import RegistrationSkeleton from './components/RegistrationSkeleton';
 import DashboardSkeleton from './components/DashboardSkeleton';
 import Toaster from './components/ui/Toaster';
+import OfflinePassportLink from './components/OfflinePassportLink';
 
 // Eager (not lazy): the landing is the default route and the first thing most visitors
 // see. Code-splitting it only adds a second network round-trip + a spinner flash before
@@ -78,6 +79,7 @@ function App() {
 			</Helmet>
 			<Router>
 				<BeaconRouteGuard />
+				<OfflinePassportLink />
 				<Suspense fallback={<LoadingScreen />}>
 					{/* Suspense must wrap Switch (not the reverse): a Suspense as Switch's only
 					    child has no `path`, so the Switch matches it for every location and never
