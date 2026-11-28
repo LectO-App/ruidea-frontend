@@ -115,3 +115,33 @@ test("a sent application has neither draft action", async () => {
   expect(row.queryByRole("button", { name: "Enviar recordatorio" })).not.toBeInTheDocument();
   expect(row.queryByRole("button", { name: "Cancelar solicitud" })).not.toBeInTheDocument();
 });
+
+const DAY = 24 * 60 * 60 * 1000;
+const daysAgo = (n) => new Date(Date.now() - n * DAY - 60 * 60 * 1000).toISOString();
+const sent = (id, fechaEnvio, fechaCreacion = daysAgo(90)) => ({
+  ...PENDING,
+  _id: id,
+  correoElectronico: `${id}@example.test`,
+  fechaEnvio,
+  fechaCreacion,
+});
+
+test("Pendientes lists the one that has waited longest first and says how long each has waited", async () => {
+  renderList([sent("p2", daysAgo(3)), sent("p3", null, daysAgo(25)), sent("p4", daysAgo(1))]);
+
+  await screen.findByText("p2@example.test");
+  expect(screen.getByText("3 pendientes · la que más espera, primero")).toBeInTheDocument();
+  const order = screen.getAllByText(/@example\.test$/).map((el) => el.textContent);
+  expect(order).toEqual(["p3@example.test", "p2@example.test", "p4@example.test"]);
+  expect(within(screen.getByText("p3@example.test").closest("tr")).getByText("Esperando 25 días")).toBeInTheDocument();
+  expect(within(screen.getByText("p4@example.test").closest("tr")).getByText("Esperando 1 día")).toBeInTheDocument();
+});
+
+test("other tabs keep the newest first and show no waiting time on closed applications", async () => {
+  renderList([{ ...sent("a1", daysAgo(5)), estado: "aceptado" }]);
+  await screen.findByText("a1@example.test");
+  await userEvent.click(screen.getByRole("tab", { name: "Aceptados" }));
+  await screen.findByText("1 solicitud");
+  expect(screen.queryByText(/Esperando/)).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: /Ordenar por fecha de creación, descendente/ })).toBeInTheDocument();
+});

@@ -7,17 +7,38 @@ import Modal from "../ui/Modal";
 import StatusBadge from "./StatusBadge";
 import InlineMessage from "../ui/InlineMessage";
 import { getFileFromServer } from "../../util/getFileFromServer";
-import { isPdfDocuments } from "../../util/documents";
+import { daysWaiting, diasLabel } from "../../util/waiting";
+import DocumentPane from "./DocumentPane";
+import ReviewChecks, { allMatch, motivosOf } from "./ReviewChecks";
+import WaitingTag from "./WaitingTag";
 
 const DIAG_LABELS = { tdah: "TDA-H" };
 
 const fmtDate = (d) =>
   d ? new Date(d).toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" }) : "—";
 
-const docsLabel = (archivoBlob, busy) => {
-  if (!archivoBlob) return "Sin documentos subidos";
-  if (isPdfDocuments(archivoBlob)) return busy ? "Abriendo…" : "Abrir diagnóstico e identificación (PDF, pestaña nueva)";
-  return busy ? "Descargando…" : "Descargar diagnóstico e identificación (ZIP)";
+const diagLabel = (d) => DIAG_LABELS[d] || d.charAt(0).toUpperCase() + d.slice(1);
+
+const presentedBy = (user) => {
+  if (!user.esTutor) return "";
+  const nombre = `${user.tutorNombre || ""} ${user.tutorApellidos || ""}`.trim();
+  const parentesco = (user.tutorParentesco || "").trim().toLowerCase();
+  if (!nombre && !parentesco) return "";
+  return ` · presentada por ${nombre}${parentesco ? (nombre ? ` (${parentesco})` : parentesco) : ""}`;
+};
+
+const AfterDecision = ({ next }) => {
+  if (!next) return null;
+  if (!next.siguiente) {
+    return <p className="adm-after">Después: no quedan más pendientes, volverás a la lista.</p>;
+  }
+  const days = daysWaiting(next.siguiente);
+  return (
+    <p className="adm-after">
+      Después: siguiente pendiente, la que más tiempo lleva esperando
+      {days != null && ` (${diasLabel(days)})`}.
+    </p>
+  );
 };
 
 const Field = ({ label, children }) => (
@@ -30,63 +51,77 @@ const Field = ({ label, children }) => (
 const AdminSolicitud = (props) => {
   const [user, setUser] = useState({});
   const [loadError, setLoadError] = useState(false);
-  // Which download is in flight ("pdf" | "img" | "docs" | null) — drives per-button busy state.
+  // Which download is in flight ("pdf" | "img" | null) — drives per-button busy state.
   const [downloading, setDownloading] = useState(null);
   const [revisionOpen, setRevisionOpen] = useState(false);
   const [revisionMsg, setRevisionMsg] = useState("");
   const [rejectOpen, setRejectOpen] = useState(false);
+  const [answers, setAnswers] = useState({});
+  const [next, setNext] = useState(null);
+  const id = props.match.params.id;
 
-  const postResultToAPI = async (estado, mensajeMedico = "", mostrarPopup = true) => {
+  // After a decision the reviewer goes on to the pending application that has waited longest.
+  const goToNext = async () => {
+    try {
+      const res = await axiosInstance.get("/admin/siguiente", { params: { excluir: id } });
+      if (res.data.siguiente) {
+        props.history.push(`/admin/solicitudes/${res.data.siguiente._id}`);
+        return;
+      }
+      toast.success("No quedan solicitudes pendientes.");
+    } catch (err) {
+      toast.error("No se pudo abrir la siguiente solicitud pendiente.");
+    }
+    props.history.push("/admin/solicitudes");
+  };
+
+  const postResultToAPI = async (estado, mensajeMedico = "") => {
     try {
       await axiosInstance.post(`/admin/respuesta`, {
         estado,
         mensajeMedico,
         emailUsuario: user.correoElectronico,
       });
-      if (mostrarPopup) {
-        toast.success("Respuesta enviada");
-        props.history.push("/admin/solicitudes");
-      }
     } catch (error) {
       toast.error("Hubo un error al mandar la respuesta.");
+      return;
     }
+    toast.success("Respuesta enviada");
+    await goToNext();
+  };
+
+  const sendRevision = () => {
+    setRevisionOpen(false);
+    postResultToAPI("revision", revisionMsg);
   };
 
   const getUserFromAPI = useCallback(async () => {
     setLoadError(false);
     try {
-      const res = await axiosInstance.post(`/admin/solicitudes/${props.match.params.id}`);
+      const res = await axiosInstance.post(`/admin/solicitudes/${id}`);
       setUser(res.data.usuario);
     } catch (err) {
       setLoadError(true);
     }
-  }, [props.match.params.id]);
+  }, [id]);
 
   useEffect(() => {
     getUserFromAPI();
   }, [getUserFromAPI]);
 
+  const pendiente = user.estado === "pendiente";
+  useEffect(() => {
+    if (!pendiente) return;
+    axiosInstance
+      .get("/admin/siguiente", { params: { excluir: id } })
+      .then((res) => setNext(res.data))
+      .catch(() => setNext(null));
+  }, [pendiente, id]);
+
   const downloadFile = async (type) => {
     setDownloading(type);
     try {
       await getFileFromServer(type, user._id);
-    } finally {
-      setDownloading(null);
-    }
-  };
-
-  // New uploads are one PDF the browser shows in a new tab; older records are a ZIP to download.
-  const openDocs = async () => {
-    setDownloading("docs");
-    try {
-      const res = await axiosInstance.get(`/inscripcion/link-archivos/${user._id}`);
-      const link = document.createElement("a");
-      link.href = res.data.url;
-      link.target = "_blank";
-      link.rel = "noopener";
-      link.click();
-    } catch (err) {
-      toast.error("No se encontraron documentos para este usuario.");
     } finally {
       setDownloading(null);
     }
@@ -117,142 +152,172 @@ const AdminSolicitud = (props) => {
   const diagnosticos = user.diagnostico
     ? Object.keys(user.diagnostico).filter((k) => user.diagnostico[k])
     : [];
+  const motivos = motivosOf(answers);
+  const canAccept = allMatch(answers);
+  const acceptBlocked = motivos.length
+    ? "Hay puntos que no coinciden: pide revisión o rechaza."
+    : "Marca los 5 puntos como «Coincide» primero.";
+  const checkValues = {
+    nombre: `${user.nombre || ""} ${user.apellidos || ""}`.trim(),
+    documento: user.numeroDocumento,
+    fechaNacimiento: user.fechaNacimiento && fmtDate(user.fechaNacimiento),
+    diagnostico: diagnosticos.map(diagLabel).join(", ") || "Sin diagnóstico indicado",
+  };
 
   return (
     <div className="adm adm-detail">
-      <div className="adm-detail__shell">
-        <div className="adm-detail__top">
+      <div className="adm-review">
+        <div className="adm-detail__top adm-review__top">
           <Link className="adm-back" to="/admin/solicitudes">
             ← Volver a solicitudes
           </Link>
           <StatusBadge item={user} />
         </div>
 
-        <header className="adm-detail__head">
-          <h1>
-            {user.nombre} {user.apellidos}
-          </h1>
-          <p className="adm-detail__sub">
-            Solicitud de pasaporte DEA · creada el {fmtDate(user.fechaCreacion)}
-          </p>
-        </header>
+        <div className="adm-review__doc">
+          <DocumentPane user={user} />
+        </div>
 
-        <section className="adm-card">
-          <h2 className="adm-card__title">Identidad</h2>
-          <dl className="adm-grid">
-            <Field label="Nombre completo">
+        <div className="adm-review__data">
+          <header className="adm-detail__head">
+            <h1>
               {user.nombre} {user.apellidos}
-            </Field>
-            <Field label="DNI o documento">{user.numeroDocumento}</Field>
-            <Field label="Fecha de nacimiento">{fmtDate(user.fechaNacimiento)}</Field>
-            <Field label="Lugar de nacimiento">{user.lugarNacimiento}</Field>
-          </dl>
-        </section>
+            </h1>
+            <p className="adm-detail__sub">
+              {user.fechaEnvio ? `Enviada el ${fmtDate(user.fechaEnvio)}` : `Creada el ${fmtDate(user.fechaCreacion)}`}
+              {presentedBy(user)}
+            </p>
+            {pendiente && <WaitingTag item={user} />}
+          </header>
 
-        {user.esTutor && (
+          {pendiente && (
+            <>
+              <ReviewChecks
+                answers={answers}
+                values={checkValues}
+                onAnswer={(key, value) => setAnswers((a) => ({ ...a, [key]: value }))}
+              />
+              <div className="adm-actionbar adm-actionbar--review">
+                <button
+                  className="adm-btn adm-btn--ghost"
+                  onClick={() => {
+                    setRevisionMsg(motivos.join("\n"));
+                    setRevisionOpen(true);
+                  }}
+                >
+                  Pedir revisión
+                  {motivos.length > 0 && ` (${motivos.length} ${motivos.length === 1 ? "motivo" : "motivos"})`}
+                </button>
+                <button className="adm-btn adm-btn--reject" onClick={() => setRejectOpen(true)}>
+                  Rechazar
+                </button>
+                <span className="adm-accept">
+                  <button
+                    className="adm-btn adm-btn--accept"
+                    onClick={() => postResultToAPI("aceptado")}
+                    disabled={!canAccept}
+                    aria-describedby={canAccept ? undefined : "accept-blocked"}
+                  >
+                    Aceptar solicitud
+                  </button>
+                  {!canAccept && (
+                    <span className="adm-accept__why" id="accept-blocked">
+                      {acceptBlocked}
+                    </span>
+                  )}
+                </span>
+                <Link to={`/admin/solicitudes/${id}/modificar`} className="adm-link adm-actionbar__modify">
+                  Modificar datos
+                </Link>
+              </div>
+              <AfterDecision next={next} />
+            </>
+          )}
+
           <section className="adm-card">
-            <h2 className="adm-card__title">Presentada por (tutor/representante)</h2>
+            <h2 className="adm-card__title">Identidad</h2>
             <dl className="adm-grid">
-              <Field label="Nombre del tutor/a">
-                {user.tutorNombre} {user.tutorApellidos}
+              <Field label="Nombre completo">
+                {user.nombre} {user.apellidos}
               </Field>
-              <Field label="Relación con la persona">{user.tutorParentesco}</Field>
+              <Field label="DNI o documento">{user.numeroDocumento}</Field>
+              <Field label="Fecha de nacimiento">{fmtDate(user.fechaNacimiento)}</Field>
+              <Field label="Lugar de nacimiento">{user.lugarNacimiento}</Field>
             </dl>
           </section>
-        )}
 
-        <section className="adm-card">
-          <h2 className="adm-card__title">Residencia y contacto</h2>
-          <dl className="adm-grid">
-            <Field label="País de residencia">{user.paisResidencia}</Field>
-            <Field label="Localidad">{user.localidadResidencia}</Field>
-            <Field label="Correo electrónico">{user.correoElectronico}</Field>
-            <Field label="Teléfono">{user.numeroTelefono}</Field>
-          </dl>
-        </section>
+          {user.esTutor && (
+            <section className="adm-card">
+              <h2 className="adm-card__title">Presentada por (tutor/representante)</h2>
+              <dl className="adm-grid">
+                <Field label="Nombre del tutor/a">
+                  {user.tutorNombre} {user.tutorApellidos}
+                </Field>
+                <Field label="Relación con la persona">{user.tutorParentesco}</Field>
+              </dl>
+            </section>
+          )}
 
-        <section className="adm-card">
-          <h2 className="adm-card__title">Diagnóstico</h2>
-          <div className="adm-chips">
-            {diagnosticos.length ? (
-              diagnosticos.map((d) => (
-                <span className="adm-chip" key={d}>
-                  {DIAG_LABELS[d] || d.charAt(0).toUpperCase() + d.slice(1)}
-                </span>
-              ))
-            ) : (
-              <span className="adm-muted">Sin diagnóstico indicado</span>
-            )}
-          </div>
-          <button
-            className="adm-btn adm-btn--ghost adm-doc-btn"
-            onClick={openDocs}
-            disabled={!user.archivoBlob || downloading === "docs"}
-          >
-            {docsLabel(user.archivoBlob, downloading === "docs")}
-          </button>
-        </section>
+          <section className="adm-card">
+            <h2 className="adm-card__title">Residencia y contacto</h2>
+            <dl className="adm-grid">
+              <Field label="País de residencia">{user.paisResidencia}</Field>
+              <Field label="Localidad">{user.localidadResidencia}</Field>
+              <Field label="Correo electrónico">{user.correoElectronico}</Field>
+              <Field label="Teléfono">{user.numeroTelefono}</Field>
+            </dl>
+          </section>
 
-        <section className="adm-card">
-          <h2 className="adm-card__title">Consentimientos</h2>
-          <dl className="adm-grid">
-            <Field label="Política de protección de datos">Aceptada</Field>
-            <Field label="Recibir información sobre DEA">
-              {user.aceptoRecibirInfo ? "Sí" : "No"}
-            </Field>
-          </dl>
-        </section>
+          <section className="adm-card">
+            <h2 className="adm-card__title">Diagnóstico</h2>
+            <div className="adm-chips">
+              {diagnosticos.length ? (
+                diagnosticos.map((d) => (
+                  <span className="adm-chip" key={d}>
+                    {diagLabel(d)}
+                  </span>
+                ))
+              ) : (
+                <span className="adm-muted">Sin diagnóstico indicado</span>
+              )}
+            </div>
+          </section>
 
-        {user.estado === "pendiente" && (
-          <div className="adm-actionbar">
-            <button className="adm-btn adm-btn--accept" onClick={() => postResultToAPI("aceptado")}>
-              Aceptar solicitud
-            </button>
-            <Link
-              to={`/admin/solicitudes/${props.match.params.id}/modificar`}
-              className="adm-btn adm-btn--ghost"
-            >
-              Modificar datos
-            </Link>
-            <button
-              className="adm-btn adm-btn--ghost"
-              onClick={() => {
-                setRevisionMsg("");
-                setRevisionOpen(true);
-              }}
-            >
-              Pedir revisión
-            </button>
-            <button className="adm-btn adm-btn--reject" onClick={() => setRejectOpen(true)}>
-              Rechazar
-            </button>
-          </div>
-        )}
+          <section className="adm-card">
+            <h2 className="adm-card__title">Consentimientos</h2>
+            <dl className="adm-grid">
+              <Field label="Política de protección de datos">Aceptada</Field>
+              <Field label="Recibir información sobre DEA">
+                {user.aceptoRecibirInfo ? "Sí" : "No"}
+              </Field>
+            </dl>
+          </section>
 
-        {user.estado === "aceptado" && (
-          <div className="adm-actionbar">
-            <Link
-              to={`/admin/solicitudes/${props.match.params.id}/modificar`}
-              className="adm-btn adm-btn--ghost"
-            >
-              Modificar datos
-            </Link>
-            <button
-              className="adm-btn adm-btn--primary"
-              onClick={() => downloadFile("pdf")}
-              disabled={downloading === "pdf"}
-            >
-              {downloading === "pdf" ? "Generando…" : "Certificado PDF"}
-            </button>
-            <button
-              className="adm-btn adm-btn--ghost"
-              onClick={() => downloadFile("img")}
-              disabled={downloading === "img"}
-            >
-              {downloading === "img" ? "Generando…" : "Certificado JPG"}
-            </button>
-          </div>
-        )}
+          {user.estado === "aceptado" && (
+            <div className="adm-actionbar">
+              <Link
+                to={`/admin/solicitudes/${id}/modificar`}
+                className="adm-btn adm-btn--ghost"
+              >
+                Modificar datos
+              </Link>
+              <button
+                className="adm-btn adm-btn--primary"
+                onClick={() => downloadFile("pdf")}
+                disabled={downloading === "pdf"}
+              >
+                {downloading === "pdf" ? "Generando…" : "Certificado PDF"}
+              </button>
+              <button
+                className="adm-btn adm-btn--ghost"
+                onClick={() => downloadFile("img")}
+                disabled={downloading === "img"}
+              >
+                {downloading === "img" ? "Generando…" : "Certificado JPG"}
+              </button>
+            </div>
+          )}
+        </div>
 
         <Modal open={rejectOpen} onClose={() => setRejectOpen(false)} title="Rechazar solicitud">
           <p className="adm-confirm-text">
@@ -282,16 +347,16 @@ const AdminSolicitud = (props) => {
           <label className="adm-modal-label" htmlFor="revision-msg">
             Mensaje para el usuario
           </label>
+          {motivos.length > 0 && (
+            <p className="adm-modal-help">Los puntos que marcaste con «No» ya están escritos. Puedes cambiar el mensaje.</p>
+          )}
           <textarea
             id="revision-msg"
             className="modal-textarea"
             value={revisionMsg}
             onChange={(e) => setRevisionMsg(e.target.value)}
             onKeyDown={(e) => {
-              if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-                setRevisionOpen(false);
-                postResultToAPI("revision", revisionMsg, !revisionMsg);
-              }
+              if ((e.metaKey || e.ctrlKey) && e.key === "Enter") sendRevision();
             }}
           />
           <div className="modal-actions">
@@ -300,10 +365,7 @@ const AdminSolicitud = (props) => {
             </button>
             <button
               className="adm-btn adm-btn--primary"
-              onClick={() => {
-                setRevisionOpen(false);
-                postResultToAPI("revision", revisionMsg, !revisionMsg);
-              }}
+              onClick={sendRevision}
             >
               Enviar
             </button>
@@ -345,4 +407,7 @@ const DetailSkeleton = () => (
   </div>
 );
 
-export default AdminSolicitud;
+// Keyed by id so moving on to the next pending application starts with fresh answers.
+const AdminSolicitudRoute = (props) => <AdminSolicitud key={props.match.params.id} {...props} />;
+
+export default AdminSolicitudRoute;
