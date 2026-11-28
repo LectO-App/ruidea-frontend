@@ -8,6 +8,8 @@ import StatusBadge, { statusKey } from "./StatusBadge";
 import { toast } from "../ui/toast";
 import InlineMessage from "../ui/InlineMessage";
 import CancelDraftDialog from "./CancelDraftDialog";
+import { waitingSince } from "../../util/waiting";
+import WaitingTag from "./WaitingTag";
 
 const FILTERS = [
   { value: "pendiente", label: "Pendientes" },
@@ -20,6 +22,9 @@ const FILTERS = [
 
 const fmtDate = (d) =>
   d ? new Date(d).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+
+// Pending applications open on the one that has waited longest; the other tabs on the newest.
+const defaultSort = (cond) => (cond === "pendiente" ? { key: "espera", dir: "asc" } : { key: "fecha", dir: "desc" });
 
 const calculateAge = (date) => {
   const today = new Date();
@@ -37,8 +42,7 @@ const AdminSolicitudes = (props) => {
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
   const [exporting, setExporting] = useState(false);
-  // Default to most-recent-first — the useful order for triage.
-  const [sort, setSort] = useState({ key: "fecha", dir: "desc" });
+  const [sort, setSort] = useState(defaultSort("pendiente"));
   const [reminding, setReminding] = useState(null); // id of the draft whose reminder is being sent
   const [cancelling, setCancelling] = useState(null); // draft shown in the cancel dialog
 
@@ -63,9 +67,18 @@ const AdminSolicitudes = (props) => {
   const cerrarSesion = () =>
     AdminAuth.logout(() => props.history.push("/admin"));
 
+  const pendientes = condicion === "pendiente";
+
+  const changeFilter = (cond) => {
+    setCondicion(cond);
+    setSort(defaultSort(cond));
+  };
+
   const toggleSort = (key) =>
     setSort((s) =>
-      s.key === key ? { key, dir: s.dir === "asc" ? "desc" : "asc" } : { key, dir: key === "nombre" ? "asc" : "desc" }
+      s.key === key
+        ? { key, dir: s.dir === "asc" ? "desc" : "asc" }
+        : { key, dir: key === "nombre" || key === "espera" ? "asc" : "desc" }
     );
 
   // Inline search (name, surname, document or email) + sort, all derived from `data`.
@@ -83,6 +96,9 @@ const AdminSolicitudes = (props) => {
     return [...list].sort((a, b) => {
       if (sort.key === "nombre") {
         return `${a.nombre} ${a.apellidos}`.localeCompare(`${b.nombre} ${b.apellidos}`, "es") * dir;
+      }
+      if (sort.key === "espera") {
+        return ((waitingSince(a) ?? Infinity) - (waitingSince(b) ?? Infinity) || 0) * dir;
       }
       return (new Date(a.fechaCreacion) - new Date(b.fechaCreacion)) * dir;
     });
@@ -214,7 +230,7 @@ const AdminSolicitudes = (props) => {
                 role="tab"
                 aria-selected={condicion === f.value}
                 className={`adm-tab${condicion === f.value ? " is-active" : ""}`}
-                onClick={() => setCondicion(f.value)}
+                onClick={() => changeFilter(f.value)}
               >
                 {f.label}
               </button>
@@ -254,8 +270,18 @@ const AdminSolicitudes = (props) => {
             ) : (
               <>
             <p className="adm-count">
-              {rows.length} {rows.length === 1 ? "solicitud" : "solicitudes"}
-              {query && " encontradas"}
+              {pendientes ? (
+                <>
+                  {rows.length} {rows.length === 1 ? "pendiente" : "pendientes"}
+                  {query && (rows.length === 1 ? " encontrada" : " encontradas")}
+                  {sort.key === "espera" && sort.dir === "asc" && " · la que más espera, primero"}
+                </>
+              ) : (
+                <>
+                  {rows.length} {rows.length === 1 ? "solicitud" : "solicitudes"}
+                  {query && " encontradas"}
+                </>
+              )}
             </p>
             <div className="adm-table-wrap">
               <table className="adm-table">
@@ -274,15 +300,31 @@ const AdminSolicitudes = (props) => {
                     </th>
                     <th>Documento</th>
                     <th>
-                      <button
-                        className="adm-th-sort"
-                        onClick={() => toggleSort("fecha")}
-                        aria-label={`Ordenar por fecha de creación${
-                          sort.key === "fecha" ? (sort.dir === "asc" ? ", ascendente" : ", descendente") : ""
-                        }`}
-                      >
-                        Creación <SortArrow col="fecha" />
-                      </button>
+                      {pendientes ? (
+                        <button
+                          className="adm-th-sort"
+                          onClick={() => toggleSort("espera")}
+                          aria-label={`Ordenar por tiempo de espera${
+                            sort.key === "espera"
+                              ? sort.dir === "asc"
+                                ? ", la que más espera primero"
+                                : ", la más reciente primero"
+                              : ""
+                          }`}
+                        >
+                          Enviada <SortArrow col="espera" />
+                        </button>
+                      ) : (
+                        <button
+                          className="adm-th-sort"
+                          onClick={() => toggleSort("fecha")}
+                          aria-label={`Ordenar por fecha de creación${
+                            sort.key === "fecha" ? (sort.dir === "asc" ? ", ascendente" : ", descendente") : ""
+                          }`}
+                        >
+                          Creación <SortArrow col="fecha" />
+                        </button>
+                      )}
                     </th>
                     <th>Nacimiento</th>
                     <th>Estado</th>
@@ -328,7 +370,11 @@ const AdminSolicitudes = (props) => {
                           ? `Nº ${item.numeroPasaporte}`
                           : item.numeroDocumento || "—"}
                       </td>
-                      <td data-label="Creación">{fmtDate(item.fechaCreacion)}</td>
+                      {pendientes ? (
+                        <td data-label="Enviada">{fmtDate(item.fechaEnvio || item.fechaCreacion)}</td>
+                      ) : (
+                        <td data-label="Creación">{fmtDate(item.fechaCreacion)}</td>
+                      )}
                       <td data-label="Nacimiento">
                         {fmtDate(item.fechaNacimiento)}
                         {item.fechaNacimiento && (
@@ -338,6 +384,7 @@ const AdminSolicitudes = (props) => {
                       <td data-label="Estado">
                         <StatusBadge item={item} />
                         {draft && <DraftProgress item={item} />}
+                        {item.estado === "pendiente" && <WaitingTag item={item} />}
                       </td>
                       <td className="adm-td-action" onClick={(e) => e.stopPropagation()}>
                         {renderAction(item)}
