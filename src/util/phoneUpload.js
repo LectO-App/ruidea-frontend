@@ -10,7 +10,7 @@ export const POLL_MS = 4000;
 export const phoneAddress = () => `${window.location.host}/movil`;
 export const phoneLink = (token) => `${window.location.origin}/movil/${token}`;
 
-// { token, codigo, caduca, minutos }
+// { token, codigo, caduca }
 export const createPhoneLink = async () => (await axiosInstance.post("/movil/token")).data;
 
 // { archivos: [{ id, grupo, orden, creado, tipo, tamano, url }], movilConectado }

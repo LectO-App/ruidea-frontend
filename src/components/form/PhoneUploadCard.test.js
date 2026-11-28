@@ -15,7 +15,7 @@ jest.mock("../../axios", () => ({ axiosInstance: { get: jest.fn(), post: jest.fn
 // Synthetic values only.
 const TOKEN = "T".repeat(43);
 const link = (minutes = 15, token = TOKEN, codigo = "482913") => ({
-  data: { token, codigo, caduca: new Date(Date.now() + minutes * 60000).toISOString(), minutos: 15 },
+  data: { token, codigo, caduca: new Date(Date.now() + minutes * 60000).toISOString() },
 });
 const staged = (id, grupo) => ({ id, grupo, orden: 1, tipo: "image/jpeg", tamano: 1000, url: `https://storage.test/${id}` });
 const listing = (archivos, movilConectado = false) => ({ data: { archivos, movilConectado } });
