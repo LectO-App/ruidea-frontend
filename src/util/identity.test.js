@@ -4,6 +4,7 @@ import {
   documentoError,
   looksLikePhone,
   suggestEmail,
+  emailDomainFeedback,
   partsToISODate,
   isoToParts,
   passwordStrength,
@@ -39,6 +40,19 @@ test("suggestEmail catches near-miss domains only", () => {
   expect(suggestEmail("juan@gmial.com")).toBe("juan@gmail.com");
   expect(suggestEmail("juan@gmail.com")).toBeNull();
   expect(suggestEmail("juan@miempresa.es")).toBeNull();
+});
+
+test("emailDomainFeedback: known domain, near miss, or nothing", () => {
+  expect(emailDomainFeedback("ana@Gmail.com ")).toEqual({ kind: "known", domain: "gmail.com" });
+  expect(emailDomainFeedback("ana@gmial.com")).toEqual({
+    kind: "suggest",
+    domain: "gmial.com",
+    suggestion: "ana@gmail.com",
+    suggestedDomain: "gmail.com",
+  });
+  expect(emailDomainFeedback("ana@colegio-ejemplo.es")).toBeNull();
+  expect(emailDomainFeedback("ana")).toBeNull();
+  expect(emailDomainFeedback("ana@")).toBeNull();
 });
 
 test("date parts round-trip and reject impossible dates", () => {
