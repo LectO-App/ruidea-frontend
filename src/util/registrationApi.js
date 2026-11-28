@@ -71,3 +71,14 @@ export const uploadFiles = async (groups, modo = "reemplazar") => {
   const res = await axiosInstance.post("/inscripcion/subir-archivos", fd);
   return res.data;
 };
+
+// JPEG sample of the passport ("Así saldrá en tu pasaporte") from the five fields printed
+// on it. Sent in the body, never the URL, and the server stores nothing.
+export const fetchPassportSample = async ({ nombre, apellidos, fechaNacimiento, numeroDocumento, paisResidencia }) => {
+  const res = await axiosInstance.post(
+    "/inscripcion/muestra-pasaporte",
+    { nombre, apellidos, fechaNacimiento, numeroDocumento, paisResidencia },
+    { responseType: "blob" }
+  );
+  return res.data;
+};

@@ -1,4 +1,7 @@
 import {
+  fechaEnPalabras,
+  fechaCorta,
+  edad,
   isValidDni,
   isValidNie,
   documentoError,
@@ -52,4 +55,24 @@ test("passwordStrength scales with complexity", () => {
   expect(passwordStrength("short").score).toBe(0);
   expect(passwordStrength("password1").score).toBeGreaterThanOrEqual(1);
   expect(passwordStrength("Sup3r-Secret-Pass").score).toBe(4);
+});
+
+test('fechaEnPalabras writes the date out in Spanish words', () => {
+  expect(fechaEnPalabras('1984-05-03')).toBe('3 de mayo de 1984');
+  expect(fechaEnPalabras('2012-12-31T00:00:00.000Z')).toBe('31 de diciembre de 2012');
+  expect(fechaEnPalabras('')).toBe('');
+});
+
+test('fechaCorta shows an ISO date as dd/mm/yyyy', () => {
+  expect(fechaCorta('1984-05-03')).toBe('03/05/1984');
+  expect(fechaCorta('2012-12-31T00:00:00.000Z')).toBe('31/12/2012');
+  expect(fechaCorta(undefined)).toBe('');
+});
+
+test('edad counts whole years, turning a year older on the birthday', () => {
+  const hoy = new Date(2026, 4, 3);
+  expect(edad('2008-05-03', hoy)).toBe(18);
+  expect(edad('2008-05-04', hoy)).toBe(17);
+  expect(edad('1984-05-03', hoy)).toBe(42);
+  expect(edad('', hoy)).toBe(null);
 });
