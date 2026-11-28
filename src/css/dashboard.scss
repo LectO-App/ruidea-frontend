@@ -191,6 +191,114 @@
 	> :nth-child(4) {
 		animation-delay: 460ms;
 	}
+	> :nth-child(5) {
+		animation-delay: 540ms;
+	}
+}
+
+// A full row under the two-column grid of the approved state.
+.status-actions .status-actions-wide {
+	grid-column: 1 / -1;
+}
+
+.dash,
+.modal-card {
+	.btn-primary,
+	.btn-secondary {
+		&:focus-visible {
+			outline: 3px solid $clrMainDark;
+			outline-offset: 3px;
+		}
+	}
+	.btn-danger {
+		background: $reg-error;
+		&:hover:not(:disabled) {
+			background: darken($reg-error, 8%);
+		}
+	}
+}
+
+/* ---------- ¿Quién ha comprobado mi pasaporte? (modal) ---------- */
+.checks {
+	color: $reg-ink;
+	line-height: 1.6;
+	&:focus {
+		outline: none;
+	}
+	p {
+		margin: 0 0 12px;
+	}
+}
+.checks-count {
+	font-weight: 700;
+	font-size: 1.05rem;
+}
+.checks-list {
+	list-style: none;
+	margin: 0 0 16px;
+	padding: 0;
+	max-height: min(40vh, 320px);
+	overflow-y: auto;
+	border-top: 1px solid $reg-border;
+}
+.checks-item {
+	display: flex;
+	gap: 12px;
+	align-items: flex-start;
+	padding: 12px 0;
+	border-bottom: 1px solid $reg-border;
+	p {
+		margin: 0;
+	}
+}
+.checks-icon {
+	flex: 0 0 36px;
+	height: 36px;
+	border-radius: 50%;
+	display: grid;
+	place-items: center;
+	background: $clrMainAccent;
+	color: $clrMainDark;
+}
+.checks-item--entidad .checks-icon {
+	background: #eaf5eb;
+	color: $reg-ok;
+}
+.checks-when {
+	font-weight: 700;
+}
+.checks-note {
+	color: $reg-muted;
+	font-size: 0.95rem;
+}
+.checks-empty {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 16px;
+	border-radius: $reg-radius;
+	background: $reg-bg;
+	border: 1px solid $reg-border;
+}
+.checks-loading {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	color: $reg-muted;
+}
+.checks-question {
+	font-size: 1.05rem;
+	margin: 20px 0 0;
+}
+.checks-steps {
+	margin: 0 0 16px;
+	padding-left: 1.4em;
+	li {
+		margin-bottom: 8px;
+	}
+}
+.checks-close {
+	margin-top: 8px;
 }
 
 @media screen and (max-width: 560px) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 
 // Accessible dialog primitive. Renders into a portal at <body> and, while open:
 //   • traps Tab focus inside the panel (Tab/Shift+Tab cycle, never escape behind it)
@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 //   • restores focus to the trigger element on close
 //   • locks body scroll so the page behind doesn't move
 //   • closes on Escape or overlay click
-// Animation is fade/rise in, subtler out. Used for the few interactions that genuinely
+// Animation is fade/rise in, subtler out; only the fade with prefers-reduced-motion. Used for the few interactions that genuinely
 // need a dialog (a confirmation, a short input) — not for errors, which are inline/toasts.
 const FOCUSABLE =
   'a[href],button:not([disabled]),textarea:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
@@ -89,39 +89,41 @@ const Modal = ({ open, onClose, title, children }) => {
   }, [open, onClose]);
 
   return createPortal(
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          className="modal-overlay"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.18 }}
-          onClick={onClose}
-        >
+    <MotionConfig reducedMotion="user">
+      <AnimatePresence>
+        {open && (
           <motion.div
-            className="modal-card"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={title ? titleId : undefined}
-            ref={panelRef}
-            tabIndex={-1}
-            initial={{ opacity: 0, y: 12, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.98 }}
-            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            onClick={(e) => e.stopPropagation()}
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            onClick={onClose}
           >
-            {title && (
-              <h2 className="modal-title" id={titleId}>
-                {title}
-              </h2>
-            )}
-            {children}
+            <motion.div
+              className="modal-card"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={title ? titleId : undefined}
+              ref={panelRef}
+              tabIndex={-1}
+              initial={{ opacity: 0, y: 12, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.98 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {title && (
+                <h2 className="modal-title" id={titleId}>
+                  {title}
+                </h2>
+              )}
+              {children}
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>,
+        )}
+      </AnimatePresence>
+    </MotionConfig>,
     document.body
   );
 };

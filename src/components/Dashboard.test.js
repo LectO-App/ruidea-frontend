@@ -76,3 +76,19 @@ test('a draft never sees wording that says it was sent or is waiting for review'
 	expect(screen.queryByText(/en camino|recibida|revisar tu solicitud|Confirma tu correo/)).not.toBeInTheDocument();
 	expect(screen.queryByRole('button', { name: /Reenviar el correo/ })).not.toBeInTheDocument();
 });
+
+const actionsOf = () =>
+	[...document.querySelectorAll('.status-card a.btn-primary, .status-card a.btn-secondary, .status-card button')];
+
+test.each([
+	['an approved passport', approved, 'Tu solicitud fue aprobada'],
+	['a draft', draft, 'Tu solicitud aún no está enviada'],
+	['an application under revision', { ...approved, estado: 'revision', mensajeMedico: 'Falta un informe.' }, 'Tu solicitud necesita una revisión'],
+	['a rejected application', { ...approved, estado: 'rechazado' }, 'Tu solicitud fue rechazada'],
+])('every button for %s has an icon hidden from screen readers', async (_, data, heading) => {
+	renderDashboard(data);
+	await screen.findByRole('heading', { name: heading });
+	const actions = actionsOf();
+	expect(actions.length).toBeGreaterThan(0);
+	for (const action of actions) expect(action.querySelector('svg[aria-hidden="true"]')).not.toBeNull();
+});

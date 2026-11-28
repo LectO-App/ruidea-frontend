@@ -17,12 +17,16 @@ import {
 	BsPencilSquare,
 	BsCheck,
 	BsCircle,
+	BsArrowRight,
+	BsEye,
+	BsX,
 } from 'react-icons/bs';
 
 import { toast } from './ui/toast';
 import Modal from './ui/Modal';
 import InlineMessage from './ui/InlineMessage';
 import StatusSteps from './StatusSteps';
+import PassportChecks from './PassportChecks';
 
 import logoLecto from '../img/webp/logo-lecto.webp';
 import logoLectoPNG from '../img/png/logo-lecto.png';
@@ -124,7 +128,7 @@ const DraftCard = ({ progreso }) => {
 			)}
 			<div className='status-actions'>
 				<Link className='btn-primary' to='/inscribirse'>
-					Continuar mi solicitud
+					<BsArrowRight aria-hidden='true' /> Continuar mi solicitud
 				</Link>
 			</div>
 		</section>
@@ -139,6 +143,7 @@ const Dashboard = () => {
 	const [resending, setResending] = useState(false); // resend-verification request in flight
 	const [resendError, setResendError] = useState(null); // inline failure shown under the resend button
 	const [shareUrl, setShareUrl] = useState(null); // shown when the clipboard API is unavailable
+	const [checksOpen, setChecksOpen] = useState(false);
 
 	const fetchFromAPI = async () => {
 		// Always resolve the loading state (finally) so a failed request can never leave the
@@ -180,6 +185,18 @@ const Dashboard = () => {
 		} catch (err) {
 			// Clipboard API unavailable (e.g. non-HTTPS) — show the link so it can be copied manually.
 			setShareUrl(url);
+		}
+	};
+
+	// Copiar enlace, Abrir pasaporte and Mostrar mi pasaporte read the token from `data`: use the
+	// new one at once, then reload the record.
+	const passportLinkChanged = async shareToken => {
+		setData(prev => ({ ...prev, shareToken }));
+		try {
+			const res = await axiosInstance.get(`/usuario/me`);
+			setData(res.data);
+		} catch (err) {
+			// The new token is already set above; the rest of the record has not changed.
 		}
 	};
 
@@ -304,6 +321,9 @@ const Dashboard = () => {
 									<a className='btn-secondary' href={passportUrl(data)} target='_blank' rel='noopener noreferrer'>
 										<BsBoxArrowUpRight aria-hidden='true' /> Abrir pasaporte
 									</a>
+									<button className='btn-secondary status-actions-wide' onClick={() => setChecksOpen(true)}>
+										<BsEye aria-hidden='true' /> ¿Quién ha comprobado mi pasaporte?
+									</button>
 								</div>
 							)}
 
@@ -313,7 +333,7 @@ const Dashboard = () => {
 										className='btn-primary'
 										to={{ pathname: '/inscribirse', state: { mensajeMedico: data.mensajeMedico } }}
 									>
-										Editar inscripción
+										<BsPencilSquare aria-hidden='true' /> Editar inscripción
 									</Link>
 								</div>
 							)}
@@ -376,10 +396,12 @@ const Dashboard = () => {
 				/>
 				<div className='modal-actions'>
 					<button className='btn-primary' onClick={() => setShareUrl(null)}>
-						Cerrar
+						<BsX aria-hidden='true' /> Cerrar
 					</button>
 				</div>
 			</Modal>
+
+			<PassportChecks open={checksOpen} onClose={() => setChecksOpen(false)} onRotated={passportLinkChanged} />
 		</div>
 	);
 };
