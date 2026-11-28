@@ -1,245 +1,276 @@
-.header-verificar {
-	background: #41a1ac;
-	width: 100%;
-	height: 15vh;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	color: #fff;
-	h1 {
-		font-size: $fsHeader;
-	}
-	.pais {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: 0.5em;
-		position: absolute;
-		left: 4vw;
-		font-size: $fsMedium;
-		.flag-icon {
-			width: 1.7em;
-			height: 1.15em;
-			border-radius: 3px;
-			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
-			flex-shrink: 0;
-		}
-	}
-	a {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-	.logo-disfam {
-		right: 4vw;
-		position: absolute;
-		height: 10vh;
-		background: #fff;
-		border-radius: 50%;
-		padding: 1vh;
-		transform: translateY(-50%);
-	}
-}
-.pasaporte {
-	position: absolute;
-	top: 2vh;
-	left: 50%;
-	transform: translateX(-50%);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-size: $fsSubHeader;
-	color: #161616;
-	height: 6vh;
-}
-.main-verificar {
-	padding: 0 6vw;
-	min-height: 70vh;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	position: relative;
-	.flex {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: row;
-	}
-	.container-logo-ruidea {
-		padding: 0 5vmax 0 0;
-		.logo-ruidea {
-			height: 40vh;
-			display: block;
-		}
-	}
-	.container-datos {
-		flex: 1;
-		display: flex;
-		justify-content: center;
-		flex-direction: column;
-		padding: 3vh 0;
+// Public passport page (/verificar/<token>, the legacy number link and /verificar/ejemplo).
+// Built for an authority holding a phone: one column, cards on the off-white surface.
 
-		.texto-main {
-			padding: 1vh 0 0 0;
-			h1 {
-				font-size: calc(40px + (50 - 40) * ((100vw - 300px) / (1600 - 300)));
-			}
-			h3 {
-				font-size: calc(36px + (40 - 36) * ((100vw - 300px) / (1600 - 300)));
-				color: #648387;
-			}
-			h4 {
-				font-size: $fsMedium;
-				color: #648387;
-				margin: 1vh 0 0 0;
-			}
-		}
-		h2 {
-			font-size: calc(40px + (50 - 40) * ((100vw - 300px) / (1600 - 300)));
-			margin: 1vh 0 0 0;
-			color: #161616;
-		}
-	}
-	.desarrollado-por-lecto {
-		--clr-font: #303030;
-		position: absolute;
-		bottom: 2vh;
-		color: var(--clr-font);
-		text-align: center;
-		a {
-			color: var(--clr-font);
-		}
-	}
-}
+$verif-ok-bg: #eef7ef;
+$verif-ok-border: #b9dcbc;
 
-.footer-verificar {
-	background: #41a1ac;
-	min-height: 15vh;
-	font-size: $fsSmall;
-	color: #fff;
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	padding: 3vh 6vw;
-	box-sizing: border-box;
-	p {
-		max-width: 58em;
-		margin: 0;
-		text-align: center;
-		line-height: 1.5;
-	}
-}
-
-.error-screen {
-	width: 100%;
+.verif {
 	min-height: 100vh;
-	box-sizing: border-box;
-	font-size: 1em;
 	display: flex;
-	justify-content: center;
-	align-items: center;
 	flex-direction: column;
-	gap: 0.4em;
-	padding: var(--padding-sides);
-	background: #fff;
-	h1 {
-		text-align: center;
-		max-width: 18em;
+	background: $reg-bg;
+	color: $reg-ink;
+	-webkit-font-smoothing: antialiased;
+	line-height: 1.5;
+
+	a:focus-visible {
+		outline: 3px solid rgba($clrMainDark, 0.55);
+		outline-offset: 2px;
+		border-radius: 4px;
 	}
-	.error-sub {
-		text-align: center;
-		max-width: 24em;
-		color: #5f6168;
-		font-size: $fsSmall;
-		line-height: 1.6;
+}
+
+.verif-sr {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
+
+.verif-header {
+	background: $reg-surface;
+	border-bottom: 1px solid $reg-border;
+	padding: 12px 16px;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px 16px;
+}
+.verif-header__brand {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.verif-header__logo {
+	height: 40px;
+	width: auto;
+	display: block;
+}
+.verif-header__title {
+	font-weight: 700;
+	font-size: 1.15rem;
+}
+.verif-header__pais {
+	margin: 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: $reg-muted;
+	font-weight: 600;
+	.flag-icon {
+		width: 1.6em;
+		height: 1.1em;
+		border-radius: 3px;
+		box-shadow: 0 0 0 1px rgba($reg-ink, 0.12);
+		flex-shrink: 0;
+	}
+}
+
+// A global `main {}` rule (hero.scss) forces its own layout; restate it here.
+.verif-main {
+	flex: 1;
+	width: 100%;
+	max-width: 520px;
+	margin: 0 auto;
+	padding: 16px 16px 24px;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: flex-start;
+	gap: 14px;
+}
+
+.verif-ejemplo {
+	margin: 0;
+	padding: 8px 12px;
+	border-radius: $reg-radius;
+	background: $clrMainAccent;
+	font-weight: 600;
+	text-align: center;
+}
+
+.verif-card {
+	background: $reg-surface;
+	border: 1px solid $reg-border;
+	border-radius: $reg-radius;
+	padding: 16px;
+	box-shadow: 0 1px 2px rgba($reg-ink, 0.05);
+	p {
 		margin: 0;
 	}
-	.error-actions {
+}
+.verif-card__titulo {
+	font-size: 1.1rem;
+	font-weight: 700;
+	margin: 0 0 8px;
+}
+.verif-card__nota {
+	margin-top: 12px !important;
+	color: $reg-muted;
+	font-size: 0.95rem;
+}
+
+.verif-sello {
+	background: $verif-ok-bg;
+	border-color: $verif-ok-border;
+	display: grid;
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	gap: 12px 14px;
+}
+.verif-sello__marca {
+	position: relative;
+	width: 64px;
+	height: 64px;
+	color: $reg-ok;
+	svg {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		fill: none;
+		stroke: currentColor;
+	}
+}
+.verif-sello__anillo {
+	stroke-width: 4;
+	stroke-dasharray: 14 6;
+	stroke-linecap: round;
+	animation: verif-girar 12s linear infinite;
+	transform-origin: 50% 50%;
+}
+.verif-sello__check {
+	padding: 16px;
+	stroke-width: 3;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+.verif-sello__titulo {
+	font-size: 1.45rem;
+	line-height: 1.2;
+	color: $reg-ok;
+	margin: 0;
+}
+.verif-sello__hora {
+	margin-top: 4px !important;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+.verif-sello__nota {
+	grid-column: 1 / -1;
+	font-size: 0.95rem;
+}
+
+@keyframes verif-girar {
+	to {
+		transform: rotate(360deg);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.verif-sello__anillo {
+		animation: none;
+	}
+}
+
+.verif-nombre {
+	font-size: 1.6rem;
+	font-weight: 700;
+	line-height: 1.25;
+	overflow-wrap: anywhere;
+}
+.verif-datos {
+	margin: 12px 0 0;
+	display: grid;
+	gap: 8px;
+	div {
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: center;
-		gap: 1em;
-		margin-top: 2vh;
+		justify-content: space-between;
+		gap: 0 12px;
+		padding-bottom: 8px;
+		border-bottom: 1px solid $reg-border;
+	}
+	dt {
+		color: $reg-muted;
+	}
+	dd {
+		margin: 0;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+	}
+}
+
+.verif-deas {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 10px;
+	li {
+		display: flex;
+		flex-direction: column;
+	}
+}
+.verif-deas__nombre {
+	font-weight: 700;
+}
+.verif-deas__texto {
+	color: $reg-muted;
+}
+
+.verif-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 48px;
+	padding: 10px 16px;
+	border-radius: 10px;
+	border: 2px solid $clrMainDark;
+	background: $clrMainDark;
+	color: $reg-surface;
+	font-weight: 700;
+	text-decoration: none;
+	&:hover {
+		filter: brightness(1.08);
+	}
+}
+.verif-btn--ghost {
+	background: $reg-surface;
+	color: $clrMainDark;
+	border-color: $reg-border;
+	&:hover {
+		filter: none;
+		border-color: $clrMainDark;
+	}
+}
+
+.verif-no-encontrado__titulo {
+	font-size: 1.45rem;
+	line-height: 1.2;
+	margin: 0 0 8px;
+}
+
+.verif-footer {
+	padding: 16px;
+	text-align: center;
+	color: $reg-muted;
+	font-size: 0.9rem;
+	p {
+		margin: 0;
 	}
 	a {
-		background: $clrMain;
-		color: #fff;
-		padding: 0.6em 1.5em;
-		font-size: $fsSmall;
-		border-radius: 12px;
-		text-decoration: none;
-		transition: 0.2s;
-		&:hover {
-			filter: brightness(1.1);
-		}
-		&.error-ghost {
-			background: transparent;
-			color: $clrMainDark;
-			border: 1px solid $clrMain;
-		}
+		color: $clrMainDark;
 	}
 }
 
-@media screen and (max-width: 1200px) {
-	.main-verificar {
-		.container-logo-ruidea {
-			img {
-				height: 30vh !important;
-			}
-		}
+@media (min-width: 900px) {
+	.verif-header {
+		padding: 16px 32px;
 	}
-}
-
-@media screen and (max-width: 900px) {
-	.main-verificar {
-		// children (Pasaporte N° / logo+data / "desarrollado por") become static below,
-		// so the container must stack them vertically instead of in the default row.
-		flex-direction: column;
-		.pasaporte,
-		.desarrollado-por-lecto {
-			position: static;
-			transform: unset;
-			margin: 2vh 0;
-			text-align: center;
-			height: fit-content;
-		}
-		.flex {
-			flex-direction: column !important;
-		}
-		.container-logo-ruidea {
-			padding: 0;
-		}
-		.container-datos {
-			* {
-				text-align: center;
-			}
-		}
-	}
-
-	.footer-verificar {
-		height: auto;
-	}
-}
-
-@media screen and (max-width: 700px) {
-	.header-verificar {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: column-reverse;
-		height: auto;
-		padding: 2vh 0;
-		* {
-			text-align: center;
-		}
-		.pais,
-		.logo-disfam {
-			position: static;
-			transform: none;
-		}
-		.logo-disfam {
-			margin: 0 0 1vh 0;
-		}
+	.verif-main {
+		padding-top: 32px;
 	}
 }

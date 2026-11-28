@@ -1,12 +1,5 @@
 import React from "react";
-
-const DEAS = [
-  { name: "Dislexia", text: "Dificultad en la lectura y la decodificación de palabras." },
-  { name: "Discalculia", text: "Dificultad para comprender y operar con números." },
-  { name: "Disortografía", text: "Dificultad en la escritura correcta de las palabras." },
-  { name: "Dispraxia", text: "Dificultad en la coordinación y planificación de movimientos." },
-  { name: "TDA-H", text: "Dificultades de atención, impulsividad y/o hiperactividad." },
-];
+import { DEAS } from "../../util/deas";
 
 const Audience = () => (
   <section className="lp-section lp-section--surface">
@@ -22,7 +15,7 @@ const Audience = () => (
 
       <ul className="lp-deas">
         {DEAS.map((dea) => (
-          <li className="lp-dea" key={dea.name}>
+          <li className="lp-dea" key={dea.key}>
             <h3 className="lp-dea__name">{dea.name}</h3>
             <p className="lp-dea__text">{dea.text}</p>
           </li>
