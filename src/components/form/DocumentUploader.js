@@ -14,19 +14,21 @@ import { formatSize, shrinkPhoto, MAX_FILE_MB } from "../../util/documents";
 // previews with per-file remove, and states the limits up front. The server joins the
 // files into one PDF in list order, so the list is numbered and each file has move
 // buttons (keyboard and screen reader friendly, not drag-only). Not bound to
-// react-hook-form — it owns a File[] and reports changes up via onFilesChange.
+// react-hook-form — it owns a File[] and reports changes up via onFilesChange. Photos sent
+// from the phone (util/phoneUpload.js) sit in the same list, tagged "Desde tu móvil";
+// removing one calls onRemoveStaged so the server deletes it too.
 
 const ACCEPT = "application/pdf,image/jpeg,image/png,image/webp,image/heic,image/heif";
 
 // Name and date, not size: a photo is smaller once shrunk, and picking it again must not add it twice.
-const fileKey = (f) => `${f.name}:${f.lastModified}`;
+const fileKey = (f) => (f.movil ? `movil:${f.id}` : `${f.name}:${f.lastModified}`);
 
 const FilePreview = ({ file, position, total, onRemove, onMove, buttonRef }) => {
   const [url, setUrl] = useState(null);
   const isImage = file.type && file.type.startsWith("image/");
 
   useEffect(() => {
-    if (!isImage) return undefined;
+    if (!isImage || file.movil) return undefined;
     const objectUrl = URL.createObjectURL(file);
     setUrl(objectUrl);
     return () => URL.revokeObjectURL(objectUrl);
@@ -38,15 +40,19 @@ const FilePreview = ({ file, position, total, onRemove, onMove, buttonRef }) => 
         {position}
       </span>
       <span className="file-thumb">
-        {isImage && url ? (
-          <img src={url} alt="" />
+        {isImage && (file.movil ? file.url : url) ? (
+          <img src={file.movil ? file.url : url} alt="" />
         ) : (
           <AiOutlineFilePdf size={26} aria-hidden="true" />
         )}
       </span>
       <span className="file-meta">
         <span className="file-name">{file.name}</span>
-        <span className="file-size">{formatSize(file.size)}</span>
+        {file.movil ? (
+          <span className="file-tag">Desde tu móvil</span>
+        ) : (
+          <span className="file-size">{formatSize(file.size)}</span>
+        )}
       </span>
       {total > 1 && (
         <span className="file-move">
@@ -84,7 +90,7 @@ const FilePreview = ({ file, position, total, onRemove, onMove, buttonRef }) => 
   );
 };
 
-const DocumentUploader = ({ id, label, hint, files = [], onFilesChange }) => {
+const DocumentUploader = ({ id, label, hint, files = [], onFilesChange, onRemoveStaged }) => {
   const [dragging, setDragging] = useState(false);
   const [announcement, setAnnouncement] = useState("");
   const [focusAfterMove, setFocusAfterMove] = useState(null);
@@ -122,7 +128,10 @@ const DocumentUploader = ({ id, label, hint, files = [], onFilesChange }) => {
     });
   };
 
-  const removeAt = (index) => onFilesChange(files.filter((_, i) => i !== index));
+  const removeAt = (index) => {
+    if (files[index].movil && onRemoveStaged) onRemoveStaged(files[index]);
+    onFilesChange(files.filter((_, i) => i !== index));
+  };
 
   const move = (index, step) => {
     const to = index + step;

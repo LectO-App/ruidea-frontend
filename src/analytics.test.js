@@ -37,6 +37,7 @@ test.each([
   "/verificarEmail/secret-email-token",
   "/verificar/12345678Z/0001234",
   "/verificar/TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT0",
+  "/movil/TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT0",
 ])("the beacon never loads on %s", (path) => {
   visit(path);
   loadBeacon(TOKEN);
