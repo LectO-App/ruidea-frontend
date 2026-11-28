@@ -118,6 +118,27 @@ export const isoToParts = (iso) => {
   return { dia: String(parseInt(m[3], 10)), mes: String(parseInt(m[2], 10)), anio: m[1] };
 };
 
+// "3 de mayo de 1984": the date as words, so swapped day and month digits stand out.
+export const fechaEnPalabras = (iso) => {
+  const { dia, mes, anio } = isoToParts(iso);
+  return dia ? `${dia} de ${MESES[mes - 1]} de ${anio}` : "";
+};
+
+export const fechaCorta = (iso) => {
+  const { dia, mes, anio } = isoToParts(iso);
+  return dia ? `${dia.padStart(2, "0")}/${mes.padStart(2, "0")}/${anio}` : "";
+};
+
+// Whole years on `hoy` for a yyyy-mm-dd birth date, or null without a date.
+export const edad = (iso, hoy = new Date()) => {
+  const { dia, mes, anio } = isoToParts(iso);
+  if (!dia) return null;
+  const [d, m, y] = [dia, mes, anio].map(Number);
+  const mesHoy = hoy.getMonth() + 1;
+  const cumplido = mesHoy > m || (mesHoy === m && hoy.getDate() >= d);
+  return hoy.getFullYear() - y - (cumplido ? 0 : 1);
+};
+
 export const passwordStrength = (value) => {
   const v = String(value || "");
   let score = 0;

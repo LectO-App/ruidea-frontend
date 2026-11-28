@@ -721,6 +721,10 @@ fieldset.diagnosis {
   &:hover {
     background: rgba($clrMain, 0.1);
   }
+  &:focus-visible {
+    outline: 3px solid rgba($clrMain, 0.5);
+    outline-offset: 2px;
+  }
 }
 .review-row {
   display: flex;
@@ -753,6 +757,115 @@ fieldset.diagnosis {
     border-radius: 99px;
     padding: 6px 14px;
     font-size: 0.95rem;
+  }
+}
+
+/* ---------- Passport sample + checks (Así saldrá en tu pasaporte) ---------- */
+.muestra-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 1.25rem;
+  margin: 0;
+}
+.muestra-tag {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b5000;
+  background: #fff3c4;
+  border: 1px solid #ecd78a;
+  border-radius: 99px;
+  padding: 2px 10px;
+}
+.muestra-sub {
+  margin: 6px 0 12px;
+  color: $reg-muted;
+}
+.muestra-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1000 / 590; // the passport's own size, so the skeleton and the image match
+  border-radius: 10px;
+  border: 1px solid $reg-border;
+}
+.review-checks {
+  list-style: none;
+  counter-reset: check;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+.review-check {
+  counter-increment: check;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid $reg-border;
+  border-radius: 16px;
+  padding: 14px 16px;
+  &::before {
+    content: counter(check);
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    background: rgba($clrMain, 0.12);
+    color: $clrMainDark;
+  }
+  &.aviso {
+    background: #fff8dc;
+    border-color: #ecd78a;
+  }
+  h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: $reg-muted;
+    margin: 0;
+  }
+  .edit-link {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+}
+.review-check-body {
+  flex: 1;
+  min-width: 0;
+}
+.review-check-value {
+  margin: 2px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+// Spaced out so a missing accent or two swapped digits are easier to see.
+.review-check-value--nombre {
+  letter-spacing: 0.06em;
+}
+.review-check-value--documento {
+  letter-spacing: 0.18em;
+  font-variant-numeric: tabular-nums;
+}
+.review-check-hint {
+  margin: 0;
+  font-size: 0.95rem;
+  color: $reg-muted;
+}
+.review-check-aviso {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0 0;
+  color: #5c4500;
+  svg {
+    flex-shrink: 0;
+    margin-top: 4px;
   }
 }
 
