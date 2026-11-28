@@ -12,6 +12,7 @@ import PasoDocumentos from "./PasoDocumentos";
 import PasoRevision from "./PasoRevision";
 import Completion from "./Completion";
 import RegistrationSkeleton from "./RegistrationSkeleton";
+import AntesDeEmpezar from "./AntesDeEmpezar";
 
 import {
   getOwn,
@@ -23,6 +24,7 @@ import {
   uploadFiles,
 } from "../util/registrationApi";
 import { isPdfDocuments, uploadErrorMessage } from "../util/documents";
+import { stepVariants, stepTransition } from "../util/motion";
 
 import "../css/registration.scss";
 
@@ -60,6 +62,7 @@ const Form = (props) => {
   const reduceMotion = useReducedMotion();
 
   const [loaded, setLoaded] = useState(false);
+  const [beforeStart, setBeforeStart] = useState(false); // "Antes de empezar", only with no session
   const [editing, setEditing] = useState(false); // editing an already-submitted record
   const [draftId, setDraftId] = useState(null); // server-side resumable draft id
   const [skipAccount, setSkipAccount] = useState(false); // account already exists
@@ -95,6 +98,8 @@ const Form = (props) => {
         } else {
           setEditing(true); // editing an existing submitted record (§1.5)
         }
+      } else {
+        setBeforeStart(true);
       }
       setLoaded(true);
     };
@@ -147,6 +152,12 @@ const Form = (props) => {
     mergeData({ correoElectronico, _id: res.id });
     setDirection(1);
     setIndex(0);
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  };
+
+  const startApplication = ({ paraQuien }) => {
+    if (paraQuien) mergeData({ esTutor: paraQuien === "otra" });
+    setBeforeStart(false);
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
   };
 
@@ -255,17 +266,7 @@ const Form = (props) => {
     return <Completion data={completion} reduceMotion={reduceMotion} historyPush={props.history.push} />;
   }
 
-  const StepComponent = current.Component;
-  const totalForUser = steps.length;
-  const variants = reduceMotion
-    ? { enter: { opacity: 1 }, center: { opacity: 1 }, exit: { opacity: 1 } }
-    : {
-        enter: (dir) => ({ x: dir > 0 ? 60 : -60, opacity: 0 }),
-        center: { x: 0, opacity: 1 },
-        exit: (dir) => ({ x: dir > 0 ? -60 : 60, opacity: 0 }),
-      };
-
-  return (
+  const shell = (children) => (
     <motion.div
       className="reg"
       initial={{ opacity: 0 }}
@@ -279,7 +280,17 @@ const Form = (props) => {
 
       <Link className="reg-close" to="/" aria-label="Cerrar y volver al inicio" role="button" />
 
-      <div className="reg-shell">
+      <div className="reg-shell">{children}</div>
+    </motion.div>
+  );
+
+  if (beforeStart) return shell(<AntesDeEmpezar onStart={startApplication} />);
+
+  const StepComponent = current.Component;
+  const totalForUser = steps.length;
+
+  return shell(
+    <>
         {revisionMessage && (
           <div className="status-note reg-revision-note">
             <span className="status-note-label">Mensaje del especialista</span>
@@ -336,11 +347,11 @@ const Form = (props) => {
             key={current.key}
             className="reg-step"
             custom={direction}
-            variants={variants}
+            variants={stepVariants(reduceMotion)}
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            transition={stepTransition}
           >
             <StepComponent
               formData={formData}
@@ -360,8 +371,7 @@ const Form = (props) => {
             />
           </motion.div>
         </AnimatePresence>
-      </div>
-    </motion.div>
+    </>
   );
 };
 

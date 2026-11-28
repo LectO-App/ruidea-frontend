@@ -1103,6 +1103,147 @@ fieldset.diagnosis {
   align-self: flex-end;
 }
 
+/* ---------- Antes de empezar (before step 1) ---------- */
+.antes-eyebrow {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: $clrMainDark;
+}
+.choice-text {
+  display: flex;
+  flex-direction: column;
+  small {
+    font-size: 0.9rem;
+    color: $reg-muted;
+  }
+}
+.choice-card:focus-within {
+  box-shadow: 0 0 0 3px rgba($clrMain, 0.25);
+}
+.antes-heading:focus {
+  outline: none;
+}
+.antes-heading:focus-visible {
+  outline: 3px solid rgba($clrMain, 0.4);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.antes-foot {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.antes-skip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 48px;
+  font-size: 1rem;
+}
+.reg .btn-primary,
+.reg .btn-secondary,
+.antes-skip {
+  &:focus-visible {
+    outline: 3px solid rgba($clrMain, 0.5);
+    outline-offset: 2px;
+  }
+}
+.antes-print-title {
+  display: none;
+}
+.antes-print {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.antes-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.antes-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  strong {
+    display: block;
+    font-size: 1.05rem;
+  }
+}
+.antes-item-text {
+  display: block;
+  color: $reg-muted;
+}
+.antes-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 1.25rem;
+  background: rgba($clrMain, 0.1);
+  color: $clrMainDark;
+}
+.antes-saved {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba($reg-ok, 0.08);
+  border: 1px solid rgba($reg-ok, 0.3);
+  color: #1f5a23;
+  svg {
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+}
+
+// "Imprimir o guardar la lista": only the list goes on paper.
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .antes-print,
+  .antes-print * {
+    visibility: visible;
+  }
+  .antes-print {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    color: #222;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+  .antes-print-title {
+    display: block;
+    margin: 0 0 8pt;
+    font-size: 16pt;
+  }
+  .antes-icon {
+    background: none;
+    border: 1px solid #888;
+    color: #222;
+  }
+  .antes-item-text {
+    color: #333;
+  }
+  .antes-print .form-banner {
+    background: none;
+    border: 1px solid #888;
+    color: #222;
+  }
+}
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   .reg *,
